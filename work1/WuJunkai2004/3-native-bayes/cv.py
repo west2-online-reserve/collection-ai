@@ -98,3 +98,22 @@ def get_visualise_density(array):
                 result.append("{}{}".format(idx+1, chr(96+end)))
                 break
     return result
+
+
+def get_density(array):
+    img = image(array)
+    img = img.clip_image(img.get_image_info())
+    img = img.center_image()
+
+    density = [
+        img.get_region(0, 0).get_density(),
+        img.get_region(0, 1).get_density(),
+        img.get_region(1, 0).get_density(),
+        img.get_region(1, 1).get_density(),
+        img.get_region(2, 0).get_density(),
+        img.get_region(2, 1).get_density()
+    ]
+
+    density = get_absolute_density(density)
+    density = get_visualise_density(density)
+    return density

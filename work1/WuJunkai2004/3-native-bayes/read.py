@@ -28,7 +28,7 @@ def get_num_image(num, func = read_train_images, label_func = read_train_labels)
     array = func()
     labels = label_func()
     print(len(labels))
+    print(num)
     for i in range(len(labels)):
         if(labels[i] == num):
-            print(labels[i])
             yield array[i].reshape((28, 28))

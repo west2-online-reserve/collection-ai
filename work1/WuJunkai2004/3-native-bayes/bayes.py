@@ -1,31 +1,88 @@
 import numpy
 
+import read
 import cv
 import param
-import read
-import view
+import dblite
 
-for i in read.get_num_image(6):
-    six = cv.image(i)
-    print(six.get_image_info())
 
-    new = six.clip_image(six.get_image_info()) 
-    new = new.center_image()
+word = ['1a','1b','1c','1d',
+        '2a','2b','2c','2d',
+        '3a','3b','3c','3d',
+        '4a','4b','4c','4d',
+        '5a','5b','5c','5d',
+        '6a','6b','6c','6d']
+prob = [ dict( zip( word, [0]*24 ) ) for i in range(10) ]
 
-    density = [
-        new.get_region(0, 0).get_density(),
-        new.get_region(0, 1).get_density(),
-        new.get_region(1, 0).get_density(),
-        new.get_region(1, 1).get_density(),
-        new.get_region(2, 0).get_density(),
-        new.get_region(2, 1).get_density()
-    ]
 
-    print(density)
+db = dblite.SQL("clean.db")
+for is_num in range(10):
+    for has_part in word:
+        totol = 0
+        goals = 0
+        for part in db[ 'num_{}'.format(is_num) ][ 'part_{}'.format(has_part[0]) ]:
+            totol += 1
+            if part == has_part:
+                goals += 1
+        prob[is_num][has_part] = goals / totol
 
-    density = cv.get_absolute_density(density)
-    print( density )
-    density = cv.get_visualise_density(density)
-    print( density )
+print(prob)
+
+
+def softmax(x):
+    return numpy.exp(x) / numpy.sum(numpy.exp(x), axis=0)
+
+
+class Bayes:
+    def __init__(self, is_num , has_part):
+        self.is_num = is_num
+        self.has_part = has_part
+        self.probability = prob[is_num][has_part]
+
+    def __call__(self):
+        return self.probability * param.probalility['is_number_{}'.format(self.is_num)] / param.probalility['has_part_{}'.format(self.has_part)]
+
+
+def check(den):
+        result = []
+        for i in range(10):
+            result.append( Bayes(i,den[0])() * Bayes(i,den[1])() * Bayes(i,den[2])() * Bayes(i,den[3])() * Bayes(i,den[4])() * Bayes(i,den[5])() )
+        '''print(result)
+        print(softmax(result))
+        print(numpy.argmax(result))
+        print(result.index(max(result)))'''
+        return numpy.argmax(result)
+
+if(__name__ == "__main__"):
+
+    schedule = 0
+
+    correct = 0
+    wrong = 0
+
+    array = read.read_test_images()
+    label = read.read_test_labels()
+
+    for i in range(10000):
+        ## check the schedule
+        schedule += 1
+        if schedule % 100 == 0:
+            print(schedule/100)
+
+        ## get the image and density
+        den = cv.get_density(array[i].reshape(28,28))
+
+        ## check the result
+        result = check(den)
+        if result == label[i]:
+            correct += 1
+        else:
+            wrong += 1
+
+
+
+    print("correct: {}".format(correct))
+    print("wrong: {}".format(wrong))
+    print("accuracy: {}".format(correct / (correct + wrong)))
 
     input()
