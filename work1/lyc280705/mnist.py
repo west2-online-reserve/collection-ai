@@ -47,5 +47,19 @@ def train_epoch(net,train_iter,loss,trainer):
 def train(net,train_iter,loss,trainer):
     for i in range(10):
         print("epoch %d,accuracy %f"%(i+1,train_epoch(net,train_iter,loss,trainer)))
+#测试模型
+def test(net, test_iter):
+    net.eval()
+    total_correct = 0
+    total_samples = 0
+    with torch.no_grad():
+        for X, y in test_iter:
+            y_hat = net(X)
+            correct, samples = accuracy(y_hat, y)
+            total_correct += correct
+            total_samples += samples
+    return total_correct / total_samples
+
 if __name__ == '__main__':
     train(net,train_iter,loss,trainer)
+    print("test accuracy %f"%test(net,test_iter))
