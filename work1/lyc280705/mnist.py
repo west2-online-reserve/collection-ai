@@ -13,7 +13,12 @@ def load_data(batch_size):
            data.DataLoader(mnist_test,batch_size,shuffle=False,num_workers=4))
 train_iter,test_iter=load_data(batch_size)
 #定义模型
-net=nn.Sequential(nn.Flatten(),nn.Linear(784,10))
+net = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Linear(256, 10)
+)
 def init_weights(m):
     if type(m)==nn.Linear:
         nn.init.normal_(m.weight,std=0.01)
