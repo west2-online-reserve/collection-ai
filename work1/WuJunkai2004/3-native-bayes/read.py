@@ -3,6 +3,8 @@ import struct
 
 import numpy
 
+import param
+
 path = './mnist/{}-{}-idx{}-ubyte.gz'
 
 def __read(name, type):
@@ -32,3 +34,41 @@ def get_num_image(num, func = read_train_images, label_func = read_train_labels)
     for i in range(len(labels)):
         if(labels[i] == num):
             yield array[i].reshape((28, 28))
+
+
+def print_edges(edges):
+    for line in range(28):
+        for idx in range(28):
+            if (line, idx) in edges:
+                print('▩', end='')
+            else:
+                print('◻', end='')
+        print('')
+
+
+def print_array(array):
+    for line in array:
+        for idx in line:
+            if idx > param.pixel.solid:
+                print('▩', end='')
+            elif idx > param.pixel.hollow:
+                print('◻', end='')
+            else:
+                print('-', end='')
+        print('')
+
+
+def change_to_list(array):
+    new_array = []
+    for line in range(28):
+        for idx in range(28):
+            if array[line][idx] > param.pixel.solid:
+                new_array.append((line, idx))
+    return new_array
+
+
+if(__name__ == '__main__'):
+    imgs = read_train_images()
+    for img in imgs:
+        print_array(img.reshape((28, 28)))
+        input("=====")

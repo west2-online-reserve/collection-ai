@@ -1,4 +1,5 @@
 import json
+import dblite
 
 class _json:
     def __init__(self, data) -> None:
@@ -35,8 +36,11 @@ threshold = _json({
     'split':    _json({
         'width':    2,
         'height':   3
-    })
+    }),
+    'density':  [0.125] * 8
 })
+
+threshold['word'] = [ "{}{}".format(i,chr(97+j)) for j in range(len(threshold.density)) for i in range(1, 1 + threshold.split.width * threshold.split.height)  ]
 
 pixel = _json({
     'solid':    255/2,
@@ -49,10 +53,7 @@ image = _json({
 })
 
 
-
-__detail = {'1b': 15878, '1a': 19135, '1d': 11060, '1c': 13927, '2d': 16660, '2c': 12735, '2b': 14821, '2a': 15784, '3c': 10432, '3d': 32642, '3b': 8432, '3a': 8494, '4c': 11144, '4d': 27786, '4b': 9125, '4a': 11945, '5d': 23022, '5c': 12696, '5b': 11406, '5a': 12876, '6a': 28394, '6b': 15609, '6d': 5758, '6c': 10239}
-
-probalility = _json({
+probability = _json({
     'is_number_0':  5923/60000,
     'is_number_1':  6742/60000,
     'is_number_2':  5958/60000,
@@ -65,5 +66,25 @@ probalility = _json({
     'is_number_9':  5949/60000
 })
 
-for __key in __detail.keys():
-    probalility['has_part_'+__key] = __detail[__key]/60000
+
+def other_probability():
+    db = dblite.SQL("clean.db")
+    try:
+        db["num_1"]["part_1"]
+    except:
+        return
+
+    data = {}
+    for num in range(10):
+        name = "num_{}".format(num)
+        for i in range(1,7):
+            part = "part_{}".format(i)
+            for item in db[name][part]:
+                if item not in data.keys():
+                    data[item] = 0
+                data[item] += 1
+    
+    print(data)
+
+    for __key in data.keys():
+        probability['has_part_'+__key] = data[__key]/60000

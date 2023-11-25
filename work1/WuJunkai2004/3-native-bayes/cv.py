@@ -91,10 +91,9 @@ def get_absolute_density(array, more = 1):
 
 def get_visualise_density(array):
     result = []
-    chars = [0.35, 0.25, 0.2, 0.2]
     for idx in range(len(array)):
-        for end in range(1,5):
-            if array[idx] <= sum(chars[:end]):
+        for end in range(1, 1 + len(param.threshold.density)):
+            if array[idx] <= sum(param.threshold.density[:end]):
                 result.append("{}{}".format(idx+1, chr(96+end)))
                 break
     return result

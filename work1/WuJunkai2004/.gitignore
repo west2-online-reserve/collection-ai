@@ -1,3 +1,8 @@
 #mnist files
 */mnist/*.gz
 
+#all of datebase files
+*.db
+
+#debug file
+debug.*

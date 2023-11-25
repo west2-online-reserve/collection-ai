@@ -6,18 +6,12 @@ import param
 import dblite
 
 
-word = ['1a','1b','1c','1d',
-        '2a','2b','2c','2d',
-        '3a','3b','3c','3d',
-        '4a','4b','4c','4d',
-        '5a','5b','5c','5d',
-        '6a','6b','6c','6d']
-prob = [ dict( zip( word, [0]*24 ) ) for i in range(10) ]
-
-
+prob = [ dict( zip( param.threshold.word, [0]*24 ) ) for i in range(10) ]
+param.other_probability()
+#quit()
 db = dblite.SQL("clean.db")
 for is_num in range(10):
-    for has_part in word:
+    for has_part in param.threshold.word:
         totol = 0
         goals = 0
         for part in db[ 'num_{}'.format(is_num) ][ 'part_{}'.format(has_part[0]) ]:
@@ -26,7 +20,7 @@ for is_num in range(10):
                 goals += 1
         prob[is_num][has_part] = goals / totol
 
-print(prob)
+#print(prob)
 
 
 def softmax(x):
@@ -40,13 +34,13 @@ class Bayes:
         self.probability = prob[is_num][has_part]
 
     def __call__(self):
-        return self.probability * param.probalility['is_number_{}'.format(self.is_num)] / param.probalility['has_part_{}'.format(self.has_part)]
+        return self.probability * param.probability['is_number_{}'.format(self.is_num)] / param.probability['has_part_{}'.format(self.has_part)]
 
 
 def check(den):
         result = []
         for i in range(10):
-            result.append( Bayes(i,den[0])() * Bayes(i,den[1])() * Bayes(i,den[2])() * Bayes(i,den[3])() * Bayes(i,den[4])() * Bayes(i,den[5])() )
+            result.append( 1000 * param.probability["is_number_{}".format(i)] * Bayes(i,den[0])() * Bayes(i,den[1])() * Bayes(i,den[2])() * Bayes(i,den[3])() * Bayes(i,den[4])() * Bayes(i,den[5])() )
         '''print(result)
         print(softmax(result))
         print(numpy.argmax(result))
