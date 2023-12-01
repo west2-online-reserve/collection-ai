@@ -27,8 +27,15 @@ def load_data(batch_size):
 
 train_iter, test_iter = load_data(batch_size)
 # 定义模型
-net = nn.Sequential(nn.Flatten(), nn.Linear(784, 256), nn.ReLU(), nn.Linear(256, 10))
-net = net.to(device)
+dropout1, dropout2 = 0.2, 0.5
+net = nn.Sequential(nn.Flatten(),
+        nn.Linear(784, 256),
+        nn.ReLU(),
+        nn.Dropout(dropout1),
+        nn.Linear(256, 256),
+        nn.ReLU(),
+        nn.Dropout(dropout2),
+        nn.Linear(256, 10)).to(device)
 
 
 def init_weights(m):
