@@ -52,3 +52,93 @@
 
 
 
+#### **卷积神经网络CNN**
+
+主要使用在影像识别上（alphaGo也是使用CNN）
+
+数据集必须是相同大小的图片（在应用时候要先把输入影像压缩到所需大小）
+
+使用cross entropy计算loss
+$$
+H(p,q)=−∑ 
+x
+​
+ p(x)logq(x)
+
+$$
+图像是有3维的tensor（长，宽，RGB三个颜色）
+
+把每个像素点都拿出来排成向量作为输入
+
+只要侦测到关键部位就可以判断因此可以不用看全部图片，而成只要看Receptive field(可以重叠)
+
+关键部位可能会在图片的任何位置，因此有些Receptive field可以共享参数(filter)
+
+这两步可以降低模型的弹性（不容易overfitting）（有比较大large model bias）
+
+convolution layer有许多filter（kenal size*channel）每个filter检测一个关键pattern，通过线性回归可以获得每个filter的参数，把filter的全部值和每个receptive filed相乘获得一个新的值从而获得一个“新的图像”（feature map）（当遇到与要检测元素相似性最高时值最大），每个filter可以给一个新的channel,所以新图片channel数变大，size变小
+
+新的图像再进行卷积意味可以覆盖跟多的像素，因此只要叠的够深就可以检测足够大的图像
+
+**卷积**：就是把filter扫过一张图片的过程
+
+pooling池化：把图片缩小不改变图片的样子，pooling不是一个layer，有点像sigmoid（可以减少计算量，可以不用）
+
+flatten把最后得到的图像拉直然后丢到fully connected layer进行softmax回归
+
+计算卷积后大小的公式:
+$$
+O = \frac{{I - K + 2P}}{{S}} + 1
+$$
+
+- **O**：输出尺寸（Output size）。它是根据输入尺寸、卷积核大小、填充量和步长计算出的输出特征图（feature map）的尺寸。
+- **I**：输入尺寸（Input size）。这是卷积层接收到的输入特征图的尺寸。
+- **K**：卷积核尺寸（Kernel size）。这是卷积操作中使用的卷积核（或滤波器）的尺寸。
+- **P**：填充量（Padding）。这是在输入特征图的边缘添加的零填充的数量。填充通常用于控制输出尺寸，防止尺寸过于迅速地缩小，或者为了保持特征图的空间尺寸。
+- **S**：步长（Stride）。这是卷积核在输入特征图上移动的步长。较大的步长会导致更小的输出尺寸。
+
+
+
+#### **分类classification**
+
+loss的计算（分类错误的次数）
+$$
+L(f) = \sum_{n} \delta(f(x^n) \neq \hat{y}^n)
+$$
+如何计算：概率论->贝叶斯公式
+$$
+P(C_1 | \mathbf{x}) = \frac{P(\mathbf{x} | C_1)P(C_1)}{P(\mathbf{x} | C_1)P(C_1) + P(\mathbf{x} | C_2)P(C_2)}
+$$
+通过在从c1和c2中抽取到x的概率得到给定x来自c1或c2的概率
+
+全概率公式
+$$
+P(A) = \sum_{i=1}^{n} P(A | B_i) P(B_i)
+$$
+高斯分布（正态分布）
+$$
+f_{\mu,\Sigma}(x) = \frac{1}{(2\pi)^{D/2}|\Sigma|^{1/2}} \exp\left\{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right\}
+$$
+
+
+最大似然估计：找一个高斯分布找到所有测试点的概率最大，而通过数学可以知道：
+
+当
+$$
+\mu^* = \frac{1}{79} \sum_{n=1}^{79} x^n
+$$
+
+$$
+\Sigma^* = \frac{1}{79} \sum_{n=1}^{79} (x^n - \mu^*)(x^n - \mu^*)^T
+$$
+
+（第二个参数可以共用以减少参数）
+
+时这个高斯分布得到的概率最大
+
+这时这个公式就可以算了就可以得到x来自c1的概率
+$$
+P(C_1 | \mathbf{x}) = \frac{P(\mathbf{x} | C_1)P(C_1)}{P(\mathbf{x} | C_1)P(C_1) + P(\mathbf{x} | C_2)P(C_2)}
+$$
+
+
