@@ -64,7 +64,7 @@ H(p,q)=−∑
 x
 ​
  p(x)logq(x)
-
+
 $$
 图像是有3维的tensor（长，宽，RGB三个颜色）
 
@@ -103,7 +103,7 @@ $$
 
 loss的计算（分类错误的次数）
 $$
-L(f) = \sum_{n} \delta(f(x^n) \neq \hat{y}^n)
+L(f) = \sum_{n} \delta(f(x^n) \neq \hat{y}^n)
 $$
 如何计算：概率论->贝叶斯公式
 $$
@@ -113,7 +113,7 @@ $$
 
 全概率公式
 $$
-P(A) = \sum_{i=1}^{n} P(A | B_i) P(B_i)
+P(A) = \sum_{i=1}^{n} P(A | B_i) P(B_i)
 $$
 高斯分布（正态分布）
 $$
@@ -125,11 +125,11 @@ $$
 
 当
 $$
-\mu^* = \frac{1}{79} \sum_{n=1}^{79} x^n
+\mu^* = \frac{1}{79} \sum_{n=1}^{79} x^n
 $$
 
 $$
-\Sigma^* = \frac{1}{79} \sum_{n=1}^{79} (x^n - \mu^*)(x^n - \mu^*)^T
+\Sigma^* = \frac{1}{79} \sum_{n=1}^{79} (x^n - \mu^*)(x^n - \mu^*)^T
 $$
 
 （第二个参数可以共用以减少参数）
@@ -140,5 +140,4 @@ $$
 $$
 P(C_1 | \mathbf{x}) = \frac{P(\mathbf{x} | C_1)P(C_1)}{P(\mathbf{x} | C_1)P(C_1) + P(\mathbf{x} | C_2)P(C_2)}
 $$
-
 
