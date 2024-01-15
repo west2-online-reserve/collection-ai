@@ -31,10 +31,6 @@ class Trainer:
                 output = self.model.forward(x)
                 loss = BCE(output, y)
                 e_loss = loss
-                l2_reg = torch.tensor(0.).to(device)
-                for param in self.model.parameters():
-                    l2_reg += torch.norm(param, p=2)
-                loss += self.lambda_reg * l2_reg
                 loss.backward()
                 optimizer.step()
             acc = self.evaluate()

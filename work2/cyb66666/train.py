@@ -7,13 +7,13 @@ from src import trainer, model, utils, Word2Sequence
 
 w2s = Word2Sequence.Word2Sequence()
 w2s.input_vocab('./imdb.vocab')
-learning_rate = 0.0009
+learning_rate = 0.01
 weight_decay = 0.0001
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # model, optimizer, epochs, lambda_reg, test_imdb_dataloader, imdb_dataloader
 model_ = model.imdb_model(w2s).to(device)
-optimizer = torch.optim.AdamW(model_.parameters(), lr=learning_rate, weight_decay=weight_decay)
-epochs = 5
+optimizer = torch.optim.Adam(model_.parameters(), lr=learning_rate)
+epochs = 10
 lambda_reg = 0.001
 # test_imdb_dataloader = utils.imdb_dataloader('./IMDB.json','test',w2s)
 # train_imdb_dataloader = utils.imdb_dataloader('./IMDB.json','train',w2s)
