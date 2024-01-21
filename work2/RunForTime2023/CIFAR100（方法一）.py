@@ -101,8 +101,6 @@ axis1.plot(epoch, torch.tensor(trainLoss).to(device), label='Train Loss', color=
 axis1.plot(epoch, torch.tensor(testLoss).to(device), label='Test Loss', color='green', linestyle='-.')
 axis2.plot(epoch, torch.tensor(trainAccuracy).to(device), label='Train Accuracy(superclass)', linestyle='-.')
 axis2.plot(epoch, torch.tensor(testAccuracy).to(device), label='Test Accuracy(superclass)', linestyle='-.')
-# axis2.plot(epoch, torch.tensor(temp1).to(device), label='Train Accuracy(subclass)', color='brown', linestyle='-.')
-# axis2.plot(epoch, torch.tensor(temp2).to(device), label='Test Accuracy(subclass)', color='purple', linestyle='-.')
 axis1.set_xlabel("epoch")
 axis1.set_ylabel("loss")
 axis2.set_ylabel("accuracy")
