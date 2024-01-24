@@ -269,14 +269,45 @@ Y=X*W+b
 
 ##八、现代卷积神经网络
 
-1.深度卷积神经网络AlexNet
+###1.深度卷积神经网络AlexNet
 
 它是第一个在大规模视觉竞赛中击败传统计算机视觉模型的大型神经网络；
 
 主要改进：丢弃法、ReLU、MaxPooling
 
+由5个卷积层、2个全连接隐藏层和一个全连接输出层构成。
 
-2.残差网络（ResNet）。它通过残差块构建跨层的数据通道，是计算机视觉中最流行的体系架构；
+举例：图片为3*224*224
+
+	net = nn.Sequential(
+    # 这里使用一个11*11的更大窗口来捕捉对象。
+    # 同时，步幅为4，以减少输出的高度和宽度。
+    # 另外，输出通道的数目远大于LeNet
+    nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=1), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    # 减小卷积窗口，使用填充为2来使得输入与输出的高和宽一致，且增大输出通道数
+    nn.Conv2d(96, 256, kernel_size=5, padding=2), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    # 使用三个连续的卷积层和较小的卷积窗口。
+    # 除了最后的卷积层，输出通道的数量进一步增加。
+    # 在前两个卷积层之后，汇聚层不用于减少输入的高度和宽度
+    nn.Conv2d(256, 384, kernel_size=3, padding=1), nn.ReLU(),
+    nn.Conv2d(384, 384, kernel_size=3, padding=1), nn.ReLU(),
+    nn.Conv2d(384, 256, kernel_size=3, padding=1), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2),
+    nn.Flatten(),
+    # 这里，全连接层的输出数量是LeNet中的好几倍。使用dropout层来减轻过拟合
+    nn.Linear(6400, 4096), nn.ReLU(),
+    nn.Dropout(p=0.5),
+    nn.Linear(4096, 4096), nn.ReLU(),
+    nn.Dropout(p=0.5),
+    # 最后是输出层。由于这里使用Fashion-MNIST，所以用类别数为10，而非论文中的1000
+    nn.Linear(4096, 10))
+
+
+
+###2.残差网络（ResNet）。它通过残差块构建跨层的数据通道，是计算机视觉中最流行的体系架构；
+
 
 3.使用重复块的网络（VGG）。它利用许多重复的神经网络块；
 
@@ -364,3 +395,41 @@ RMSProp主要思想：使用指数加权移动平均的方法计算累积梯度�
 ###4.优秀网络
 4.1 Vit:ViT将输入图片分为多个patch（16 * 16）,再将每个patch投影为固定长度的向量送入Transformer，后续encoder的操作和原始Transformer中完全相同。
 4.2Yolo:一次性预测多个Box位置和类别的卷积神经网络能够实现端到端的目标检测和识别，其最大的优势就是速度快。
+
+##十、数据增广
+增加一个已有数据集，使得有更多的多样性，在语言中加入各种不同点背景噪音/改变图片的颜色形状
+
+
+1.翻转：
+左右:transforms.RandomHorizontalFlip
+
+上下:transforms.RandomVerticalFlip
+
+2.切割：从图片中切割一块，然后变形到固定形状
+（随机高宽比，随机大小，随机位置）
+	# 大小为200×200,scale是10%~100%,ratio表示高宽比
+	transforms.RandomResizedCrop((200,200),scale=(0.1,1),ratio=(0.5,2))
+
+3.颜色：色调hue/饱和度saturation/明亮度brightness/对比度contrast
+	transforms.ColorJitter(brightness=0.5,contrast=0,saturation=0,hue=0)
+
+微调通过在已有的预训练模型的来初始化权重来完成提升精度。
+训练时，在目标数据集上正常训练，但要使用更强的正则化，更小的学习率，以及更少的数据迭代。源数据集远复杂于目标数据集，需微调。
+
+##十一、循环神经网络
+###1.序列模型(当前数据与之前观察到的数据相关)
+1. 自回归模型使用自身过去来预测未来。
+2. 马尔科夫模型假设当前只跟最近少数数据相关，从而简化模型
+3. 潜变量模型使用潜变量来概括历史信息。
+
+##十二、提高模型准确率方法：
+1.增加模型复杂度：添加卷积/池化/全连接层
+
+2.使用更深/复杂的网络架构，比如ResNet、Inception
+
+3.数据增强
+
+4.正则化：可添加L1/L2正则化，来减少模型的过拟合。可以通过在 optimizer 中指定正则化参数的权重来实现
+
+5.调整超参数：尝试调整学习率、批次大小、优化器等超参数，以找到更好的模型性能。可以通过使用学习率调度器或进行交叉验证来优化超参数选择。
+
