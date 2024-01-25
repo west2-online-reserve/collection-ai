@@ -42,8 +42,8 @@ class Cifar100(nn.Module):
         self.pool  = nn.MaxPool2d(2, 2)
         self.relu  = nn.ReLU()
 
-        self.linear1 = nn.Linear(128 * 5 * 5, 120)
-        #self.linear1 = nn.Linear(128 * 5 * 5, 1024)
+        #self.linear1 = nn.Linear(128 * 5 * 5, 120)
+        self.linear1 = nn.Linear(128 * 5 * 5, 1024)
         self.linear2 = nn.Linear(120, 84)
 
     def forward(self, x):
@@ -65,7 +65,7 @@ class Cifar100(nn.Module):
 # define loss function and optimizer
 model = Cifar100()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.SGD(model.parameters(), lr=0.001/2, momentum=0.9)
 device = th.device("cuda")
 
 # move model to GPU
@@ -73,8 +73,8 @@ model.to(device)
 
 
 # train
-epochs = 10
-batch_size = 64
+epochs = 20
+batch_size = 100
 
 #start training
 for epoch in range(epochs):
