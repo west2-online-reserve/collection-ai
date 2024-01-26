@@ -7,26 +7,26 @@ from torchvision import datasets, transforms
 import numpy
 
 categories = {
-    0: ['castle', 'skyscraper', 'bridge', 'house', 'road'],
-    1: ['beaver', 'dolphin', 'otter', 'seal', 'whale'],
-    2: ['bear', 'lion', 'tiger', 'wolf', 'leopard'],
-    3: ['beetle', 'bee', 'butterfly', 'caterpillar', 'cockroach'],
-    4: ['apple', 'mushroom', 'orange', 'pear', 'sweet_pepper'],
-    5: ['cloud', 'forest', 'mountain', 'plain', 'sea'],
-    6: ['cattle', 'chimpanzee', 'camel', 'elephant', 'kangaroo'],
-    7: ['maple_tree', 'oak_tree', 'pine_tree', 'palm_tree', 'willow_tree'],
-    8: ['television', 'clock', 'keyboard', 'telephone', 'lamp'],
-    9: ['hamster', 'mouse', 'rabbit', 'shrew', 'squirrel'],
-    10: ['worm', 'spider', 'snail', 'lobster', 'crab'],
-    11: ['plate', 'cup', 'bottle', 'bowl', 'can'],
-    12: ['woman', 'baby', 'boy', 'girl', 'man'],
-    13: ['skunk', 'fox', 'raccoon', 'possum', 'porcupine'],
-    14: ['bus', 'pickup_truck', 'train', 'motorcycle', 'bicycle'],
-    15: ['aquarium_fish', 'ray', 'flatfish', 'shark', 'trout'],
-    16: ['orchid', 'poppy', 'rose', 'sunflower', 'tulip'],
-    17: ['tank', 'tractor', 'streetcar', 'rocket', 'lawn_mower'],
-    18: ['couch', 'chair', 'bed', 'wardrobe', 'table'],
-    19: ['lizard','snake', 'turtle', 'dinosaur', 'crocodile']
+    'castle': 0, 'skyscraper': 0, 'bridge': 0, 'house': 0, 'road': 0,
+    'beaver': 1, 'dolphin': 1, 'otter': 1, 'seal': 1, 'whale': 1,
+    'bear': 2, 'lion': 2, 'tiger': 2, 'wolf': 2, 'leopard': 2,
+    'beetle': 3, 'bee': 3, 'butterfly': 3, 'caterpillar': 3, 'cockroach': 3,
+    'apple': 4, 'mushroom': 4, 'orange': 4, 'pear': 4, 'sweet_pepper': 4,
+    'cloud': 5, 'forest': 5, 'mountain': 5, 'plain': 5, 'sea': 5,
+    'cattle': 6, 'chimpanzee': 6, 'camel': 6, 'elephant': 6, 'kangaroo': 6,
+    'maple_tree': 7, 'oak_tree': 7, 'pine_tree': 7, 'palm_tree': 7, 'willow_tree': 7,
+    'television': 8, 'clock': 8, 'keyboard': 8, 'telephone': 8, 'lamp': 8,
+    'hamster': 9, 'mouse': 9, 'rabbit': 9, 'shrew': 9, 'squirrel': 9,
+    'worm': 10, 'spider': 10, 'snail': 10, 'lobster': 10, 'crab': 10,
+    'plate': 11, 'cup': 11, 'bottle': 11, 'bowl': 11, 'can': 11,
+    'woman': 12, 'baby': 12, 'boy': 12, 'girl': 12, 'man': 12,
+    'skunk': 13, 'fox': 13, 'raccoon': 13, 'possum': 13, 'porcupine': 13,
+    'bus': 14, 'pickup_truck': 14, 'train': 14, 'motorcycle': 14, 'bicycle': 14,
+    'aquarium_fish': 15, 'ray': 15, 'flatfish': 15, 'shark': 15, 'trout': 15,
+    'orchid': 16, 'poppy': 16, 'rose': 16, 'sunflower': 16, 'tulip': 16,
+    'tank': 17, 'tractor': 17, 'streetcar': 17, 'rocket': 17, 'lawn_mower': 17,
+    'couch': 18, 'chair': 18, 'bed': 18, 'wardrobe': 18, 'table': 18,
+    'lizard': 19, 'snake': 19, 'turtle': 19, 'dinosaur': 19, 'crocodile': 19
 }
 
 mean = [0.5070751592371323, 0.48654887331495095, 0.4409178433670343]
@@ -35,14 +35,25 @@ std = [0.2673342858792401, 0.2564384629170883, 0.27615047132568404]
 # Normalize()使用均值和标准差对张量图片进行归一化,将数据分布到(-1,1)，均值为0，方差为1
 # 加入随机左右翻转数据增强,用imagenet的方差做归一化
 trans_train = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                transforms.ToTensor(),
-                                transforms.Normalize(mean=mean, std=std)])
+                                  transforms.ToTensor(),
+                                  transforms.Normalize(mean=mean, std=std)])
 trans_test = transforms.Compose([transforms.ToTensor(),
-                                transforms.Normalize(mean=mean, std=std)])
+                                 transforms.Normalize(mean=mean, std=std)])
 cifar_train = datasets.CIFAR100(
-    root="../data", train=True, transform=trans_train, download=False)
+    root="../data", train=True, transform=trans_train, download=True)
 cifar_test = datasets.CIFAR100(
-    root="../data", train=False, transform=trans_test, download=False)
+    root="../data", train=False, transform=trans_test, download=True)
+
+
+def trans_cifar_train():
+    cifar_train.targets = \
+        [categories[cifar_train.classes[cifar_train.targets[i]]] for i in range(len(cifar_train.targets))]
+
+
+def trans_cifar_test():
+    cifar_test.targets = \
+        [categories[cifar_test.classes[cifar_test.targets[i]]] for i in range(len(cifar_test.targets))]
+
 
 # 加载CIFAR-100数据集
 def load_data_cifar(batch_size):
@@ -52,94 +63,6 @@ def load_data_cifar(batch_size):
     return (data.DataLoader(cifar_train, batch_size, shuffle=True),
             data.DataLoader(cifar_test, batch_size, shuffle=False))
 
-def trans_cifar_train():
-    # 对50000张训练图进行预处理
-    for i in range(1, 50000):
-        name = cifar_train.classes[cifar_train.targets[i]]
-        if name in categories[0]:
-            cifar_train.targets[i] = 0
-        elif name in categories[1]:
-            cifar_train.targets[i] = 1
-        elif name in categories[2]:
-            cifar_train.targets[i] = 2
-        elif name in categories[3]:
-            cifar_train.targets[i] = 3
-        elif name in categories[4]:
-            cifar_train.targets[i] = 4
-        elif name in categories[5]:
-            cifar_train.targets[i] = 5
-        elif name in categories[6]:
-            cifar_train.targets[i] = 6
-        elif name in categories[7]:
-            cifar_train.targets[i] = 7
-        elif name in categories[8]:
-            cifar_train.targets[i] = 8
-        elif name in categories[9]:
-            cifar_train.targets[i] = 9
-        elif name in categories[10]:
-            cifar_train.targets[i] = 10
-        elif name in categories[11]:
-            cifar_train.targets[i] = 11
-        elif name in categories[12]:
-            cifar_train.targets[i] = 12
-        elif name in categories[13]:
-            cifar_train.targets[i] = 13
-        elif name in categories[14]:
-            cifar_train.targets[i] = 14
-        elif name in categories[15]:
-            cifar_train.targets[i] = 15
-        elif name in categories[16]:
-            cifar_train.targets[i] = 16
-        elif name in categories[17]:
-            cifar_train.targets[i] = 17
-        elif name in categories[18]:
-            cifar_train.targets[i] = 18
-        elif name in categories[19]:
-            cifar_train.targets[i] = 19
-
-def trans_cifar_test():
-    for i in range(1,10000):
-        name = cifar_test.classes[cifar_test.targets[i]]
-        if name in categories[0]:
-            cifar_test.targets[i] = 0
-        elif name in categories[1]:
-            cifar_test.targets[i] = 1
-        elif name in categories[2]:
-            cifar_test.targets[i] = 2
-        elif name in categories[3]:
-            cifar_test.targets[i] = 3
-        elif name in categories[4]:
-            cifar_test.targets[i] = 4
-        elif name in categories[5]:
-            cifar_test.targets[i] = 5
-        elif name in categories[6]:
-            cifar_test.targets[i] = 6
-        elif name in categories[7]:
-            cifar_test.targets[i] = 7
-        elif name in categories[8]:
-            cifar_test.targets[i] = 8
-        elif name in categories[9]:
-            cifar_test.targets[i] = 9
-        elif name in categories[10]:
-            cifar_test.targets[i] = 10
-        elif name in categories[11]:
-            cifar_test.targets[i] = 11
-        elif name in categories[12]:
-            cifar_test.targets[i] = 12
-        elif name in categories[13]:
-            cifar_test.targets[i] = 13
-        elif name in categories[14]:
-            cifar_test.targets[i] = 14
-        elif name in categories[15]:
-            cifar_test.targets[i] = 15
-        elif name in categories[16]:
-            cifar_test.targets[i] = 16
-        elif name in categories[17]:
-            cifar_test.targets[i] = 17
-        elif name in categories[18]:
-            cifar_test.targets[i] = 18
-        elif name in categories[19]:
-            cifar_test.targets[i] = 19
 
 def train(net, epoch_num, loss, updater, trainloader, testloader, device):
     train_loss_list = []
@@ -158,10 +81,10 @@ def train(net, epoch_num, loss, updater, trainloader, testloader, device):
             X, label = data[0].to(device), data[1].to(device)
             updater.zero_grad()
             y_hat = net(X)
-            print(epoch,y_hat,label)
-            print(y_hat.shape,label.shape)
-            mask = (label >= 20)
-            label[mask] = 0
+            # print(epoch,y_hat,label)
+            # print(y_hat.shape,label.shape)
+            # mask = (label >= 20)
+            # label[mask] = 0
             l1 = loss(y_hat, label)
             l1.mean().backward()
             updater.step()
@@ -173,7 +96,7 @@ def train(net, epoch_num, loss, updater, trainloader, testloader, device):
             train_sum += label.size(0)
 
         # 进入测试模式
-        if isinstance(net,nn.Module):
+        if isinstance(net, nn.Module):
             net.eval()
         for j, data in enumerate(testloader):
             X, label = data[0].to(device), data[1].to(device)
@@ -184,37 +107,36 @@ def train(net, epoch_num, loss, updater, trainloader, testloader, device):
             test_cor += (predicted == label).sum().item()
             test_sum += label.size(0)
 
-        train_loss_list.append(train_loss/i)
-        train_acc_list.append(train_cor/train_sum * 100)
-        test_loss_list.append(test_loss/j)
-        test_acc_list.append(test_cor/test_sum * 100)
+        train_loss_list.append(train_loss / i)
+        train_acc_list.append(train_cor / train_sum * 100)
+        test_loss_list.append(test_loss / j)
+        test_acc_list.append(test_cor / test_sum * 100)
         print("Train loss:{}   Train accuracy:{}%  Test loss:{}  Test accuracy:{}%".format(
-            train_loss/i, train_cor/train_sum * 100, test_loss/j, test_cor/test_sum * 100))
+            train_loss / i, train_cor / train_sum * 100, test_loss / j, test_cor / test_sum * 100))
     return train_loss_list, train_acc_list, test_loss_list, test_acc_list
 
 
-def show_acc(train_acc_list, test_acc_list):
+def show(train_acc_list, test_acc_list, train_loss_list, test_loss_list):
     # 创建准确率画布
-    plt.figure()
-    plt.plot(range(len(train_acc_list)), train_acc_list, 'red')
-    plt.plot(range(len(test_acc_list)), test_acc_list, 'green')
-    # 添加图例
-    plt.legend(['train accuracy', 'test accuracy'], fontsize=14, loc='best')
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    line1 = plt.plot(range(len(train_acc_list)), train_acc_list, 'red')
+    line2 = plt.plot(range(len(test_acc_list)), test_acc_list, 'green')
     # 设置横纵坐标
-    plt.xlabel('epochs', fontsize=14)
-    plt.ylabel('accuracy rate(%)', fontsize=14)
+    ax.set_xlabel('epochs', fontsize=14)
+    ax.set_ylabel('accuracy rate(%)', fontsize=14)
+    # 共用x轴
+    ax2 = ax.twinx()
+    line3 = ax2.plot(range(len(train_loss_list)), train_loss_list, 'blue')
+    line4 = ax2.plot(range(len(test_loss_list)), test_loss_list, 'yellow')
+    ax2.set_ylabel('loss value', fontsize=14)
+    # 合并图例
+    # lines = line1+line2+line3+line4
+    # labs = [l.get_label() for l in lines]
+    # ax.legend(lines, labs, loc=0)
+    ax.legend(['train accuracy', 'test accuracy'], loc='best')
+    ax2.legend(['train loss', 'test loss'], loc='best')
     # 生成网格线
     plt.grid()
-    plt.savefig('CIFAR100_figAccuracy_02_1')
-    plt.show()
-
-def show_loss(train_loss_list, test_loss_list):
-    plt.figure()
-    plt.plot(range(len(train_loss_list)), train_loss_list, 'blue')
-    plt.plot(range(len(test_loss_list)), test_loss_list, 'red')
-    plt.legend(['train loss', 'test loss'], fontsize=14, loc='best')
-    plt.xlabel('epochs', fontsize=14)
-    plt.ylabel('loss value', fontsize=14)
-    plt.grid()
-    plt.savefig('CIFAR100_figLOSS_02_1')
+    plt.savefig('CIFAR100_fig_02_1')
     plt.show()

@@ -5,6 +5,7 @@ from torch.utils import data
 from torchvision import datasets, transforms
 import tool
 
+
 class ResBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(ResBlock, self).__init__()
@@ -80,22 +81,22 @@ class ResNet(nn.Module):
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     net = ResNet(ResBlock, num_classes=20)
-    #net.load_state_dict(torch.load('CIFAR100_resnet6.pth'))
+    # net.load_state_dict(torch.load('CIFAR100_resnet2.pth'))
     net.to(device)
 
     loss = nn.CrossEntropyLoss()
     loss.to(device)
-    updater = torch.optim.Adam(net.parameters(), lr=0.0001)
+    updater = torch.optim.Adam(net.parameters(), lr=0.001)
     # 读取数据集
     batch_size = 64
     train_iter, test_iter = tool.load_data_cifar(batch_size)
     # 开始训练
     epoch_num = 5
     train_loss_list, train_acc_list, test_loss_list, test_acc_list = tool.train(net, epoch_num, loss, updater,
-                                                                           train_iter, test_iter,device)
-    torch.save(net.state_dict(), 'CIFAR100_resnet.pth')
-    tool.show_acc(train_acc_list, test_acc_list)
-    tool.show_loss(train_loss_list, test_loss_list)
+                                                                                train_iter, test_iter, device)
+    # torch.save(net.state_dict(), 'CIFAR100_resnet3.pth')
+    tool.show_acc(train_acc_list, test_acc_list, train_loss_list, test_loss_list)
+
 
 if __name__ == '__main__':
     main()
