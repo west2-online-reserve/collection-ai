@@ -1,0 +1,89 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchtext.datasets import IMDB
+from torchtext.data import Field, LabelField, BucketIterator
+TEXT = Field(tokenize='spacy', tokenizer_language='en_core_web_sm')
+LABEL = LabelField(dtype=torch.float)
+train_data, test_data = IMDB.splits(TEXT, LABEL)
+TEXT.build_vocab(train_data, max_size=25000)
+LABEL.build_vocab(train_data)
+BATCH_SIZE = 64
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+train_iterator, test_iterator = BucketIterator.splits(
+    (train_data, test_data),
+    batch_size=BATCH_SIZE,
+    device=device)
+class SimpleModel(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, output_dim):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.fc = nn.Linear(embedding_dim, output_dim)
+
+    def forward(self, text):
+        embedded = self.embedding(text)
+        return self.fc(embedded.mean(dim=0))
+VOCAB_SIZE = len(TEXT.vocab)
+EMBEDDING_DIM = 100
+OUTPUT_DIM = 1
+
+model = SimpleModel(VOCAB_SIZE, EMBEDDING_DIM, OUTPUT_DIM)
+优化器 = optim.Adam(model.parameters())
+criterion = nn.BCEWithLogitsLoss()
+
+model = model.to(device)
+criterion = criterion.to(device)
+
+def train(model, 迭代器, 优化器, 标准):
+    epoch_loss = 0
+    epoch_acc = 0
+
+    model.train()
+
+    for batch in 迭代器:
+        优化器.zero_grad()
+
+        text = batch.text
+        prediction = model(text).squeeze(1)
+        loss = 标准(prediction, batch.label)
+        acc = binary_accuracy(prediction, batch.label)
+
+        loss.backward()
+        优化器.step()
+
+        epoch_loss += loss.item()
+        epoch_acc += acc.item()
+
+    return epoch_loss / len(迭代器), epoch_acc / len(迭代器)
+
+def evaluate(model, iterator, criterion):
+    epoch_loss = 0
+    epoch_acc = 0
+
+    model.eval()
+
+    with torch.no_grad():
+        for batch in iterator:
+            text = batch.text
+            predictions = model(text).squeeze(1)
+            loss = criterion(predictions, batch.label)
+            acc = binary_accuracy(predictions, batch.label)
+
+            epoch_loss += loss.item()
+            epoch_acc += acc.item()
+
+    return epoch_loss / len(iterator), epoch_acc / len(iterator)
+
+def binary_accuracy(preds, y):
+    yuche = torch.round(torch.sigmoid(preds))
+    correct = (yuche == y).float()
+    准却 = correct.sum() / len(correct)
+    return 准却
+
+N_EPOCHS = 5
+
+for epoch in range(N_EPOCHS):
+
+    train_loss, train_acc = train(model, train_iterator, optimizer, criterion)
+    valid_loss, valid_acc = evaluate(model, test_iterator, criterion)
+    print(f' 损失: {valid_loss:.3f} ,准却性: {valid_acc*100:.2f}%')
