@@ -1,0 +1,6 @@
+#test file
+
+cifar-10-python/*.*
+cifar-10-python/*
+cifar-100-python/*.*
+cifar-100-python/*

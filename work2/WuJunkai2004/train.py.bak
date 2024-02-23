@@ -1,0 +1,153 @@
+'''
+@brief: This file is used to train the model of cifar100.
+@date: 2024/01/24
+@author: Wu Junkai
+'''
+
+import pickle
+import os
+
+import numpy as np
+import torch as th
+from torch import nn, optim
+
+
+def unpickle(file):
+    with open(file, 'rb') as fo:
+        dict = pickle.load(fo, encoding='bytes')
+    return dict
+
+file_dir = 'cifar-100-python'
+file_list = ["data_batch_1", "data_batch_2", "data_batch_3", "data_batch_4", "data_batch_5"]
+
+# load data
+data = []
+label = []
+for file in file_list:
+    file_path = os.path.join(file_dir, file)
+    data_dict = unpickle(file_path)
+    print(data_dict.keys())
+    data.append(data_dict[b'data'])
+    label.append(data_dict[b'labels'])
+
+
+data = np.concatenate(data, axis=0)
+label = np.concatenate(label, axis=0)
+
+# split data
+train_data = data[:40000]
+train_label = label[:40000]
+val_data = data[40000:]
+val_label = label[40000:]
+
+# define model
+class Cifar100(nn.Module):
+    def __init__(self):
+        super(Cifar100, self).__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 32, 3, 1, 1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(32, 64, 3, 1, 1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(64, 128, 3, 1, 1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv4 = nn.Sequential(
+            nn.Conv2d(128, 256, 3, 1, 1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(256, 512, 3, 1, 1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv6 = nn.Sequential(
+            nn.Conv2d(512, 512, 3, 1, 1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.fc = nn.Sequential(
+            nn.Linear(512, 100)
+        )
+
+    def forward(self, x):
+        x = self.conv1(x)
+        # print(x.shape)
+        x = self.conv2(x)
+        # print(x.shape)
+        x = self.conv3(x)
+        # print(x.shape)
+        x = self.conv4(x)
+        # print(x.shape)
+        x = self.conv5(x)
+        # print(x.shape)
+        x = self.conv6(x)
+        # print(x.shape)
+        x = x.view(x.size(0), -1)
+        # print(x.shape)
+        x = self.fc(x)
+        # print(x.shape)
+        return x
+    
+
+# define loss function and optimizer
+model = Cifar100()
+loss_func = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# train
+epochs = 10
+batch_size = 128
+
+for epoch in range(epochs):
+    for i in range(0, len(train_data), batch_size):
+        batch_data = train_data[i:i+batch_size]
+        batch_label = train_label[i:i+batch_size]
+        batch_data = th.from_numpy(batch_data).float()
+        batch_label = th.from_numpy(batch_label).long()
+
+        batch_data = np.expand_dims(batch_data, axis=0)
+        batch_data = batch_data.reshape([1, 128, 1024, 3])
+        #print(batch_data.shape)
+        #quit()
+        #batch_data = th.unsqueeze(batch_data, dim=2)  # 在通道维度上添加一个维度
+        #batch_data = th.cat([batch_data] * 3, dim=2) 
+        output = model(batch_data)
+        loss = loss_func(output, batch_label)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        print("epoch: {}, loss: {}".format(epoch, loss.item()))
+
+    # val
+    val_data = th.from_numpy(val_data).float()
+    val_label = th.from_numpy(val_label).long()
+    output = model(val_data)
+    loss = loss_func(output, val_label)
+    print("epoch: {}, val_loss: {}".format(epoch, loss.item()))
+
+
+# check accuracy
+data = th.from_numpy(data).float()
+label = th.from_numpy(label).long()
+output = model(data)
+output = th.argmax(output, dim=1)
+print(output)
+print(label)
+print(th.sum(output == label))
+print(len(label))
+print(th.sum(output == label) / len(label))
