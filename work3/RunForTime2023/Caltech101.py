@@ -51,8 +51,10 @@ class Caltech(torch.nn.Module):
             torch.nn.AdaptiveAvgPool2d((1, 1)),
             torch.nn.Flatten(),
             torch.nn.Linear(512, 101))
-        self.upsample1 = torch.nn.ConvTranspose2d(101, 101, 2, 2)
-        self.upsample2 = torch.nn.ConvTranspose2d(101, 101, 16, 16)
+        # self.upsample1 = torch.nn.ConvTranspose2d(101, 101, 2, 2)
+        # self.upsample2 = torch.nn.ConvTranspose2d(101, 101, 16, 16)
+        self.upsample1 = torch.nn.ConvTranspose2d(101, 101, 4, 2, 1)
+        self.upsample2 = torch.nn.ConvTranspose2d(101, 101, 32, 16, 8)
         self.conv1 = torch.nn.Sequential(torch.nn.Conv2d(256, 101, 1), torch.nn.ReLU())
         self.conv2 = torch.nn.Sequential(torch.nn.Conv2d(512, 101, 1), torch.nn.ReLU())
     def forward(self, x):
@@ -135,6 +137,7 @@ with torch.no_grad():
             count += 1
             if not os.path.exists("heatmap/" + labels[label[i]]):
                 os.mkdir("heatmap/" + labels[label[i]])
+            pyplot.figure(figsize=(56,56))
             pyplot.imshow(temp, cmap='coolwarm')
             pyplot.axis('off')
             pyplot.savefig("heatmap/" + labels[label[i]] + "/image_" + str(count).zfill(4) + ".jpg", bbox_inches='tight', pad_inches=0)
