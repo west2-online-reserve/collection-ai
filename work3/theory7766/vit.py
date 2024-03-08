@@ -1,22 +1,19 @@
 import functools
 import torch
 import matplotlib.pyplot as plt
-import torchvision.models
 from torch import nn
 from torch.utils import data
 from torch.utils.data import Dataset
-from torchvision import datasets, transforms
-import os
+from torchvision import transforms
 import pandas as pd
 from PIL import Image
 
-
 # PatchEmbed层
-class PatchEmbed(nn.Module):
+class patch_embed(nn.Module):
     # 2D Image to Patch Embedding
     # norm_layer参数指定归一化层的类型
     def __init__(self, img_size=224, patch_size=16, in_channel=3, embed_dim=768, norm_layer=None):
-        super(PatchEmbed, self).__init__()
+        super(patch_embed, self).__init__()
         img_size = (img_size, img_size)
         patch_size = (patch_size, patch_size)
         self.img_size = img_size
@@ -32,9 +29,6 @@ class PatchEmbed(nn.Module):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        assert H == self.img_size[0] and W == self.img_size[1], \
-            f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
-
         # flatten: [B,C,H,W] -> [B,C,HW]
         # transpose: [B,C,HW] -> [B,HW,C]
         x = self.proj(x).flatten(2).transpose(1, 2)
@@ -64,7 +58,6 @@ class MutiHeadsAttention(nn.Module):
     def forward(self, x):
         # [ batch_size, num_patches + 1, total_embed_dim]
         B, N, C = x.shape
-
         # qkv(): ->[batch_size, num_patches + 1, 3 * total_embed_dim]
         # reshape: -> [batch_size, num_patches + 1, 3, num_heads，embed_dim_per_head]
         # permute: ->[ 3,batch_size，num_heads，num_patches + 1， embed_dim_per_head]
@@ -92,8 +85,6 @@ class MutiHeadsAttention(nn.Module):
 class MLP(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
         super(MLP, self).__init__()
-        out_features = out_features or in_features
-        hidden_features = in_features or hidden_features
         self.fc1 = nn.Linear(in_features, hidden_features)
         self.act = act_layer()
         self.fc2 = nn.Linear(hidden_features, out_features)
@@ -144,10 +135,11 @@ class Vit(nn.Module):
                  embed_dim=768, depth=12,  # depth为block堆叠次数
                  num_heads=12, mlp_ratio=4.0, qkv_bias=True, qk_scale=None,
                  # representation_size=0.,
-                 drop_ratio=0., attn_drop_ratio=0, drop=0., embed_layer=PatchEmbed,
+                 drop_ratio=0., attn_drop_ratio=0, drop=0., embed_layer=patch_embed,
                  norm_layer=None, act_layer=None):
         super(Vit, self).__init__()
         self.num_classes = num_classes
+        # 卷积核个数，隐藏层 768
         self.num_features = self.embed_dim = embed_dim
         self.num_tokens = 1
         # 使用partial进行参数绑定，返回参数缩减版本
@@ -175,8 +167,6 @@ class Vit(nn.Module):
         # 权重初始化(截断正态分布:tensor, mean=0.0, std=1.0, a=- 2.0, b=2.0)
         nn.init.trunc_normal_(self.pos_embed, std=0.02)
         nn.init.trunc_normal_(self.cls_token, std=0.02)
-        # nn.init.xavier_normal(self.pos_embed)
-        # nn.init.xavier_normal(self.cls_token)
         # 调用vit初始函数
         # pytorch中的model.apply(fn)
         # 会递归地将函数fn应用到父模块的每个子模块submodule，也包括model这个父模块自身。经常用于初始化init_weights的操作。
@@ -281,15 +271,10 @@ class CustomImageDataset(Dataset):
         # print(label)
         return image, label
 
-
-# 路径地址
-# data_dir = '/kaggle/output/caltech101'
-# img_dir = ".\caltech_images"
 train_dataset = CustomImageDataset(annotations_file="./train_annotations.csv",
                                    transform=data_transforms['train'])
 test_dataset = CustomImageDataset(annotations_file="./test_annotations.csv",
                                   transform=data_transforms['test'])
-
 
 def load_data_caltech101(batch_size):
     return (data.DataLoader(train_dataset, batch_size, shuffle=True),
@@ -358,8 +343,7 @@ def show(train_acc_list, test_acc_list, train_loss_list, test_loss_list):
     line3 = ax2.plot(range(len(train_loss_list)), train_loss_list, 'blue')
     line4 = ax2.plot(range(len(test_loss_list)), test_loss_list, 'yellow')
     ax2.set_ylabel('loss value', fontsize=14)
-    # 合并图例
-    # ax.legend(lines, labs, loc=0)
+    # 图例
     ax.legend(['train accuracy', 'test accuracy'], loc='best')
     ax2.legend(['train loss', 'test loss'], loc='best')
     # 生成网格线
@@ -367,24 +351,28 @@ def show(train_acc_list, test_acc_list, train_loss_list, test_loss_list):
     plt.savefig('Caltech101_fig_1')
     plt.show()
 
-
 # 构建模型
 def vit_base_patch16_224(num_classes: int = 101):
     model = Vit(img_size=224, patch_size=16, embed_dim=768, depth=12, num_heads=12,
                 num_classes=num_classes, qkv_bias=True)
     return model
 
+def vit_large_patch16_224(num_classes: int = 101):
+    model = Vit(img_size=224, patch_size=16, embed_dim=1024, depth=24, num_heads=16,
+                num_classes=num_classes, qkv_bias=True)
+    return model
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # net = vit_base_patch16_224(num_classes=101)
-    net = torchvision.models.vit_b_16(pretrained=True)
-    print(net)
-    # net.load_state_dict(torch.load('Caltech101.pth'))
+    net = vit_large_patch16_224(num_classes=101)
+    # net = torchvision.models.vit_b_16(pretrained=True)
+    net.load_state_dict(torch.load('Caltech101_1.pth'))
     net.to(device)
     loss = nn.CrossEntropyLoss()
     loss.to(device)
-    updater = torch.optim.Adam(net.parameters(), lr=0.001)
+    # updater = torch.optim.Adam(net.parameters(), lr=0.001)
+    updater = torch.optim.SGD(net.parameters(), lr=0.01)
     # 读取数据集
     batch_size = 64
     train_iter, test_iter = load_data_caltech101(batch_size)
