@@ -4,8 +4,8 @@ import torch
 from PIL import Image
 import matplotlib.pyplot as plt
 from torchvision import transforms
-from util import GradCAM, show_cam_on_image, center_crop_img
-from vit import vit_base_patch16_224
+from work5.utils.util import GradCAM, show_cam_on_image, center_crop_img
+from work5.model.vit import vit_base_patch16_224
 # from torchvision import models
 
 class ReshapeTransform:
@@ -38,8 +38,6 @@ def main():
     # torch.save(model.state_dict(), 'Caltech101_2.pth')
     model.load_state_dict(torch.load('Caltech101_1.pth'))
     model.eval()
-
-
     target_layers = [model.blocks[-1].norm1]
     # target_layers = [model.encoder.layers[-1].ln_1]
 
@@ -67,8 +65,8 @@ def main():
 
     grayscale_cam = grayscale_cam[0, :]
     visualization = show_cam_on_image(img / 255., grayscale_cam, use_rgb=True)
-    plt.savefig('GradCam_1')
     plt.imshow(visualization)
+    plt.savefig('GradCam_1')
     plt.show()
 
 

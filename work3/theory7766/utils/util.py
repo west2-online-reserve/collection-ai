@@ -1,5 +1,29 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+
+def show(train_acc_list, test_acc_list, train_loss_list, test_loss_list):
+    # 创建准确率画布
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    line1 = plt.plot(range(len(train_acc_list)), train_acc_list, 'red')
+    line2 = plt.plot(range(len(test_acc_list)), test_acc_list, 'green')
+    # 设置横纵坐标
+    ax.set_xlabel('epochs', fontsize=14)
+    ax.set_ylabel('accuracy rate(%)', fontsize=14)
+    # 共用x轴
+    ax2 = ax.twinx()
+    line3 = ax2.plot(range(len(train_loss_list)), train_loss_list, 'blue')
+    line4 = ax2.plot(range(len(test_loss_list)), test_loss_list, 'yellow')
+    ax2.set_ylabel('loss value', fontsize=14)
+    # 图例
+    ax.legend(['train accuracy', 'test accuracy'], loc='best')
+    ax2.legend(['train loss', 'test loss'], loc='best')
+    # 生成网格线
+    plt.grid()
+    plt.savefig('Caltech101_fig_1')
+    plt.show()
+
 
 class ActivationsAndGradients:
     """ Class for extracting activations and

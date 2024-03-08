@@ -1,12 +1,9 @@
 import functools
 import torch
-import matplotlib.pyplot as plt
 from torch import nn
-from torch.utils import data
-from torch.utils.data import Dataset
-from torchvision import transforms
-import pandas as pd
-from PIL import Image
+from ..data.datasetsProcess import load_data_caltech101
+from ..trainer.train import train
+from ..utils.util import show
 
 # PatchEmbed层
 class patch_embed(nn.Module):
@@ -203,154 +200,6 @@ def _init_vit_weights(m):
         nn.init.zeros_(m.bias)
         nn.init.ones_(m.weight)
 
-
-# 导入数据集
-data_transforms = {
-    'train': transforms.Compose([
-        transforms.Resize((230, 230)),
-        transforms.RandomRotation(15, ),
-        transforms.RandomCrop(224),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.507, 0.487, 0.441], std=[0.267, 0.256, 0.276])
-    ]),
-    'test': transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.507, 0.487, 0.441], std=[0.267, 0.256, 0.276])
-    ]),
-}
-
-categories = {
-    'accordion': 0, 'airplanes': 1, 'anchor': 2, 'ant': 3, 'yin_yang': 4, 'barrel': 5,
-    'bass': 6, 'beaver': 7, 'binocular': 8, 'bonsai': 9, 'brain': 10, 'brontosaurus': 11,
-    'buddha': 12, 'butterfly': 13, 'camera': 14, 'cannon': 15, 'car_side': 16, 'ceiling_fan': 17,
-    'cellphone': 18, 'chair': 19, 'chandelier': 20, 'cougar_body': 21, 'cougar_face': 22,
-    'crab': 23, 'crayfish': 24, 'crocodile': 25, 'crocodile_head': 26, 'cup': 27, 'dalmatian': 28,
-    'dollar_bill': 29, 'dolphin': 30, 'dragonfly': 31, 'electric_guitar': 32, 'elephant': 33,
-    'emu': 34, 'euphonium': 35, 'ewer': 36, 'Faces': 37, 'Faces_easy': 38, 'ferry': 39, 'flamingo': 40,
-    'flamingo_head': 41, 'garfield': 42, 'gerenuk': 43, 'gramophone': 44, 'grand_piano': 45,
-    'hawksbill': 46, 'headphone': 47, 'hedgehog': 48, 'helicopter': 49, 'ibis': 50, 'inline_skate': 51,
-    'joshua_tree': 52, 'kangaroo': 53, 'ketch': 54, 'lamp': 55, 'laptop': 56, 'Leopards': 57, 'wrench': 58,
-    'llama': 59, 'lobster': 60, 'lotus': 61, 'mandolin': 62, 'mayfly': 63, 'menorah': 64, 'metronome': 65,
-    'minaret': 66, 'Motorbikes': 67, 'nautilus': 68, 'octopus': 69, 'okapi': 70, 'pagoda': 71, 'panda': 72,
-    'pigeon': 73, 'pizza': 74, 'platypus': 75, 'pyramid': 76, 'revolver': 77, 'rhino': 78, 'rooster': 79,
-    'saxophone': 80, 'schooner': 81, 'scissors': 82, 'scorpion': 83, 'sea_horse': 84, 'snoopy': 85,
-    'soccer_ball': 86, 'stapler': 87, 'starfish': 88, 'stegosaurus': 89, 'stop_sign': 90, 'strawberry': 91,
-    'sunflower': 92, 'tick': 93, 'trilobite': 94, 'umbrella': 95, 'watch': 96, 'water_lilly': 97, 'wheelchair': 98,
-    'wild_cat': 99, 'windsor_chair': 100
-}
-
-
-# 自定义数据集
-class CustomImageDataset(Dataset):
-    def __init__(self, annotations_file, transform=None, target_transform=None):
-        self.img_labels = pd.read_csv(annotations_file)
-        self.transform = transform
-        self.target_transform = target_transform
-        self.image = []
-        for idx in range(len(self.img_labels)):
-            img = Image.open(self.img_labels.iloc[idx, 0])
-            # 若为单通道图像，则复制为三通道图像
-            if len(img.split()) == 1:
-                r, g, b = img, img, img
-                img = Image.merge("RGB", (r, g, b))
-            tmp = self.transform(img)
-            self.image.append(tmp)
-        #  = [self.transform(Image.open(self.img_labels.iloc[idx,0]))
-        #               for idx in range(len(self.img_labels))]
-        for i in range(len(self.img_labels)):
-            self.img_labels.iloc[i, 1] = categories[self.img_labels.iloc[i, 1]]
-
-    def __len__(self):
-        return len(self.img_labels)
-
-    def __getitem__(self, idx):
-        image = self.image[idx]
-        label = self.img_labels.iloc[idx, 1]
-        # print(label)
-        return image, label
-
-train_dataset = CustomImageDataset(annotations_file="./train_annotations.csv",
-                                   transform=data_transforms['train'])
-test_dataset = CustomImageDataset(annotations_file="./test_annotations.csv",
-                                  transform=data_transforms['test'])
-
-def load_data_caltech101(batch_size):
-    return (data.DataLoader(train_dataset, batch_size, shuffle=True),
-            data.DataLoader(test_dataset, batch_size, shuffle=False))
-
-
-def train(net, epoch_num, loss, updater, trainloader, testloader, device):
-    train_loss_list = []
-    train_acc_list = []
-    test_loss_list = []
-    test_acc_list = []
-    for epoch in range(epoch_num):
-        print("-----第{}轮训练开始------".format(epoch + 1))
-        train_loss = 0.0
-        test_loss = 0.0
-        train_sum, train_cor, test_sum, test_cor = 0.0, 0.0, 0.0, 0.0
-        # 开始训练
-        if isinstance(net, nn.Module):
-            net.train()
-        for i, data in enumerate(trainloader):
-            X, label = data[0].to(device), data[1].to(device)
-            updater.zero_grad()
-            y_hat = net(X)
-            l1 = loss(y_hat, label)
-            l1.mean().backward()
-            updater.step()
-            # 计算每轮训练集的loss
-            train_loss += l1.item()
-            # 计算训练集精度
-            _, predicted = torch.max(y_hat.data, 1)
-            train_cor += (predicted == label).sum().item()
-            train_sum += label.size(0)
-
-        # 进入测试模式
-        if isinstance(net, nn.Module):
-            net.eval()
-        for j, data in enumerate(testloader):
-            X, label = data[0].to(device), data[1].to(device)
-            y_hat = net(X)
-            l2 = loss(y_hat, label)
-            test_loss += l2.item()
-            _, predicted = torch.max(y_hat.data, 1)
-            test_cor += (predicted == label).sum().item()
-            test_sum += label.size(0)
-
-        train_loss_list.append(train_loss / i)
-        train_acc_list.append(train_cor / train_sum * 100)
-        test_loss_list.append(test_loss / j)
-        test_acc_list.append(test_cor / test_sum * 100)
-        print("Train loss:{}   Train accuracy:{}%  Test loss:{}  Test accuracy:{}%".format(
-            train_loss / i, train_cor / train_sum * 100, test_loss / j, test_cor / test_sum * 100))
-    return train_loss_list, train_acc_list, test_loss_list, test_acc_list
-
-
-def show(train_acc_list, test_acc_list, train_loss_list, test_loss_list):
-    # 创建准确率画布
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    line1 = plt.plot(range(len(train_acc_list)), train_acc_list, 'red')
-    line2 = plt.plot(range(len(test_acc_list)), test_acc_list, 'green')
-    # 设置横纵坐标
-    ax.set_xlabel('epochs', fontsize=14)
-    ax.set_ylabel('accuracy rate(%)', fontsize=14)
-    # 共用x轴
-    ax2 = ax.twinx()
-    line3 = ax2.plot(range(len(train_loss_list)), train_loss_list, 'blue')
-    line4 = ax2.plot(range(len(test_loss_list)), test_loss_list, 'yellow')
-    ax2.set_ylabel('loss value', fontsize=14)
-    # 图例
-    ax.legend(['train accuracy', 'test accuracy'], loc='best')
-    ax2.legend(['train loss', 'test loss'], loc='best')
-    # 生成网格线
-    plt.grid()
-    plt.savefig('Caltech101_fig_1')
-    plt.show()
-
 # 构建模型
 def vit_base_patch16_224(num_classes: int = 101):
     model = Vit(img_size=224, patch_size=16, embed_dim=768, depth=12, num_heads=12,
@@ -364,20 +213,24 @@ def vit_large_patch16_224(num_classes: int = 101):
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # net = vit_base_patch16_224(num_classes=101)
-    net = vit_large_patch16_224(num_classes=101)
+    net = vit_base_patch16_224(num_classes=101)
+    # net = vit_large_patch16_224(num_classes=101)
     # net = torchvision.models.vit_b_16(pretrained=True)
     net.load_state_dict(torch.load('Caltech101_1.pth'))
     net.to(device)
     loss = nn.CrossEntropyLoss()
     loss.to(device)
-    # updater = torch.optim.Adam(net.parameters(), lr=0.001)
-    updater = torch.optim.SGD(net.parameters(), lr=0.01)
+
     # 读取数据集
     batch_size = 64
     train_iter, test_iter = load_data_caltech101(batch_size)
+
     # 开始训练
-    epoch_num = 5
+    epoch_num = 20
+    # 相较于Adam，收敛速度更快，正则系数不受动量影响
+    updater = torch.optim.AdamW(net.parameters(), lr=0.1e-4, weight_decay=0.05)
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(updater, T_max=epoch_num * batch_size)
+    # updater = torch.optim.SGD(net.parameters(), lr=0.01)
     train_loss_list, train_acc_list, test_loss_list, test_acc_list = \
         train(net, epoch_num, loss, updater, train_iter, test_iter, device)
     torch.save(net.state_dict(), 'Caltech101.pth')
