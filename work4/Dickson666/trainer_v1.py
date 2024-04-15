@@ -11,17 +11,17 @@ def train(model, epoch, dataloader, crit, optims, device, ep, scheduler):
     ls = []
     se = []
     for i, (img, lable, bbox) in enumerate(dataloader):
-        fig, ax = plt.subplots()
-        ax.imshow(img[0].permute(1, 2, 0))
+        # fig, ax = plt.subplots()
+        # ax.imshow(img[0].permute(1, 2, 0))
         for i in range(bbox[0].shape[0]):
             if(lable[0][i] == -1):
                 continue
-            print(bbox[0][i])
-            box = patches.Rectangle((bbox[0][i][0] * 224, bbox[0][i][1] * 224), bbox[0][i][2] * 224, bbox[0][i][3] * 224, linewidth = 2, edgecolor = 'r', facecolor = 'none')
-            ax.add_patch(box)
-            plt.text(bbox[0][i][0].detach().numpy() * 224, bbox[0][i][1].detach().numpy() * 224, f"{lable[0][i]}", color= "red")
-        plt.axis('off')
-        plt.show()
+        #     print(bbox[0][i])
+        #     box = patches.Rectangle((bbox[0][i][0] * 224, bbox[0][i][1] * 224), bbox[0][i][2] * 224, bbox[0][i][3] * 224, linewidth = 2, edgecolor = 'r', facecolor = 'none')
+        #     ax.add_patch(box)
+        #     plt.text(bbox[0][i][0].detach().numpy() * 224, bbox[0][i][1].detach().numpy() * 224, f"{lable[0][i]}", color= "red")
+        # plt.axis('off')
+        # plt.show()
         img = img.to(device)
         lable, bbox = matcher(lable, bbox)
         lable = lable.to(device)

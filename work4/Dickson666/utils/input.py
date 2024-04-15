@@ -30,8 +30,8 @@ def read_train():
         H = float(tree.findtext("size/height"))
         label.append([])
         bbox.append([])
-        fig, ax = plt.subplots()
-        ax.imshow(img_data)
+        # fig, ax = plt.subplots()
+        # ax.imshow(img_data)
         for obj in tree.iter("object"):
             label[i].append(class_code[obj.findtext("name")])
             box = []
@@ -44,11 +44,11 @@ def read_train():
             box.append(xmax - xmin)
             box.append(ymax - ymin)
             bbox[i].append(box)
-            boxs = patches.Rectangle((box[0] * W, box[1] * H), box[2] * W, box[3] * H, linewidth = 2, edgecolor = 'r', facecolor = 'none')
-            ax.add_patch(boxs)
-            plt.text(box[0] * W, box[1] * H, obj.findtext("name"), color= "red")
-        plt.axis('off')
-        plt.show()
+            # boxs = patches.Rectangle((box[0] * W, box[1] * H), box[2] * W, box[3] * H, linewidth = 2, edgecolor = 'r', facecolor = 'none')
+            # ax.add_patch(boxs)
+            # plt.text(box[0] * W, box[1] * H, obj.findtext("name"), color= "red")
+        # plt.axis('off')
+        # plt.show()
         img.append(img_data)
     return img, label, bbox
 
