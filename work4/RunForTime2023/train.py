@@ -63,7 +63,6 @@ for i in range(turns):
     testAccuracy[i] = sum_accurate / predict_set.get_sum_boxes()
     testIoU[i] = sum_iou / predict_set.get_sum_boxes()
 
-torch.save(model.state_dict(),'model.pth')
 x = range(1, turns + 1)
 pyplot.figure(1)
 pyplot.title("训练集/测试集损失变化")
