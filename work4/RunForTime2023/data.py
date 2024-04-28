@@ -36,8 +36,7 @@ class my_dataset(torch.utils.data.Dataset):
         return len(self.bounding_boxes)
 
     def __getitem__(self, index):
-        image = cv2.imread(self.path + '\\' + self.filenames[index])
-        # image = cv2.imread(self.path + '/' + self.filenames[index])
+        image = cv2.imread(self.path + '/' + self.filenames[index])
         boxes = self.bounding_boxes[index].clone()
         labels = self.labels[index].clone()
         if self.train:
