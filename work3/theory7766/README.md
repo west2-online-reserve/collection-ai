@@ -1,5 +1,6 @@
-#1.Transformer
+#1.Vision Transformer
 先将图片处理为patches输入Embedding层,获得token。
+
 ##1.Linear Projection of Flatten Patches(Embedding层）
 对于标准的Transformer模块，要求输入的是token(向量)序列，即二维矩阵[num_token,token_dim]
 
@@ -24,9 +25,14 @@
 	# ImageNet1K
 	Linear(197×768)->Dropout
 
+Muti-Head Attetion:
+Attention(Q,K,V) = softmax(Q*K^T/dk^0.5)V
+
+计算完softmax(Q*K^T/dk^0.5)先经过一个dropout层，再与V相乘，然后由于数据集较小，直接过一个简单的Linear层，再过一个dropout层。
+
+
 ##3.MLP Head（最终用于分类）
-
-
+一个简单的Linear层，靠交叉熵函数实现分类
 
 ##4.数据集处理
 
@@ -40,6 +46,15 @@ BACKGROUND_Google这个杂类。
 4. 自定义数据集
 特别注意，caltech101中包含灰度图像，故需先转换为三通道图像再进行transform。
 
-##5.热力图Grad-CAM
+##5.模型参数
+	Model  Patch_Size Layers Hidden_Size MLP_size Headers 
+	ViT-Base 16*16 12 768 3072 12
+	ViT-Large 16*16 24 1024 4096 16
+##6.热力图Grad-CAM
+1. 选取最后一个Encoder Block的第一个layernorm作为目标层。
+2. python默认图片为BGR，需转换为RGB格式
+3. 图片进行居中处理到宽高均为224
+4. 由于vit模型会将图片切成patches，并且在前面加上class token，需要将model去掉class token，并且恢复图片
+
 
 
