@@ -6,4 +6,4 @@
 
 ## repos
 
-1.
+1. 052403146 蔡明润 https://github.com/S1exy/Pokemon
