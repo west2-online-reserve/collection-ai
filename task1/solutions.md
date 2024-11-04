@@ -6,6 +6,9 @@
 ## repos
 
 1. 052403146 蔡明润 https://github.com/S1exy/Pokemon
-2. 102402136  [v-1.0 的 JustBlurBlue/Pokemon3 --- JustBlurBlue/Pokemon3 at v-1.0](https://github.com/JustBlurBlue/Pokemon3/tree/v-1.0) 
-3. 022302217 https://github.com/ShaddockNH3/west2-online-ai-2024-test/tree/master/answer
 
+2. 102402136  [v-1.0 的 JustBlurBlue/Pokemon3 --- JustBlurBlue/Pokemon3 at v-1.0](https://github.com/JustBlurBlue/Pokemon3/tree/v-1.0) 
+
+3. 102300235 https://github.com/sleep-lin/works
+
+4. 022302217 https://github.com/ShaddockNH3/west2-online-ai-2024-test/tree/master/answer
