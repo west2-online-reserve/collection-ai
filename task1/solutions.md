@@ -12,3 +12,5 @@
 3. 102300235 https://github.com/sleep-lin/works
 
 4. 022302217 https://github.com/ShaddockNH3/west2-online-ai-2024-test/tree/master/answer
+
+5.102400324 https://github.com/L1nYux/W2OL_tasks
