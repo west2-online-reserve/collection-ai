@@ -13,6 +13,9 @@
 
 4. 022302217 https://github.com/ShaddockNH3/west2-online-ai-2024-test/tree/master/answer
 
-5. 182300440 [https://github.com/weijianxian/West2](https://github.com/weijianxian/West2)
+5. 102400324 https://github.com/L1nYux/W2OL_tasks
 
-6. 832202109 https://github.com/XiaoYXsleeping/west2-test1-pokemongame.git
+6. 182300440 [https://github.com/weijianxian/West2](https://github.com/weijianxian/West2)
+
+7. 832202109 https://github.com/XiaoYXsleeping/west2-test1-pokemongame.git
+
