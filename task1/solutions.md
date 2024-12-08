@@ -5,7 +5,7 @@
 > 格式：你的学号 你的作业实现的仓库地址
 ## repos
 
-1. 052403146 蔡明润 https://github.com/S1exy/Pokemon
+1. 052403146  https://github.com/S1exy/Pokemon
 
 2. 102402136  [v-1.0 的 JustBlurBlue/Pokemon3 --- JustBlurBlue/Pokemon3 at v-1.0](https://github.com/JustBlurBlue/Pokemon3/tree/v-1.0) 
 
@@ -14,3 +14,5 @@
 4. 022302217 https://github.com/ShaddockNH3/west2-online-ai-2024-test/tree/master/answer
 
 5. 182300440 [https://github.com/weijianxian/West2](https://github.com/weijianxian/West2)
+
+6. 832202109 https://github.com/XiaoYXsleeping/west2-test1-pokemongame.git
