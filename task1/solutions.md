@@ -6,7 +6,7 @@
 ## repos
 
 
-1. 052403146 蔡明润 https://github.com/S1exy/Pokemon
+1. 052403146 https://github.com/S1exy/Pokemon
 2. 052403146  https://github.com/S1exy/Pokemon
 3. 102402136  [v-1.0 的 JustBlurBlue/Pokemon3 --- JustBlurBlue/Pokemon3 at v-1.0](https://github.com/JustBlurBlue/Pokemon3/tree/v-1.0) 
 4. 102300235 https://github.com/sleep-lin/works
