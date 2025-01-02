@@ -20,7 +20,7 @@ class Skill:
 
 class SeedBomb(Skill):
     name = "Seed Bomb"
-
+    
     def __init__(self, damage: int, activation_chance: int = 15) -> None:
         super().__init__()
         self.damage = damage
@@ -115,8 +115,9 @@ class Ember(Skill):
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         print(f"{user.name} uses {self.name}!")
-        damage = user.attack * self.damage_multiplier
+        damage = user.get_current_attack() * self.damage_multiplier
         opponent.receive_damage(int(damage))
+        user.increase_attack_boost()
         # 10% 概率使目标陷入“烧伤”状态
         if random.random() < 0.1:
             print(f"{opponent.name} is burned!")
@@ -138,7 +139,7 @@ class FlameCharge(Skill):
             self.requires_charge = False  # 蓄力完成
         else:
             print(f"{user.name} unleashes {self.name}!")
-            damage = user.attack * self.damage_multiplier
+            damage = user.get_current_attack() * self.damage_multiplier
             opponent.receive_damage(int(damage))
             self.requires_charge = True  # 下次使用需要重新蓄力
             opponent.evasion_rate -= self.evasion_increase  # 恢复对手的闪避率
@@ -146,6 +147,8 @@ class FlameCharge(Skill):
             if random.random() < 0.8:
                 print(f"{opponent.name} is burned!")
                 opponent.add_status_effect(effects.BurnEffect(duration=2, burn_damage=10))
+            # 触发攻击力提升
+            user.increase_attack_boost()
 
 
 class Gust(Skill):

@@ -9,7 +9,7 @@ class Effect:
     name: str
 
     def __init__(self, duration: int) -> None:
-        # 初始化效果持续时间
+        # 初始化效果持续时间？？？
         self.duration = duration
 
     def apply(self, pokemon: "Pokemon") -> None:
@@ -30,7 +30,7 @@ class PoisonEffect(Effect):
         self.damage = damage
 
     def apply(self, pokemon: "Pokemon") -> None:
-        pokemon.receive_damage(self.damage)
+        pokemon.receive_damage(self.damage) #传入的是毒效果类中定义并初始化的值，故要加self
         print(f"{pokemon.name} takes {self.damage} poison damage!")
 
 
@@ -46,6 +46,7 @@ class HealEffect(Effect):
         print(f"{pokemon.name} heals {self.amount} HP!")
 
 
+
 class BurnEffect(Effect):
     name = "Burn"
 
@@ -59,6 +60,7 @@ class BurnEffect(Effect):
 
 
 
+# 麻痹效果
 class ParalyzeEffect(Effect):
     name = "Paralyzed"
     def __init__(self, duration: int) -> None:
@@ -77,15 +79,15 @@ class ParalyzeEffect(Effect):
 
 class ShieldEffect(Effect):
     name = "Shield"
-    def __init__(self, duration: int = 1) -> None:
+    def __init__(self, duration: int = 1, damage_reduction: float = 0.5) -> None:
         super().__init__(duration)
-        self.damage_reduction = 0.5  # 减少 50% 伤害
+        self.damage_reduction = damage_reduction  # 动态减伤比例
 
     def apply(self, pokemon: "Pokemon") -> None:
         print(f"{pokemon.name} is shielded and will take reduced damage this turn!")
         # 在这回合中减少受到的伤害
-        pokemon.is_shielded = True
+        # pokemon.is_shielded = True
 
     def wear_off(self, pokemon: "Pokemon") -> None:
-        print(f"{pokemon.name}'s shield effect has worn off.")
-        pokemon.is_shielded = False
+        print(f"{pokemon.name}'s shield effect has worn off.当你看到中文这段代码执行了")
+        # pokemon.is_shielded = False

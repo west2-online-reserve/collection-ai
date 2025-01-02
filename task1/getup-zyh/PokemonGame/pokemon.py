@@ -4,9 +4,12 @@ from typing import List
 import skills
 from skills import Skill
 from effects import Effect
+import effects
 from PIL import Image, ImageTk
 import tkinter as tk
-import sys
+import sys  ##用于end_game方法内，用于关闭图片后结束程序
+import os
+from threading import Timer 
 
 
 
@@ -26,7 +29,7 @@ class Pokemon:
         self.statuses: List[Effect] = []
         #类型注解，表明statuses是Effect的列表
         self.is_paralyzed = False
-        self.is_shielded = False
+        # self.is_shielded = False
         self.death_image = death_image
 
     def initialize_skills(self):
@@ -55,11 +58,14 @@ class Pokemon:
             print(f"{self.name}'s defence absorbed the attack!")
             return
         # 计算伤害并减去防御力，更新 HP
-        if hasattr(self, 'is_shielded') and self.is_shielded:
-            print(f"{self.name}'s shield reduces the damage by 50%!")
-        damage = int(damage * 0.5)  # 减少 50% 的伤害
+        # if hasattr(self, 'is_shielded') and self.is_shielded:
+        for effect in self.statuses:
+            if isinstance(effect, effects.ShieldEffect):
+                print(f"{self.name}'s shield reduces the damage by {effect.damage_reduction * 100}%!")
+                damage = int(damage * effect.damage_reduction)
+                break
         
-        if not isinstance(damage, int):
+        if not isinstance(damage, int): #检查是否整数
             damage = int(damage)
 
         damage -= self.defense
@@ -79,25 +85,43 @@ class Pokemon:
 
 
     def show_death_image(self, image_path: str):
+        #绝对路径显示
+        base_path = os.path.dirname(__file__)#获取当前文件目录
+        full_image_path = os.path.join(base_path, image_path)
+
+        #检查文件路径是否存在
+        if not os.path.exists(image_path):
+            print(f"Image file '{image_path}' not found. Skipping death display.")
+            return
         # 显示宝可梦死亡图片
-        root = tk.Tk()
+        root = tk.Tk()#创建tk.TK对象
         root.title(f"{self.name} has fainted!")
         img = Image.open(image_path)
-        img = ImageTk.PhotoImage(img)
+        img = ImageTk.PhotoImage(img)## 将图像转化为TK能够显示的格式ImageTk.PhotoImage
 
-        label = tk.Label(root, image=img)
-        label.pack()
+        label = tk.Label(root, image=img)#创建标签，即显示操作
+        label.pack()#将lable添加到窗口
 
         #关闭图片后结束程序，即绑定关闭窗口这一事件
-        root.protocol("WM_DELETE_WINDOW",lambda: self.end_game(root))
+    #     root.protocol("WM_DELETE_WINDOW",lambda: self.end_game(root))
+    #     root.mainloop()
+
+    # def end_game(self,root):
+    #     root.quit() #退出图片窗口住循环
+    #     root.destroy() #销毁窗口
+    #     print("Game Over")
+    #     sys.exit() #关闭窗口即可结束，不用强制退出，更优雅
+        # 定义关闭窗口的逻辑
+        def close_window():
+            root.destroy()  # 销毁窗口
+        
+        # 使用定时器在指定时间后关闭窗口
+        # timer = Timer(1.5, close_window)  # 1.5 秒后关闭窗口
+        # timer.start()  # 启动定时器
+
+        # 使用 Tkinter 的 after 方法在主线程中定时关闭窗口
+        root.after(1500, close_window)  # 1500 毫秒（1.5 秒）后自动关闭窗口
         root.mainloop()
-
-    def end_game(self,root):
-        root.quit() #退出图片窗口住循环
-        root.destroy() #销毁窗口
-        print("Game Over")
-        sys.exit() #关闭窗口即可结束，不用强制退出，更优雅
-
 
             
 
@@ -107,15 +131,15 @@ class Pokemon:
 
     def apply_status_effect(self):
         # 应用所有当前的状态效果，并移除持续时间结束的效果
-        for status in self.statuses[:]:  # 使用切片防止列表在遍历时被修改
-            status.apply(self)
+        for status in self.statuses[:]:  # 使用切片防止列表在遍历时被修改（for循环原理：迭代器
+            status.apply(self)           # 调用effects的apply方法
             status.decrease_duration()
             if status.duration <= 0:
                 print(f"{self.name}'s {status.name} effect has worn off.")
                 self.statuses.remove(status)
         #检查是否处于麻痹状态
         if hasattr(self, 'is_paralyzed') and self.is_paralyzed:
-            print(f"{self.name} is paralyed and cannot act this turn.")
+            print(f"{self.name} is paralyed and cannot act this turn.")#此处打印好像有点多余
             return False
         return True
     
@@ -170,7 +194,7 @@ class Bulbasaur(GrassPokemon):
         super().__init__(hp, attack, defense,evasion_rate, death_image)
 
     def initialize_skills(self):
-        # 初始化技能，具体技能是 SeedBomb 和 ParasiticSeeds
+        # 初始化技能，具体技能是 SeedBomb 和 ParasiticSeeds,创建示例对象
         return [skills.SeedBomb(damage=50), skills.ParasiticSeeds(amount=10)]
     
 class ElectricPokemon(Pokemon):
@@ -188,21 +212,23 @@ class ElectricPokemon(Pokemon):
             effectiveness = 0.5  # 电被草克制，伤害减半
         return effectiveness
 
-    def receive_damage(self, damage: int) -> None:
+    def receive_damage(self, damage: int, opponent: Pokemon = None) -> None:
         if random.random() < self.evasion_rate:
             print(f"{self.name} dodged the attack!")
             # 电属性特性：成功躲闪时，立即使用一次技能
-            self.use_skill_immediately()
+            if opponent:
+                self.use_skill_immediately(opponent)
             return
         # 如果没有躲避，继续正常的伤害计算
         super().receive_damage(damage)
 
-    def use_skill_immediately(self):
-        import random
+    def use_skill_immediately(self, opponent):
+        
         # 随机选择一个技能并
         if self.skills:
             skill = random.choice(self.skills)  # 随机选择一个技能
             print(f"{self.name} immediately uses {skill.name} after dodging!")
+            skill.execute(self, opponent)
             
 
 class PikaChu(ElectricPokemon):
@@ -287,7 +313,7 @@ class FirePokemon(Pokemon):
 class Charmander(FirePokemon):
     name = "Charmander"
 
-    def __init__(self, hp=80, attack=35, defense=15, evasion_rate=0.1, death_image: str = None) -> None:
+    def __init__(self, hp=80, attack=40, defense=15, evasion_rate=0.1, death_image: str = None) -> None:
         super().__init__(hp, attack, defense, evasion_rate, death_image)
 
     def initialize_skills(self):
@@ -342,6 +368,10 @@ class Pidgey(WindPokemon):
     
 
 
+# for i in range(0,10):
+#     i+=1
+#     print(i)
+    
 
 
 

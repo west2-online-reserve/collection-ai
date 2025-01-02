@@ -21,8 +21,8 @@ class Play:
         self.current_computer_pokemon = None
         self.turn = 0
 
-    def player_choose_pokemon_team(self, pokemon_to_choose: list, num=1):
-        # 玩家选择队伍中的Pokemon
+    def player_choose_pokemon_team(self, pokemon_to_choose: list, num:int):
+        # 第二个参数是all_pokemon
         print(f"Choose {num} pokemon for your team:")
         pokemon_to_choose = copy.copy(pokemon_to_choose)
         index = 0
@@ -30,14 +30,14 @@ class Play:
             self.print_pokemon_list(pokemon_to_choose)
             choice = input(f"Select your pokemon {index} by number: ")
             if valid_choice(choice, len(pokemon_to_choose)):
-                self.player_team.append(pokemon_to_choose.pop(int(choice) - 1))
+                self.player_team.append(pokemon_to_choose.pop(int(choice) - 1))#这段代码有点巧，.pop方法返回的是索引值，并且删除了原列表，一句两得
                 index += 1
             else:
                 print("Invalid choice, please select a valid Pokemon")
         print("Here is your pokemon team:")
         self.print_pokemon_list(self.player_team)
 
-    def computer_choose_pokemon_team(self, pokemon_to_choose: list, num=1):
+    def computer_choose_pokemon_team(self, pokemon_to_choose: list, num:int):
         # 电脑选择对战的队伍
         print(f"Your opponent is choosing {num} pokemon")
         self.computer_team.extend(random.sample(pokemon_to_choose, num))
@@ -57,7 +57,7 @@ class Play:
             choice = input("Select your pokemon to battle by number:")
             if valid_choice(choice, len(self.player_team)):
                 chosen_pokemon = self.player_team[int(choice) - 1]
-                if chosen_pokemon.alive is True:
+                if chosen_pokemon.alive is True: ##之所以任然保留这个逻辑，是因为增加代码健壮性
                     print(f"You choosed {chosen_pokemon.name}")
                     self.current_player_pokemon = chosen_pokemon
                     return chosen_pokemon  # 返回选择的Pokemon
@@ -68,7 +68,7 @@ class Play:
 
     def computer_choose_pokemon(self):
         # 电脑随机选择一个存活的Pokemon
-        available_pokemon = [p for p in self.computer_team if p.alive is True]
+        available_pokemon = [p for p in self.computer_team if p.alive is True]#列表生成
         chosen_pokemon = random.choice(available_pokemon)
         print(f"Your opponent choosed {chosen_pokemon}")
         self.current_computer_pokemon = chosen_pokemon
@@ -79,7 +79,7 @@ class Play:
         sys.exit()
 
     def check_game_status(self):
-        # 检查游戏状态，判断玩家或电脑是否失败
+        # 检查游戏状态，判断玩家或电脑是否失败，先检查是否决出胜负，再检查当前pokemon状态，并是否移除
         is_player_fail = all(pokemon.alive is False for pokemon in self.player_team)
         is_computer_fail = all(pokemon.alive is False for pokemon in self.computer_team)
         if is_player_fail and is_computer_fail:
@@ -93,9 +93,24 @@ class Play:
             self.game_finished()
 
         if not self.current_player_pokemon.alive:
-            self.player_choose_pokemon()
+            print(f"{self.current_player_pokemon.name} has fainted!")
+            self.player_team.remove(self.current_player_pokemon)  # 从玩家队伍移除死亡宝可梦，或许此处有点冗余
+            if self.player_team:
+                self.player_choose_pokemon()
+            else:
+                print("All your Pokémon have fainted. You lose!")
+                self.game_finished()
+
+
+
         if not self.current_computer_pokemon.alive:
-            self.computer_choose_pokemon()
+            print(f"{self.current_computer_pokemon.name} has fainted!")
+            self.computer_team.remove(self.current_computer_pokemon)  # 从电脑队伍移除死亡宝可梦
+            if self.computer_team:
+                self.computer_choose_pokemon()
+            else:
+                print("All opponent's Pokémon have fainted. You win!")
+                self.game_finished()
 
     def player_use_skills(self):
         # 玩家选择技能
@@ -126,20 +141,44 @@ class Play:
         self.check_game_status()
 
     def battle_round(self):
-        # 回合进行
-        print(
-            f"\n{self.current_player_pokemon.name} vs {self.current_computer_pokemon.name}"
-        )
-        self.player_use_skills()
-        self.computer_use_skills()
+        print(f"\n{self.current_player_pokemon.name} vs {self.current_computer_pokemon.name}")
+
+    # 玩家宝可梦使用技能攻击电脑宝可梦
+        if self.current_player_pokemon.apply_status_effect():#apply_status_effect是根据paralyzed情况的布尔值
+            self.player_use_skills()  # 玩家选择并使用技能
+        else:
+            print(f"{self.current_player_pokemon.name} is paralyzed and cannot move this turn!")
+
+    # 检查电脑宝可梦是否还活着
+        if not self.current_computer_pokemon.alive:
+            print(f"{self.current_computer_pokemon.name} has fainted!")
+            return  # 如果电脑宝可梦晕倒，回合结束
+
+    # 电脑宝可梦使用技能攻击玩家宝可梦
+        if self.current_computer_pokemon.apply_status_effect():
+            self.computer_use_skills()  # 电脑选择并使用技能
+        else:
+            print(f"{self.current_computer_pokemon.name} is paralyzed and cannot move this turn!")
+
+    # 检查玩家宝可梦是否还活着
+        if not self.current_player_pokemon.alive:
+            print(f"{self.current_player_pokemon.name} has fainted!")
+
+    # 检查游戏状态，判断是否有一方胜利
         self.check_game_status()
 
     
 
     def run(self):
         # 游戏主循环
-        self.player_choose_pokemon_team(self.all_pokemon)
-        self.computer_choose_pokemon_team(self.all_pokemon)
+        batle_num = input("选择双方宝可梦数量:")
+        if valid_choice(batle_num, len(all_pokemon)):
+            num = int(batle_num)
+        else:
+            print("Invalid choice, please select a valid Pokemon")
+
+        self.player_choose_pokemon_team(self.all_pokemon,num)
+        self.computer_choose_pokemon_team(self.all_pokemon,num)
 
         print("Choose Your First Pokemon to battle")
         self.current_player_pokemon = self.player_choose_pokemon()
@@ -151,11 +190,11 @@ class Play:
 
 
 if __name__ == "__main__":
-    pokemon1 = pokemon.Bulbasaur(death_image = "Bulbasaur.jpeg")
-    pokemon2 = pokemon.PikaChu(death_image = "Pikachu.jpeg")
-    pokemon3 = pokemon.Squirtle(death_image = "Squirtle.jpeg")
-    pokemon4 = pokemon.Charmander(death_image = "Charmander.jpeg")
-    pokemon5 = pokemon.Pidgey(death_image = "Pidge.jpeg")
+    pokemon1 = pokemon.Bulbasaur(death_image = "/Users/zhangyifeng/Desktop/collection-ai/task1/getup-zyh/PokemonGame/Bulbasaur.jpeg")
+    pokemon2 = pokemon.PikaChu(death_image = "/Users/zhangyifeng/Desktop/collection-ai/task1/getup-zyh/PokemonGame/Pikachu.jpeg")
+    pokemon3 = pokemon.Squirtle(death_image = "/Users/zhangyifeng/Desktop/collection-ai/task1/getup-zyh/PokemonGame/Squirtle.jpeg")
+    pokemon4 = pokemon.Charmander(death_image = "/Users/zhangyifeng/Desktop/collection-ai/task1/getup-zyh/PokemonGame/Charmander.jpeg")
+    pokemon5 = pokemon.Pidgey(death_image = "/Users/zhangyifeng/Desktop/collection-ai/task1/getup-zyh/PokemonGame/Pidge.png")
     all_pokemon = [pokemon1,pokemon2,pokemon3,pokemon4,pokemon5]
     play = Play(all_pokemon)
     play.run()
