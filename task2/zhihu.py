@@ -15,11 +15,18 @@ from selenium.webdriver.common.keys import Keys
 
 
 
-f=open(r'C:\Users\宋志坤\Desktop\新建文件夹\学习\新建文件夹\zhihu.csv','w',encoding='utf-8')
+f=open(r'C:\Users\宋志坤\Desktop\新建文件夹\学习\新建文件夹\zhihu.csv','w',encoding='utf-8-sig')#
 writer=csv.writer(f)
 t=0
-
-driver = webdriver.Chrome()
+#加上反爬伪装 能够爬的更多一些
+options=Options()
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+options.add_experimental_option("excludeSwitches", ["enable-automation"])
+options.add_argument('--disable-gpu')
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("start-maximized")
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+driver = webdriver.Chrome(options=options)
 actions=ActionChains(driver)
 # if os.path.exists("cookies"):
 #     cookies=load(open("cookies"))
@@ -71,9 +78,9 @@ for question in question1:
 writer.writerow(title_list)
 for url in url_list:
     #爬多了会寄 设置少一点...
-    t+=1
-    if(t==15):  
-        break
+    # t+=1
+    # if(t==14):  
+    #     break
     driver.get(f"{url}")
     time.sleep(5)
     
@@ -91,10 +98,11 @@ for url in url_list:
     time.sleep(5)
     try:
         driver.find_element(By.XPATH,'//div[@class="Card ViewAll"]/a').click()
+        time.sleep(1)
     except:
         pass
 
-    for i in range(10):
+    for i in range(20):
         #按下上箭头 模拟用户行为 不然刷新不出来
         js_real=f"window.scrollTo(0, {i*5000});"
         driver.execute_script(js_real)
@@ -105,7 +113,7 @@ for url in url_list:
     answers=driver.find_elements(By.XPATH,'//div[@class="ContentItem AnswerItem"]')
     answer_text=[element.text for element in answers]
     Answer.append(answer_text)
-    
+    print(Answer)
 
         
 
