@@ -11,33 +11,41 @@ opt.add_argument("--disable-blink-features=AutomationControlled")
 web = Chrome(options=opt)
 
 # 打开知乎首页
-web.get('https://www.zhihu.com/')
+web.get("https://www.zhihu.com/")
 web.implicitly_wait(100)
 
 # 搜索关键词“庄子”
 search_box = web.find_element(By.XPATH, '//*[@id="Popover1-toggle"]')
-search_box.send_keys('庄子', Keys.ENTER)
+search_box.send_keys("庄子", Keys.ENTER)
 web.implicitly_wait(5)
 
 # 筛选为“只看问答”
-web.find_element(By.XPATH, '//*[@id="root"]/div/main/div/div[1]/div/div/div').click()  # 筛选按钮
+web.find_element(
+    By.XPATH, '//*[@id="root"]/div/main/div/div[1]/div/div/div'
+).click()  # 筛选按钮
 web.implicitly_wait(5)
-web.find_element(By.XPATH, '//*[@id="root"]/div/main/div/div[1]/div[2]/ul[1]/li[2]/div').click()  # 只看问答
+web.find_element(
+    By.XPATH, '//*[@id="root"]/div/main/div/div[1]/div[2]/ul[1]/li[2]/div'
+).click()  # 只看问答
 web.implicitly_wait(5)
 
 # 滚动加载问题，爬取 50 个问题
 questions = []  # 用于存储问题的标题和链接
 while len(questions) < 50:
-    web.execute_script("window.scrollTo(0, document.body.scrollHeight);")#模拟JS操作，y方向滚动到最底部
+    web.execute_script(
+        "window.scrollTo(0, document.body.scrollHeight);"
+    )  # 模拟JS操作，y方向滚动到最底部
     time.sleep(2)
     # 获取所有问题标题和链接
-    elements = web.find_elements(By.XPATH, '//h2[@class="ContentItem-title"]/span/div/div/div/a')
+    elements = web.find_elements(
+        By.XPATH, '//h2[@class="ContentItem-title"]/span/div/div/div/a'
+    )
     for elem in elements:
         try:
             title = elem.text
-            link = elem.get_attribute('href')
-            if link not in [q['link'] for q in questions]:  # 防止重复
-                questions.append({'title': title, 'link': link})
+            link = elem.get_attribute("href")
+            if link not in [q["link"] for q in questions]:  # 防止重复
+                questions.append({"title": title, "link": link})
         except Exception as e:
             print(f"获取问题失败: {e}")
     print(f"已获取 {len(questions)} 个问题")
@@ -51,19 +59,21 @@ df_questions = pd.DataFrame(questions)
 print(df_questions.head())
 
 # 保存为 CSV 文件
-df_questions.to_csv("zhihu_questions.csv", index=False, encoding='utf-8')
+df_questions.to_csv("zhihu_questions.csv", index=False, encoding="utf-8")
 
 
 # 模拟爬取问题的回答
 answers = []
 for idx, row in df_questions.iterrows():  # 遍历问题的 DataFrame
     print(f"正在爬取第 {idx + 1} 个问题：{row['title']}")
-    web.get(row['link'])  # 打开问题页面
+    web.get(row["link"])  # 打开问题页面
     time.sleep(3)
 
     # 点击“查看全部回答”按钮
     try:
-        view_all_button = web.find_element(By.XPATH, '//*[@id="root"]/div/main/div/div/div[3]/div[1]/div/div[1]/a')
+        view_all_button = web.find_element(
+            By.XPATH, '//*[@id="root"]/div/main/div/div/div[3]/div[1]/div/div[1]/a'
+        )
         view_all_button.click()  # 点击按钮
         time.sleep(2)  # 等待页面加载完成
     except Exception as e:
@@ -75,7 +85,9 @@ for idx, row in df_questions.iterrows():  # 遍历问题的 DataFrame
         web.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)  # 等待内容加载
         # 检查当前回答数量
-        current_count = len(web.find_elements(By.XPATH, '//div[@class="RichContent-inner"]'))
+        current_count = len(
+            web.find_elements(By.XPATH, '//div[@class="RichContent-inner"]')
+        )
         if current_count == previous_count:
             break  # 如果回答数量没有增加，停止滚动
         previous_count = current_count
@@ -85,7 +97,9 @@ for idx, row in df_questions.iterrows():  # 遍历问题的 DataFrame
     for answer_elem in answer_elements[:20]:  # 只取前 20 条回答
         try:
             content = answer_elem.text  # 提取回答文本
-            answers.append({'question': row['title'], 'link': row['link'], 'answer': content})
+            answers.append(
+                {"question": row["title"], "link": row["link"], "answer": content}
+            )
         except Exception as e:
             print(f"获取回答失败: {e}")
 
