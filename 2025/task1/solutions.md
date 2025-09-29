@@ -6,3 +6,4 @@
 
 ## repos
 1. 052503126 https://github.com/ACaiCat/w2-learn-AI/tree/main/task1
+2. 042502218 https://github.com/Ligture/learn-AI/task1
