@@ -5,3 +5,5 @@
 > 格式：你的学号 你的作业实现的仓库地址
 
 ## repos
+
+1. 102501320 https://github.com/rechenz/AIsolution/tree/main/work2
