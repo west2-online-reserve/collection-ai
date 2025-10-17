@@ -7,3 +7,4 @@
 ## repos
 
 1. 102501320 https://github.com/rechenz/AIsolution/tree/main/work2
+2. 052503126 https://github.com/ACaiCat/w2-learn-AI/tree/main/task2
