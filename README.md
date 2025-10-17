@@ -18,7 +18,9 @@
 
 ## 作业仓库
 
-本仓库请不要直接提交作业本体，提交作业地址即可，也可以提交一些学习思路，不要直接提交答案
+本仓库请提交作业地址，以及你认为必要的源码以及学习思路（可以参考task仓库里的ExampleName的提交，仓库名字用你的github用户名。
+
+pr请以`{your-student-code}-{the-task-you-completed}`提交，如`02×××××××-task0`
 
 请访问: [ai作业与帮助资料](https://github.com/west2-online/learn-AI)
 
