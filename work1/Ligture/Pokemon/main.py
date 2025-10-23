@@ -40,6 +40,7 @@ def set_battle_counters(pokemon1: Pokemon.Pokemon, pokemon2: Pokemon.Pokemon):
 
 def pick_pokemon():
     print('\n请选择你的出战宝可梦:')
+    print(player_pokemons)
     for i, p in enumerate(player_pokemons):  # 来自chatgpt
         print(f'{i}.{p.name}')
     while True:
@@ -54,119 +55,126 @@ def pick_pokemon():
         except ValueError:
             print('输入有误，请输入数字!')
 
-print('请选择你的宝可梦:')
-for i in range (len(Pokemon_list)):
-    print(f'{i}.{Pokemon_list[i]().name}')
-while True:
-    try:
-        player_pokemons = []
-        choose = input('输入数字选择你的宝可梦(空格分隔):')
-        index = choose.split(' ')
-        for i in index:
-            player_pokemons.append(Pokemon_list[int(i)]())
-        if not len(player_pokemons) <=3 and len(player_pokemons) >0:
-            print('只能选择1-3只宝可梦!')
-            continue
-        print('你选择了:',end='')
-        for i in player_pokemons:
-            print(i.name,end=' ')
-        break
-    except BaseException as e:
-        print(f'输入有误，请重新输入!({e})')
-
-for i in range(3):
-    randpokemon = random.choice(Pokemon_list_temp)
-    ai_pokemons.append(randpokemon())
-    Pokemon_list_temp.remove(randpokemon)
-print('电脑选择了:',end='')
-for i in ai_pokemons:
-    print(i.name, end=' ')
-    i.belong = 'ai' #修改归属为ai
-
-pick_pokemon() #选择出战宝可梦
-# 电脑随机选择
-ai_first_index = random.randint(0, len(ai_pokemons) - 1)
-shared.ai_current_pokemon = ai_pokemons[ai_first_index]
-print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
-
-current_turn = 1
-while True:
-
-    print(f'===================第{current_turn}回合===================')
-    set_battle_counters(shared.player_current_pokemon, shared.ai_current_pokemon)
-    shared.player_current_pokemon.turn_start()
-    shared.ai_current_pokemon.turn_start()
-    if not shared.player_current_pokemon.jump_turn:
-        print(f'你的{shared.player_current_pokemon.name}的技能:')
-        for i in range(len(shared.player_current_pokemon.skill)):
-            print(f'{i}.{shared.player_current_pokemon.skill[i].name}')
-        while True:
-            try:
-                index = int(input('输入数字选择技能:'))
-                if index in range(len(shared.player_current_pokemon.skill)):
-                    selected_skill: Skills.Skill = shared.player_current_pokemon.skill[index]
-                    break
-            except ValueError:
-                print('输入有误，请重新输入!')
-        selected_skill.use(shared.player_current_pokemon, shared.ai_current_pokemon)
-        #print(f'<Debug>你的 {shared.player_current_pokemon.name} 当前数据:')
-        #print(shared.player_current_pokemon)
-        #print(f'<Debug>ai的 {shared.ai_current_pokemon.name} 当前数据:')
-        #print(shared.ai_current_pokemon)
-        print(f'你的 {shared.player_current_pokemon.name} 当前HP:{shared.player_current_pokemon.current_hp},对方的 {shared.ai_current_pokemon.name} 当前HP:{shared.ai_current_pokemon.current_hp}')
-    else:
-        print(f'你的{shared.player_current_pokemon.name}跳过了行动!')
-
-    if shared.player_current_pokemon.current_hp <= 0:
-        print(f'你的 {shared.player_current_pokemon.name} 昏厥!')
-        player_pokemons.remove(shared.player_current_pokemon)
-        if len(player_pokemons) == 0:
-            print('你输了!')
+def main():
+    print('请选择你的宝可梦:')
+    for i in range(len(Pokemon_list)):
+        print(f'{i}.{Pokemon_list[i]().name}')
+    while True:
+        try:
+            choose = input('输入数字选择你的宝可梦(空格分隔):')
+            index = choose.split(' ')
+            for i in index:
+                player_pokemons.append(Pokemon_list[int(i)]())
+            if not len(player_pokemons) <= 3 and len(player_pokemons) > 0:
+                print('只能选择1-3只宝可梦!')
+                continue
+            print('你选择了:', end='')
+            for i in player_pokemons:
+                print(i.name, end=' ')
             break
-        pick_pokemon()
-        continue
+        except BaseException as e:
+            print(f'输入有误，请重新输入!({e})')
 
-    if shared.ai_current_pokemon.current_hp <= 0:
-        print(f'对方的 {shared.ai_current_pokemon.name} 昏厥!')
-        ai_pokemons.remove(shared.ai_current_pokemon)
-        if len(ai_pokemons) == 0:
-            print('你赢了!')
-            break
+    for i in range(3):
+        randpokemon = random.choice(Pokemon_list_temp)
+        ai_pokemons.append(randpokemon())
+        Pokemon_list_temp.remove(randpokemon)
+    print('电脑选择了:', end='')
+    for i in ai_pokemons:
+        print(i.name, end=' ')
+        i.belong = 'ai'  # 修改归属为ai
+
+    pick_pokemon()  # 选择出战宝可梦
+    # 电脑随机选择
+    ai_first_index = random.randint(0, len(ai_pokemons) - 1)
+    shared.ai_current_pokemon = ai_pokemons[ai_first_index]
+    print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
+
+    current_turn = 1
+    while True:
+
+        print(f'===================第{current_turn}回合===================')
+        set_battle_counters(shared.player_current_pokemon, shared.ai_current_pokemon)
+        shared.player_current_pokemon.turn_start()
+        shared.ai_current_pokemon.turn_start()
+        if not shared.player_current_pokemon.jump_turn:
+            print(f'你的{shared.player_current_pokemon.name}的技能:')
+            for i in range(len(shared.player_current_pokemon.skill)):
+                print(f'{i}.{shared.player_current_pokemon.skill[i].name}')
+            while True:
+                try:
+                    index = int(input('输入数字选择技能:'))
+                    if index in range(len(shared.player_current_pokemon.skill)):
+                        selected_skill: Skills.Skill = shared.player_current_pokemon.skill[index]
+                        break
+                except ValueError:
+                    print('输入有误，请重新输入!')
+            selected_skill.use(shared.player_current_pokemon, shared.ai_current_pokemon)
+            # print(f'<Debug>你的 {shared.player_current_pokemon.name} 当前数据:')
+            # print(shared.player_current_pokemon)
+            # print(f'<Debug>ai的 {shared.ai_current_pokemon.name} 当前数据:')
+            # print(shared.ai_current_pokemon)
+            print(
+                f'你的 {shared.player_current_pokemon.name} 当前HP:{shared.player_current_pokemon.current_hp},对方的 {shared.ai_current_pokemon.name} 当前HP:{shared.ai_current_pokemon.current_hp}')
         else:
-            ai_index = random.randint(0, len(ai_pokemons) - 1)
-            shared.ai_current_pokemon = ai_pokemons[ai_index]
-            print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
-            continue
-    #ai随机使用一个技能
-    if not shared.ai_current_pokemon.jump_turn:
-        random.choice(shared.ai_current_pokemon.skill).use(shared.ai_current_pokemon, shared.player_current_pokemon)
-        print(f'你的 {shared.player_current_pokemon.name} 当前HP:{shared.player_current_pokemon.current_hp},对方的 {shared.ai_current_pokemon.name} 当前HP:{shared.ai_current_pokemon.current_hp}')
-    else:
-        print(f'对方的{shared.ai_current_pokemon.name}跳过了行动!')
-    # print(f'<Debug>你的 {shared.player_current_pokemon.name} 当前数据:')
-    # print(shared.player_current_pokemon)
-    # print(f'<Debug>ai的 {shared.ai_current_pokemon.name} 当前数据:')
-    # print(shared.ai_current_pokemon)
+            print(f'你的{shared.player_current_pokemon.name}跳过了行动!')
 
-    if shared.player_current_pokemon.current_hp <= 0:
-        print(f'你的 {shared.player_current_pokemon.name} 昏厥!')
-        player_pokemons.remove(shared.player_current_pokemon)
-        if len(player_pokemons) == 0:
-            print('你输了!')
-            break
-        pick_pokemon()
-        continue
-    if shared.ai_current_pokemon.current_hp <= 0:
-        print(f'对方的 {shared.ai_current_pokemon.name} 昏厥!')
-        ai_pokemons.remove(shared.ai_current_pokemon)
-        if len(ai_pokemons) == 0:
-            print('你赢了!')
-            break
-        else:
-            ai_index = random.randint(0, len(ai_pokemons) - 1)
-            shared.ai_current_pokemon = ai_pokemons[ai_index]
-            print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
+        if shared.player_current_pokemon.current_hp <= 0:
+            print(f'你的 {shared.player_current_pokemon.name} 昏厥!')
+            player_pokemons.remove(shared.player_current_pokemon)
+            if len(player_pokemons) == 0:
+                print('你输了!')
+                break
+            pick_pokemon()
             continue
-    shared.player_current_pokemon.turn_end()
-    shared.ai_current_pokemon.turn_end()
-    current_turn += 1
+
+        if shared.ai_current_pokemon.current_hp <= 0:
+            print(f'对方的 {shared.ai_current_pokemon.name} 昏厥!')
+            ai_pokemons.remove(shared.ai_current_pokemon)
+            if len(ai_pokemons) == 0:
+                print('你赢了!')
+                break
+            else:
+                ai_index = random.randint(0, len(ai_pokemons) - 1)
+                shared.ai_current_pokemon = ai_pokemons[ai_index]
+                print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
+                continue
+        # ai随机使用一个技能
+        if not shared.ai_current_pokemon.jump_turn:
+            random.choice(shared.ai_current_pokemon.skill).use(shared.ai_current_pokemon, shared.player_current_pokemon)
+            print(
+                f'你的 {shared.player_current_pokemon.name} 当前HP:{shared.player_current_pokemon.current_hp},对方的 {shared.ai_current_pokemon.name} 当前HP:{shared.ai_current_pokemon.current_hp}')
+        else:
+            print(f'对方的{shared.ai_current_pokemon.name}跳过了行动!')
+        # print(f'<Debug>你的 {shared.player_current_pokemon.name} 当前数据:')
+        # print(shared.player_current_pokemon)
+        # print(f'<Debug>ai的 {shared.ai_current_pokemon.name} 当前数据:')
+        # print(shared.ai_current_pokemon)
+
+        if shared.player_current_pokemon.current_hp <= 0:
+            print(f'你的 {shared.player_current_pokemon.name} 昏厥!')
+            player_pokemons.remove(shared.player_current_pokemon)
+            if len(player_pokemons) == 0:
+                print('你输了!')
+                break
+            pick_pokemon()
+            continue
+        if shared.ai_current_pokemon.current_hp <= 0:
+            print(f'对方的 {shared.ai_current_pokemon.name} 昏厥!')
+            ai_pokemons.remove(shared.ai_current_pokemon)
+            if len(ai_pokemons) == 0:
+                print('你赢了!')
+                break
+            else:
+                ai_index = random.randint(0, len(ai_pokemons) - 1)
+                shared.ai_current_pokemon = ai_pokemons[ai_index]
+                print(f'电脑出战宝可梦为: {shared.ai_current_pokemon.name}')
+                continue
+        shared.player_current_pokemon.turn_end()
+        shared.ai_current_pokemon.turn_end()
+        current_turn += 1
+
+if __name__ == '__main__':
+    main()
+
+
