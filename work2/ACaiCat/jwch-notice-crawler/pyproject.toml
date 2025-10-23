@@ -1,0 +1,11 @@
+[project]
+name = "jwch-notice-crawler"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "fake-useragent>=2.2.0",
+    "httpx>=0.28.1",
+    "pandas>=2.3.3",
+]
