@@ -21,7 +21,6 @@ def display_status(character_name, current_hp, max_hp):
     """打印格式: 【角色名】HP: 当前血量 / 最大血量"""
     # 在这里写你的代码，用print()函数
     print(f'【{character_name}】HP: {current_hp} / {max_hp}')
-    pass
 
 
 # 任务二：掷骰子
@@ -118,8 +117,7 @@ def main_battle_loop():
             if check_critical_hit(points):
                 print("💥「BIG SEVEN」触发！伤害翻倍！")
                 points *= 2
-            else:
-                pass
+
             damage = max(points - nabiya_defense_bonus,0)
             nabiya_hp -= damage
             print(f"长门对娜比娅造成了 {damage} 点伤害！娜比娅剩余 {nabiya_hp} 点血量！")
