@@ -1,5 +1,4 @@
 #引用模块
-from pokemon_funct import creat_ty
 from time import sleep;import random
 
 #缩减写法
@@ -91,14 +90,32 @@ class Pokenmon(object):
             pr(self.name,'触发了连击!')
             return True
         return False
+
+#创建属性工厂函数
+def create_ty(cls_name,ty_name):
+    '''
+    创建新属性的函数:
+
+    Args:
+        cls_name:属性类的类名
+        ty_name:属性名称
     
+    Returns:
+        新的属性类
+    '''
+    class Newtype(Pokenmon):
+        def __init__(self,name,hp,at,de,mi_ra,num):
+            super().__init__(name=name,hp=hp,at=at,de=de,mi_ra=mi_ra,ty=ty_name,num=num)
+    Newtype.__name__=cls_name
+    return Newtype
+
 #不同属性    
-Dian=creat_ty('Dian','电')
-Cao=creat_ty('Cao', '草')
-Shui=creat_ty('Shui', '水')
-Huo=creat_ty('Huo', '火')
-Beast=creat_ty('Beast', '兽')
-God=creat_ty('God', '神')
+Dian=create_ty('Dian','电')
+Cao=create_ty('Cao', '草')
+Shui=create_ty('Shui', '水')
+Huo=create_ty('Huo', '火')
+Beast=create_ty('Beast', '兽')
+God=create_ty('God', '神')
 
 #具体宝可梦
 
@@ -237,10 +254,11 @@ class fores_crow(Cao):
 class god_huai(God):
     def __init__(self):
         super().__init__(name='神-槐安',hp=80,at=20,de=15,mi_ra=25,num=6)#25
-        self.skills={'1:飞升(修炼自己,提高了境界!\n获得一层“神化”状态(下一次受到的伤害减 10))':self.Ascendin,
-                     '2:神堕(释放愤怒,道心不稳!对敌方造成攻击力+10×使用过飞升次数点 无视闪避的伤害,然后视为使用过的飞升次数清零)':self.Corruptin
-        }
         self.ascend_times=0
+        self.skills={'1:飞升(修炼自己,提高了境界!\n获得一层“神化”状态(下一次受到的伤害减 10))':self.Ascendin,
+                     f'2:神堕(释放愤怒,道心不稳!对敌方造成攻击力+10×使用过飞升次数点(当前为{10+10*self.ascend_times}点) 无视闪避的伤害,然后视为使用过的飞升次数清零)':self.Corruptin
+        }
+        
 
     def Ascendin(self,enemy,**kw):
         damage=0
@@ -375,11 +393,11 @@ class sevniao_rabbit(Beast):
     
     def end_turn_effect(self):
         """回合结束时的被动效果（需要在主循环中调用）"""
-        pr(f'{self.name} 当前月光能量为:{self.moon_energy}%')
         # 每回合自动恢复5点月光能量
         if self.moon_energy < 100:
             self.moon_energy = min(self.moon_energy + 5, 100)
             pr(f'🌙 {self.name} 吸收了月光能量 (+5%)')
+        pr(f'{self.name} 当前月光能量为:{self.moon_energy}%')
+        pr(f'{self.name} 当前魅力值为:{self.charm_points}')
 
-#宝可梦列表
-poke_list=[pikachu, bulbasaur, squirtle, charmander,fores_crow,god_huai,sevniao_rabbit]
+poke_list=[pikachu, bulbasaur, squirtle, charmander, fores_crow, god_huai, sevniao_rabbit]

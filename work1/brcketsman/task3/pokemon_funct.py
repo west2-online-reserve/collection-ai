@@ -2,7 +2,7 @@
 import random
 from time import sleep
 from pokemon_cls import (
-    poke_list, sta_ty, de_sta_ty, ty_list, max_sta_level,
+    max_sta_level,poke_list,sta_ty,de_sta_ty,ty_list,
     Pokenmon, pikachu, bulbasaur, squirtle, charmander, 
     fores_crow, god_huai, sevniao_rabbit
 )
@@ -10,25 +10,6 @@ from pokemon_cls import (
 
 #缩减写法
 pr,inp,sl=print,input,sleep
-
-
-#创建属性工厂函数
-def creat_ty(cls_name,ty_name):
-    '''
-    创建新属性的函数:
-
-    Args:
-        cls_name:属性类的类名
-        ty_name:属性名称
-    
-    Returns:
-        新的属性类
-    '''
-    class Newtype(Pokenmon):
-        def __init__(self,name,hp,at,de,mi_ra,num):
-            super().__init__(name=name,hp=hp,at=at,de=de,mi_ra=mi_ra,ty=ty_name,num=num)
-    Newtype.__name__=cls_name
-    return Newtype
 
 #查看宝可梦函数
 def check_poke(poke_l=poke_list):
@@ -213,11 +194,11 @@ def fight_change(me,enemy,fin_damage,rise_hp,enemy_sta,enemy_sta_level,my_sta,my
 #展示战斗结果函数
 def show_fight(me,enemy,damage,rise_,contr_name,oppon_name):
     if damage>0:
-        pr(f'\n{oppon_name} {enemy.name} 受到了 {damage} 点伤害! 剩余HP:{enemy.hp}/{enemy.max_hp}\n')
+        pr(f'\n{oppon_name} {enemy.name} 受到了 {damage} 点伤害! 剩余HP:{enemy.hp}/{enemy.max_hp}')
     else:
-        pr(f'\n{oppon_name} {enemy.name} 没有受到伤害!剩余HP:{enemy.hp}\n')
+        pr(f'\n{oppon_name} {enemy.name} 没有受到伤害!剩余HP:{enemy.hp}')
     if rise_>0:
-        pr(f'\n{contr_name} {me.name} 恢复了 {rise_} 点HP! 当前HP:{me.hp}/{me.max_hp}\n')
+        pr(f'\n{contr_name} {me.name} 恢复了 {rise_} 点HP! 当前HP:{me.hp}/{me.max_hp}')
     sl(0.5)
     pr('')
 

@@ -4,9 +4,7 @@
 #引入模块
 from time import sleep;import random;from sys import exit
 from pokemon_cls import (
-    poke_list, sta_ty, de_sta_ty, ty_list, max_sta_level,
-    Pokenmon, pikachu, bulbasaur, squirtle, charmander, 
-    fores_crow, god_huai, sevniao_rabbit
+    sta_ty
 )
 from pokemon_funct import (
     check_poke,cho_poke,cho_fight_poke,turn_start,
