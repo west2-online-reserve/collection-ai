@@ -7,4 +7,4 @@
 ## repos
 1. 052503126 https://github.com/ACaiCat/w2-learn-AI/tree/main/task1
 2. 042502218 https://github.com/Ligture/learn-AI/tree/master/task1
-3. 052503147
+3. 052503147 https://github.com/Super-Hercules/collection-ai/tree/main/task1
