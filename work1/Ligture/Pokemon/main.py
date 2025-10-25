@@ -40,6 +40,7 @@ def set_battle_counters(pokemon1: Pokemon.Pokemon, pokemon2: Pokemon.Pokemon):
 
 def pick_pokemon():
     print('\n请选择你的出战宝可梦:')
+    print(player_pokemons)
     for i, p in enumerate(player_pokemons):  # 来自chatgpt
         print(f'{i}.{p.name}')
     while True:
