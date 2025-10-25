@@ -1,0 +1,10 @@
+damage_evasion = 0
+damage_success = 1
+damage_block = 2
+attr_grass = 'grass'
+attr_fire = 'fire'
+attr_water = 'water'
+attr_electric = 'electric'
+attr_normal = 'normal'
+player_current_pokemon = None
+ai_current_pokemon = None
