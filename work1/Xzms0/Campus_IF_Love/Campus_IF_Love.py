@@ -1,4 +1,5 @@
 import sys
+import random
 
 class Character:
     def __init__(self, name, role, affinity=0):
@@ -7,14 +8,29 @@ class Character:
         self.affinity = affinity
 
     def talk(self):
-        print(f"你正在和{self.name}对话...")
+        print(f"\n你正在和{self.name}对话...")
         # TODO: 补充具体对话，对话内容可以从剧本里面截取 根据主人公的不同，使用不同的对话（你也可以根据好感度的不同/对话次数的不同 改变对话和选项）
-        self.change_affinity(5)
+        text=DIALOGUES[self.name][random.randint(0,4)]
+        print(f"学姐：『{text["text"]}』")
+        print(f"Option A：『{text["optionA"]}』")
+        print(f"Option B：『{text["optionB"]}』")
+        choice = input("请选择 A 或 B 项：").strip().upper()
+        if choice == "A":
+            self.change_affinity(5)
+        elif choice == "B":
+            self.change_affinity(0)
+        else:
+            print("无效选择。。。你是来搞笑的吗？")
+            self.change_affinity(-2)
 
     def give_gift(self, gift):
-        print(f"你送给 {self.name} 一份 {gift}。")
-        # TODO: 完成礼物好感度逻辑（送出不同礼物加不同的好感度） 并调用change_affinity（）函数 传入此次好感度变化的数值value
-        pass
+        try:
+            effect=GIFT_EFFECTS[gift][self.name]
+            print(f"\n你送给 {self.name} 一份 {gift}。")
+            self.change_affinity(effect)
+        except:
+            print("\n事到临头你才发现你手里并没有那件礼物。。。\n你收获了一个白眼。。。")
+            self.change_affinity(-10)
 
     def change_affinity(self, value):
         self.affinity += value
@@ -22,8 +38,10 @@ class Character:
 
     def check_ending(self):
         if self.affinity >= 100:
-            print(f"恭喜！你和 {self.name} 的故事进入了结局线！")
+            print(f"\n恭喜！你和 {self.name} 的故事进入了结局线！")
             return True
+        if self.affinity <= -50:
+            print(f"\n很遗憾！{self.name}再也不想理你了，你和她的故事彻底结束了。。。")
         return False
 
 
@@ -58,7 +76,7 @@ class Game:
         choice = input("1. 主动表现兴趣，拿起一只笔作画\n2. 表示抱歉，没兴趣，转身离开\n请选择：")
         if choice == "1":
             print("\n你随手挑起一只笔，在纸上几笔勾勒出惊艳的图案，引得周围阵阵惊呼。")
-            print("学姐目光一震，眼神变得格外认真。你进入【学姐线】！")
+            print("学姐目光一震，眼神变得格外认真。你进入了【学姐线】！")
             self.current_target = self.characters["学姐"]
             self.story_loop()
             return True
@@ -72,10 +90,15 @@ class Game:
         print("小白：『呜呜……这题到底该怎么写呀？』")
 
         choice = input("1. 主动帮她解题\n2. 敷衍几句，转身离开\n请选择：")
-        # TODO 两种选择 如果选择了1 则进入该位角色的故事线 并返回 True 如果选择了 2 则进入下一位角色的选择 并且返回False
-        #注意 除了判断外 你可以同时输出角色的反应 
-        #比如在上一位角色的判断中 选择了1时 输出了print("\n你随手挑起一只笔，在纸上几笔勾勒出惊艳的图案，引得周围阵阵惊呼。")
-        #写法可以借鉴学姐线
+        if choice == "1":
+            print("你一把抢过她手中的笔，随手写下那显而易见的答案，紧接着开始了讲解。")
+            print("小白一脸惊愕，随即缓过神来，开始聆听你的讲解。你进入了【小白线】！")
+            self.current_target = self.characters["小白"]
+            self.story_loop()
+            return True
+        else:
+            print("『蛤？一个二分就解决的题，你是唐氏吗？』你留下无情的吐槽，扬长而去。")
+            return False
 
     def scene_jiejie(self):
         print("\n【场景三：姐姐")
@@ -83,8 +106,15 @@ class Game:
         print("姐姐：『你的代码思路很有趣呢，能给我讲讲你的实现方法吗？』")
 
         choice = input("1. 缓缓低眉，毫不在意的开始解释\n2. 头也不抬，保持敲代码的状态\n请选择：")
-        # TODO 两种选择 如果选择了1 则进入该位角色的故事线 并返回 True 如果选择了 2 则进入下一位角色的选择 并且返回False
-        #要求同上
+        if choice == "1":
+            print("你稍稍放慢了敲代码的速度，开始了你的讲解，毫不在意她是否跟上了你的节奏。")
+            print("姐姐兴致勃勃的凑近你，专心倾听你的讲解。你进入了【姐姐线】！")
+            self.current_target = self.characters["姐姐"]
+            self.story_loop()
+            return True
+        else:
+            print("你丝毫不理会她，反而加快了打代码的速度，对于这种无趣的搭讪，你只会感到厌烦。")
+            return False
         
     def story_loop(self):
         """角色线主循环"""
@@ -95,29 +125,25 @@ class Game:
             print("3. 查看好感度")
             print("4. 离开（退出游戏）")
 
-            choice = input("请输入选项：")
+            choice = input("\n请输入选项：")
 
-            # TODO 完成输入不同选项时 进行的操作 
+            if choice == "1":
+                self.current_target.talk()
+            
+            elif choice == "2":
+                print("\n你手上有这些礼物：鲜花.编程笔记.奶茶.奇怪的石头.精致的钢笔.可爱玩偶.夜宵外卖")
+                gift=input("你决定送她什么？").strip()
+                self.current_target.give_gift(gift)
 
-            #输入1---关于聊天的内容可以自己构思 也可以从剧本中截取
+            elif choice == "3":
+                print(f"\n当前{self.current_target.name}的好感度为 {self.current_target.affinity}")
 
-
-
-            #输入2----
-
-
-
-            #输入3----
-
-
-
-
-            if choice == "4":
-                print("你选择离开，游戏结束。")
+            elif choice == "4":
+                print("\n你选择离开，游戏结束。")
                 sys.exit(0)
 
             else:
-                print("无效输入，请重新选择。")
+                print("\n无效输入，请重新选择。")
 
             if self.current_target.check_ending():
                 break
