@@ -1,0 +1,9 @@
+[project]
+name = "summer-ospp-crawler"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pandas>=2.3.3",
+]
