@@ -33,3 +33,77 @@ GIFT_EFFECTS = {
     "可爱玩偶": {"学姐": 10, "小白": 20, "姐姐": 10},
     "夜宵外卖": {"学姐": 0, "小白": 5, "姐姐": -5}
 }
+
+class Character:
+    def __init__(self, name, role, affinity=0):
+        self.name = name
+        self.role = role
+        self.affinity = affinity
+
+
+
+    def talk(self):
+        print(f"你正在和{self.name}对话...")
+        all_dias = DIALOGUES.get(self.name)
+        if self.affinity > 0:
+            affinity_dias = self.affinity//20 #选择哪一级对话
+        else:
+            affinity_dias = 0
+        new_dias = all_dias[affinity_dias]
+        sys_dias = new_dias.get('text')
+        option_a = new_dias.get('optionA')
+        option_b = new_dias.get('optionB')
+        print(f'{self.name}:{sys_dias}\n1:{option_a}\n2:{option_b}')
+        while True:
+            your_choice = input('输入你的选择:')
+            if your_choice == "1":
+                self.change_affinity(5) #好感度随正确选项上升
+                break
+            elif your_choice == "2":
+                self.change_affinity(-(affinity_dias+1)*2) #好感度随错误选项下降
+                break
+            else:
+                print('请重新输入')
+            continue
+
+
+    def give_gift(self, gift):
+        print(f"你送给 {self.name} 一份 {gift}。")
+        now_gift = GIFT_EFFECTS.get(gift)
+
+        if now_gift == {"default": -10}:
+            gift_affinity = -10
+        else:
+            gift_affinity = now_gift[self.name]
+
+        if gift_affinity >= 0:
+            print(f'你送出的礼物给 {self.name} 增加了 {gift_affinity} 的好感度。')
+        else:
+            print(f'你送出的礼物给 {self.name} 减少了 {-gift_affinity} 的好感度。')
+
+        self.change_affinity(gift_affinity)
+        pass
+
+
+
+    def change_affinity(self, value):
+        self.affinity += value
+        print(f"{self.name} 的好感度变化 {value} -> 当前好感度：{self.affinity}")
+
+
+
+    def check_affinity(self):
+        print(f'当前 {self.name} 的好感度是 {self.affinity} 。')
+
+
+
+    def check_ending(self):
+        if self.affinity >= 100:
+            print(f"恭喜！你和 {self.name} 的故事进入了结局线！")
+            return True
+        return False
+
+
+
+
+
