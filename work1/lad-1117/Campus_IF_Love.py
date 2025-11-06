@@ -45,10 +45,16 @@ class Game:
         print("小白：『呜呜……这题到底该怎么写呀？』")
 
         choice = input("1. 主动帮她解题\n2. 敷衍几句，转身离开\n请选择：")
-        # TODO 两种选择 如果选择了1 则进入该位角色的故事线 并返回 True 如果选择了 2 则进入下一位角色的选择 并且返回False
-        #注意 除了判断外 你可以同时输出角色的反应 
-        #比如在上一位角色的判断中 选择了1时 输出了print("\n你随手挑起一只笔，在纸上几笔勾勒出惊艳的图案，引得周围阵阵惊呼。")
-        #写法可以借鉴学姐线
+        if choice == "1":
+            print("\n你拿过小白的作业本稍加思索，以流畅的思路介绍起解题方法。")
+            print("小白手中的铅笔掉落在地，Σ(っ °Д °;)っ。你进入【小白线】！")
+            self.current_target = self.characters["小白"]
+            self.story_loop()
+            return True
+        else:
+            print("“这么简单的题都不会，这个小白就是逊啊。”你摇头走开。")
+            return False
+
 
     def scene_jiejie(self):
         print("\n【场景三：姐姐")
@@ -56,50 +62,62 @@ class Game:
         print("姐姐：『你的代码思路很有趣呢，能给我讲讲你的实现方法吗？』")
 
         choice = input("1. 缓缓低眉，毫不在意的开始解释\n2. 头也不抬，保持敲代码的状态\n请选择：")
-        # TODO 两种选择 如果选择了1 则进入该位角色的故事线 并返回 True 如果选择了 2 则进入下一位角色的选择 并且返回False
-        #要求同上
+        if choice == "1":
+            print("\n你空出一个位置，盛情邀请她来参观你的代码。")
+            print("成熟的姐姐很乐意地与你交流起心得。你进入【姐姐线】！")
+            self.current_target = self.characters["姐姐"]
+            self.story_loop()
+            return True
+        else:
+            print("“这么专注啊，那就不打扰你了。”姐姐转身离开了你的位置。")
+            return False
         
     def story_loop(self):
         """角色线主循环"""
         while True:
-            print("\n你要做什么？")
-            print("1. 和她聊天")
-            print("2. 送她礼物")
-            print("3. 查看好感度")
-            print("4. 离开（退出游戏）")
-
-            choice = input("请输入选项：")
-
-            if choice == "1":
-                Character.talk(self.current_target)
-                continue
-            # TODO 完成输入不同选项时 进行的操作
-
-            #输入1---关于聊天的内容可以自己构思 也可以从剧本中截取
-
-
-
-            #输入2----
-
-
-
-            #输入3----
-
-
-
-
-            if choice == "4":
-                print("你选择离开，游戏结束。")
-                sys.exit(0)
-
-            else:
-                print("无效输入，请重新选择。")
-
             if self.current_target.check_ending():
                 break
-            
+            else:
+                print("\n你要做什么？")
+                print("1. 和她聊天")
+                print("2. 送她礼物")
+                print("3. 查看好感度")
+                print("4. 离开（退出游戏）")
+
+                choice = input("请输入选项：")
+
+                if choice == "1":
+                    Character.talk(self.current_target)
+                    continue
+
+                if choice == "2":
+                    while True:
+                        your_gift = int(input("请输入赠送的礼物：\n1 鲜花\n2 编程笔记\n3 奶茶\n4 奇怪的石头\n5 精致的钢笔\n"
+                                          "6 可爱的玩偶\n7 宵夜外卖\n"))
+                        if your_gift not in range(1,8):
+                            print('请重新输入')
+                            continue
+                        else:
+                            Character.give_gift(self.current_target,gift=gift_list[your_gift-1])
+                            break
+                    continue
 
 
+
+                if choice == "3":
+                    Character.check_affinity(self.current_target)
+                    continue
+
+
+
+
+
+                if choice == "4":
+                    print("你选择离开，游戏结束。")
+                    sys.exit(0)
+
+                else:
+                    print("无效输入，请重新选择。")
 
 
 
@@ -128,7 +146,6 @@ DIALOGUES = {
 }
 
 
-
 GIFT_EFFECTS = {
     # 通用 / 默认 值
     "鲜花": {"学姐": 10, "小白": 10, "姐姐": 15},
@@ -140,7 +157,10 @@ GIFT_EFFECTS = {
     "夜宵外卖": {"学姐": 0, "小白": 5, "姐姐": -5}
 }
 
+gift_list = list(GIFT_EFFECTS.keys())
 
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     game = Game()
     game.start()
+
