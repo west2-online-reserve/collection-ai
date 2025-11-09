@@ -1,0 +1,19 @@
+{
+    "raw_file_name": "",
+    "start_stage": "begin",
+    "end_stage": "end",
+    "start_point": "00:00:00.000",    
+    "llm_prompt": "",
+    "llm_prompt_trans":"", 
+
+    "len": -1,
+    "lang": "zh",
+    "trans_to": "None",
+    "tasks_name":"这里是任务名称",
+    "ggml_prompt": "whisper prompt",
+    "llm_prompt_config":{
+        "content":"视频内容",
+        "lang":"原语言",
+        "trans_to":"翻译为"
+    }
+}
