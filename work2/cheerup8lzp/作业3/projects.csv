@@ -1,0 +1,291 @@
+﻿项目名,项目难度,技术领域标签,项目简述,项目产出要求
+基于RISC-V的Linux操作系统原生无人机飞控开发,进阶,"Linux, Programming Language","- 项目背景
+
+随着低空经济的发展，无人机的需求越来越负责。运行在RTOS上的飞控难以满足复杂的需求，所以Linux原生的飞控逐渐被大家认可，呈现出飞控主控二合一的趋势，具有开发简单，兼容性好，生态丰富的特点。但是Linux实时性可能无法满足飞控的要求，RROS作为Linux硬实时的解决方案，在这个场景中具备明显的优势。
+
+RROS是一个双内核实时操作系统，基于Rust-For-Linux（RFL）重构了Xenomai的实时内核。具体来说，使用RFL提供的在Linux中使用Rust编写驱动的框架，与Xenomai社区的dovetail中断虚拟化接口，基于Rust语言实现了一个实时内核。实时内核将Linux内核作为idle任务进行调度，优先调度实时内核的任务，同时RROS兼容了实时核心的用户态接口库libevl。
+
+以往无人机飞控和主控都以ARM生态为主，本题目想要基于国产化的RISC-V开发板控制无人机，适配RustPilot飞控。
+
+- 项目任务
+
+基于Risc-V开发板，支持RustPilot飞控，重点完成RISC-V架构下的实时驱动开发，包括SPI驱动，imu驱动等无人机场景下常用外设。","项目产出要求
+1. 基于RROS在RISCV开发板上实现针对无人机的实时驱动
+2. 将实时驱动和RustPilot框架调通
+3. （进阶）在搭载了RROS的RISC-V开发板上，利用RustPilot做主控驱动无人机，完成调参，并成功完成飞行任务"
+基于ct-oval的操作系统安全用例数据库及评估用例生成工具在openeuler发行版上的适配开发,进阶/Advanced,x86,"把ct-oval开源项目对接openeuler的cve数据接口，清洗整理生成相应的openeuler cve评估用例数据库，适配openeuler24.03-lts-next等若干主力版本，达到可以实时输出主力lts版本CVE安全评估用例的效果。保证用例可用openscap正常扫描并输出结果。
+（1）需要的技能：xml, sql, golang
+（2）已有的工作: ct-oval项目，在openeuler一个衍生版上的测试报告
+（3）存在的不足： 未适配openeuler发行版，未对接openeuler cve数据发布接口，未完成多操作系统/多CVE发布接口的架构设计及开发
+（4）希望改进的点：完成多操作系统/多CVE发布接口的架构设计及开发，完成openeuler发行版及cve接口的适配
+（5）最终项目实现的目标：各衍生版可以通过少许工作量便可实现适配","项目产出要求
+1. 完成多操作系统/多CVE发布接口的架构设计及开发，完成openeuler发行版及cve接口的适配"
+SpiderMonkey 的 64 位 RISC-V 后端修缮工作,进阶/Advanced,"Web Application, Desktop Application, CI, CD, SVN, Git, Clang, Compiler, GCC, Linux, LLVM","Firefox 浏览器的 JS 引擎（代号 SpiderMonkey）支持多个处理器架构的 JIT 编译，即动态生成适合当前平台的机器码，以达到比普通解释器高几个数量级的性能。PC 机常用的 x64 和手机常用的 arm64 是它支持得最好的平台目标，而 riscv64 后端的单元测试通过率甚至已被即将成为历史的 mips64 反超。
+
+该项目的主要目的是改善 riscv64 后端代码的品质和测试通过率，并以此机会引导学生接触 Firefox 补丁的上游化流程。","项目产出要求
+1.改善 Firefox 的 JS 子项目的 riscv64 部分并根据完成进度递交上游，测试错误小于 50 个"
+NebulaGraph 集成 PyG ,基础/Basic,"PyTorch, Distributed Storage, Database, Graph Database",PyG 是一个用于在 PyTorch 中创建和训练图神经网络的强大而灵活的框架。它简化了图数据的处理，并提供了各种 GNN 模型的构建块，助力研究人员和开发者在图结构数据上进行创新。NebulaGraph 是一款开源的、分布式的、易扩展的原生图数据库，能够承载包含数千亿个点和数万亿条边的超大规模数据集，并且提供毫秒级查询。PyG 作为 GNN 的训练推理框架、它的图抽象支持从远程的分布式基础设施上存取，这个抽象叫“remote server”，有了这个抽象，我们可以连接两个项目，让 PyG 社区受益于 NebulaGraph 的超大规模分布式图存储，驱动分布式图申请网络的训练。,"项目产出要求
+1. 设计实现 PyG 的 NebulaGraph remote server ，作为其 FeatureStore 与 GraphStore."
+AI 模型和数据集的生命周期管理系统,进阶/Advanced,"AI, Cloud Native, Distributed Storage",在当前AI模型训练和推理的生命周期中，模型和数据集的统一管理是实现高效、可重现开发流程的关键。本项目以开源版Alluxio为缓存和存储系统，基于[Lance协议格式](https://github.com/eto-ai/lance)，对Alluxio社区版的 Python客户端`alluxio-py`进行功能性扩展（），以支持对模型与数据集的检索查询、版本控制、元数据追踪、生命周期管理等高级功能。项目目标是打通数据读写与模型管理链路，提供统一的API接口，提升整体系统的数据访问效率与开发体验。,"项目产出要求
+1. 基于Lance格式的元数据方案，扩展`alluxio-py`支持对模型和数据集的注册、查询与加载；
+2. 支持模型与数据集的生命周期操作（注册、更新、删除、归档）；
+3. 实现至少一种持久化方案，元数据可存储在Alluxio或兼容系统中；
+4. 实现可以很好兼容Pytorch/TensorFlow的对外API；
+5. 完成单元测试及端到端集成测试；
+6. PR成功Merge至主干；
+7. 提交完整项目报告和使用文档，提供API文档与用例说明，便于下游用户集成。"
+在Occlum 库操作系统中实现Linux AIO系统调用,基础,Linux,Occlum是适用于TEE环境下的内存安全的、多进程库操作系统。Occlum为了让Linux原生应用无需修改和编译无缝的迁移到TEE中，为此Occlum实现了150多个兼容Linux的系统调用。,"项目产出要求
+1. 当前Occlum还未实现Linux原生异步IO接口 AIO系统调用，此项目的目标是在Occlum库操作系统中实现兼容Linux AIO的系统调用。"
+jailhouse到RISC-V移植支持,基础/Basic,"Embedded Database, Virtualization","（1）相关背景：openEuler embedded通过部署混合关键系统(MCS)，允许在单块硬件上同时运行多个操作系统，以实现多样化任务的资源隔离与调度。而为了确保多OS协同运作的安全性，必须确保OS间的资源隔离。openEuler embedded使用了由西门子主导的开源轻量级hypervisor——jailhouse来实现这一目标。
+（2）已有的工作：openEuler embedded在ARM/X86上已经实现了基于jailhouse部署混合系统，jailhouse本身也支持在ARM/x86的QEMU上运行，并且在RISC-V方面有一定的学术成果。
+（3）存在的不足：目前jailhouse主干和openEuler embedded使用的版本均缺少对RISC-V的支持，并且已有的RISC-V相关的研究成果对RISC-V新的中断架构AIA研究不足。
+（4）希望改进的点：
+- 补充对jailhouse的分析文档，包括对jailhouse的架构设计，jailhouse在RISC-V上的移植方案，以及基于RISC-V AIA支持jailhouse虚拟化中断直通的方案。
+- 为openEuler embedded使用的jailhouse添加RISC-V以及基于AIA的中断直通支持。
+（5）最终项目实现的目标：完成对jailhouse设计的全面分析以及jailhouse在RISC-V上的移植方案，在社区进行汇报和分享。并且基于移植方案在实现了AIA的RISC-V环境上使用jailhouse部署中断直通的openEuler embedded。","项目产出要求
+1. 完成对jailhouse设计的全面分析以及jailhouse在RISC-V上的移植和基于AIA的中断直通方案，并且在社区进行分享。
+2. 基于移植方案，在支持AIA的RISC-V环境上实现基于jailhouse和中断直通部署的openEuler embedded，并进行性能测试。"
+TinyEditor 支持协同编辑,进阶,Vue.js,随着在线协作需求的日益增长，用户希望在 TinyEditor 富文本编辑器中实现多人实时协同编辑功能。本功能需要从0开始开发，旨在允许多个用户同时对同一文档进行编辑，并且能够实时看到彼此的修改内容，确保团队成员之间的高效协作。,"项目产出要求
+1. 完成 TinyEditor 富文本编辑器的协同编辑功能开发，确保多个用户能够同时对同一个文档进行编辑，且编辑操作能够实时同步到所有参与协作的客户端。
+2. 用户在编辑器中的操作（如文本输入、删除、格式调整、图片插入、表格编辑等）能够在极短的时间内（不超过 1 秒）反映到其他协同编辑用户的编辑器界面上，确保实时性。不同用户的编辑操作能够在编辑器中以不同的颜色、光标样式或其他可视化方式加以区分，方便用户清楚地了解每个操作是由谁执行的。
+3. 冲突解决机制 ：在多个用户同时对同一段内容进行编辑时，能够自动检测并合理解决编辑冲突，确保文档内容的一致性和正确性。
+4. 接口与集成 ：提供与后端服务的接口，实现编辑器内容的实时保存和同步，确保在网络中断或其他异常情况下，用户的编辑内容不会丢失，并且能够在重新连接后继续协同编辑。
+5. 提供一个或多个完整的示例项目，展示 TinyEditor 协同编辑功能在实际应用场景中的使用方法，包括如何初始化协同编辑、如何处理用户加入和退出协同编辑等情况。编写详细的协同编辑功能使用文档和开发教程，包括功能介绍、操作步骤、接口说明、常见问题解答等内容，帮助用户快速上手并有效使用协同编辑功能。
+6. 确保代码符合项目规范，有完整的TypeScript类型声明，UI美观体验良好。
+7. 补充相应的文档和自动化测试用例。
+8. 建议输出TinyEditor协同编辑的介绍文章和视频"
+EmbodiedAI-Ops,进阶,"PyTorch, AI",开发面向端到端具身操作任务的效率优化框架，通过多模态感知融合、动态技能重组与实时决策加速等技术，突破传统方法在数据效率、响应延迟和跨场景适应性方面的瓶颈。针对使用场景如工业装配、物流分拣等中实现操作成功率提升、任务执行时间缩短的目标。,"项目产出要求
+1.在仿真环境如pushT，metaworld实现对应操作任务，成功率达到70%以上
+2. 完成收集真实场景任务数据，如抓取放置。并在真实机器臂部署训练好模型，实现80%以上成功率
+3.利用前沿技术如预训练，CoT，仿真与真机数据混合训练等方式，实现完成长程任务并达到成功率80%以上。"
+Kmesh特性验证与补充和文档编写,基础/Basic,"Cloud Native, Kubernetes","Kmesh 是基于 eBPF 和可编程内核的高性能、低开销服务网格数据平面。去年完成捐赠CNCF。流量治理相关的功能特性也已经基本完善。但Kmesh dual-engine mode下的流量治理特性缺少相对应的验证测试与文档。因此我们希望就以下几个特性完成验证测试与验证文档的编写。
+locality load balance
+circuit breaker
+rete limit
+Ingress
+engress
+其中关于Ingress和egress经过先行测试，欠缺DNS解析的逻辑，需要补充开发。","项目产出要求
+1. egress特性针对serverEntry的开发
+1.1. DNS解析模块逻辑的补充
+1.2. 针对serverEntry的STATIC和NONE处理逻辑的补充
+1.3. UT测试覆盖
+1.4. e2e测试的覆盖
+2. 其他功能的验证文档
+2.1. locality load balance
+2.2. circuit breaker
+2.3. rate limit
+2.4. Ingress"
+基于MindSpore实现化学材料AI 大模型MoMa的开发及性能优化,进阶,AI,"基于MindSpore+NPU进行创新：
+（1）基于用户模型代码生成MindSpore 计算图，根据模块化计算模型具备动态分支模块与静态结构模块的特点，实现动态+静态编译结合的计算图，并基于此计算图进行性能优化的策略寻优与计算加速，既满足动态分支部分模型对框架灵活性的需求，又能将静态结构模型的优化空间最大化。
+（2）针对模块化大模型基于运行中间结果选择分支的计算特点，探索动态计算图的并行计算加速策略，基于MindSpore 算子粒度切分的并行切分机制，对模型进行不同并行切分策略下的代价计算，以模型通信、数据通信、计算效率为参考实现并行切分策略的递归搜索，实现最优的计算图切分，实现训练与推理加速。","项目产出要求
+1. 完成基于MindSpore+NPU的MoMa模型开发。
+2. 支持模块化计算、具备动态分支的模型在分布式系统中运行速度的优化与提升，在同等算力下，模型取得同等精度所需训练时间缩短30%以上。"
+openGauss 向量数据库 AI 数据 ETL 框架最佳实践输出,基础,"AI, Database",完成 Apache Kafka、Firecrawl、VectorETL 对接 openGauss 最佳实践教程输出,"项目产出要求
+1. 基于 openGauss 部署指导文档，完成openGauss Docker 部署
+2. 参考 Milvus weaviate 等文档，完成 Apache Kafka、Firecrawl、VectorETL 对接 openGauss 最佳实践教程输出
+3. 将文档提交至 openGauss 社区"
+为 NestOS 适配 RISC-V 架构,进阶,"RISC-V, GitLab CI/CD","项目描述：
+清楚描述本项目背景以及要做什么。
+（1）相关背景
+NestOS 是基于 openEuler 社区孵化的云底座操作系统，目前仅支持 x86_64 与 aarch64。
+RISC‑V 硬件生态快速发展，越来越多的云平台与边缘设备采用 RISC‑V 架构。
+NestOS 具备 rpm‑ostree、Ignition、双根文件系统原子化更新等先进特性，非常适合作为 RISC‑V 上的云原生操作系统底座。
+（2）已有的工作
+openEuler RISC‑V SIG 已完成对 openEuler Kernel 的 RISC‑V 引导与内核移植。
+核心组件（ostree、rpm‑ostree、Butane）已有部分 RISC‑V 移植分支。
+nestos‑assembler 容器镜像尚未支持 RISC‑V 构建流程。
+
+（3）存在的不足
+构建脚本和 CI/CD 流水线缺少 RISC‑V 交叉编译与打包支持。
+Ignition、overlay、dual‑rootfs 等功能在 RISC‑V qemu 上未经充分测试。
+
+官方文档中未提供 RISC‑V 构建与部署示例。
+
+（4）希望改进的点
+完善 nestos‑assembler 对 RISC‑V 的支持，包含交叉编译、qemu 测试与镜像产出。
+增加 Butane / Ignition v3.3.0 RISC‑V 配置示例，并集成至构建流程。
+
+在 CI 环境中增设 RISC‑V 构建流水线（GitLab CI 或 GitHub Actions）。
+
+撰写完整的 RISC‑V 构建与部署用户指南章节。
+
+（5）最终项目实现的目标
+能够一键在 x86_64 CI 环境中生产 RISC‑V QCOW2、ISO、PXE、OpenStack 镜像。
+验证在 K8s、OpenStack 上运行的 RISC‑V NestOS 集群稳定性。
+
+将 RISC‑V 支持合入主仓库并发布 v1.0‑riscv 版本标签。","项目产出要求
+1. 可在 x86_64 构建服务器上运行的 nestos‑assembler RISC‑V 构建脚本。
+2. 基于 qemu 的 RISC‑V 镜像（QCOW2、ISO、PXE、OpenStack）。
+3. CI/CD 流水线配置示例（GitLab CI 或 GitHub Actions）。
+4. 完整的用户指南：第 7、8 章新增 RISC‑V 构建与部署内容。"
+为洛书语言编写交互式学习手册,基础,Programming Language,"本项目要求为处于Beta阶段的洛书 v2.x 版本制作一份交互式学习手册，并以在线站点的形式部署至社区服务器，内容包括：安装与入门、程序结构、数据类型与编码技巧等。
+该手册要求具备交互式运行支持，基于WASM技术提供 Play Ground 环境，使得用户可以在浏览器环境下体验手册中的样例代码。","项目产出要求
+1. 根据社区工作进展，完成文档内容编写，要求使用 MarkDown 格式
+2. 接入交互式运行功能，实现基于浏览器的 PlayGround 环境
+3. 将项目打包部署至社区服务器"
+安同 OS Python 2 清除计划,进阶/Advanced,"Desktop Application, CI, CD, Clang, Debian, Compiler, GCC, Linux, LLVM, RISC-V, Programming Language","Python 2.7 已于 2020 年 1 月 1 日正式停止维护，标志着 Python 2 官方支持的终止。然而截至目前，安同 OS（AOSC OS）中仍存在大量 Python 2 软件包及其依赖项，这些残留导致安同 OS 仍需预装 Python 2，这些工作都意味着我们需要重新调查这些软件包的依赖关系、上游更改和代码兼容性，并在必要时编写补丁进行移植。目前，安同 OS 尚有至少 300 个软件包依赖 Python 2。
+
+由于 Python 2 不再提供安全补丁与功能更新，继续依赖 Python 2 将导致系统存在潜在的安全隐患及维护负担，并可能拖慢系统更新。本项目的主要目标是彻底移除安同 OS 软件仓库中的 Python 2 相关软件包和依赖，全面迁移至 Python 3。","项目产出要求
+1. 在安同 OS 的软件仓库中彻底移除 Python 2，并在符合社区《软件包样式指南》要求的前提下提交相关的代码并进行充分测试和验证工作，完成现有 Python 2 软件包向 Python 3 的依赖迁移、移植或替换工作
+2. 对上述软件包逐个进行评估，确认其是否完成 Python 3 移植，或寻找替代软件
+3. 使用现有设施（如软件包信息站 packages.aosc.io 及 breaker 脚本等）分析目前依然存在的 Python 2 模块及 ELF 依赖
+4. 如有必要，开发 shebang（#! 文件头）依赖分析工具"
+llvm与gcc兼容性增强——模板调构造函数使用auto,进阶,"GCC, LLVM","llvm和gcc是当下主流的C、C++编译器。应用使用不同编译器编译构建，可能遇到编译或者运行的兼容性问题。为降低客户在从gcc迁移至llvm过程中的人力投入，提升客户体验，需要在llvm编译器中对兼容性进行增强，支持对应场景，例如如下在调用析构函数时使用auto的场景：
+template
+void f (T* p)
+{
+p->~auto(); // p->~T();
+}
+
+int d;
+struct A { ~A() { ++d; } };
+
+int main()
+{
+f(new int(42));
+f(new A);
+if (d != 1)
+throw;
+return 0;
+}
+该场景gcc可以编译通过，llvm编译会提示如下报错：
+test.cpp:4:7: error: expected a class name after '~' to name a destructor
+4 | p->~auto(); // p->~T();
+| ^
+1 error generated.
+将auto改为对应类型名称后LLVM可以编译通过。出于兼容性考虑，希望可以兼容对应用法。","项目产出要求
+1. 调研GCC编译器对于对应场景的支持，测试用例迁移，并基于LLVM编译器对对应场景进行兼容
+2. 针对项目描述中代码中模版函数使用auto的场景，基于LLVM编译器支持可以编译和执行，效果和gcc编译器一致"
+基于 Node.js 和 Docker 实现的通用游戏服务端程序控制面板,基础/Basic,"DevOps, Vue.js, Socket, WebSocket, Webpack, Web Application","MCSManager 面板是一款免费，开源，分布式，轻量级，快速部署，支持 Minecraft 和大部分 Steam 游戏服务器的 Web 控制面板。
+
+此软件在 Minecraft 和部分能局域网联机的游戏社区内中已有一定的流行程度，它可以帮助你集中管理多个物理服务器，实现在任何主机上创建游戏服务器，并且提供安全可靠的多用户权限系统，可以很轻松的帮助你管理多个服务器，一直在为 Minecraft，Terraria 和 Steam 游戏服务器的管理员，运维人员和个人开发者提供健康的软件支持。
+
+主要特性：
+1. 支持 Minecraft 和 Steam 游戏 服务器。
+2. 支持分布式架构，组织多台机器。
+3. 可拖拽，可高度自定义的网页 UI。
+4. 支持运行所有 Docker 镜像。
+5. 多用户管理，资源分配，商业出租。
+6. 安装简单，一键快速开服。
+
+主要技术栈：
+1. NodeJS 生态（90%）
+后端：Koa，Socket.io，Docker API。
+前端：Vue3，Vueuse，Antdv。
+
+2. Golang 生态（10%）
+
+团队氛围：
+目前团队内的开发者均为用爱发电，大部分为大学生，少部分上班族，有菜鸡也有大佬，主要是中国大陆开发者为主，少数几个不怎么活跃的海外地区开发者。
+
+他们来自五湖四海，包容性强，只要你愿意学习，懂一些全栈开发，熟悉子进程控制知识，操作系统基本功，熟悉IO流编程，Docker 生态即可。
+
+拒绝有实力但不屑一顾，自恃清高，能用就行态度的学生。","项目产出要求
+1.为 MCSManager 提升基于 Docker 的可靠性，即主程序崩溃并重启后，能够重新接管存活的 Docker 容器的能力
+2. 开发 MCSManager 分布式的文件上传能力，实现切片文件上传，断点续传能力
+3. 修复一些项目上的BUG，提升项目运行稳定性
+4. (可选项) 实现兼容 Docker for Windows。"
+openInula 2.0 Antd 核心组件库,进阶,"React, UI, Webpack, Web Application","openInula2.0 是一个新兴的前端框架，但目前缺乏一套完整的 UI 组件库支持。本项目旨在基于 Ant Design（Antd）的设计规范，开发一套轻量级的核心组件库，为开发者提供高效、易用的基础组件。
+
+相关背景：Antd 是 React 生态中广泛使用的 UI 组件库，但 openInula2.0 作为新框架，需要兼容其特性的组件库。
+已有工作：Antd 的开源代码和设计规范可作为参考。
+存在的不足：openInula2.0 尚未有官方支持的组件库，开发者需要手动适配 Antd 组件。
+
+实现目标：提供一套稳定、高效的 openInula2.0 版 Antd 基础组件库，支持常见场景的开发需求，包括：
+DatePicker (日期选择框)
+Form (表单)
+Tooltip (文字提示)
+Tree (树形控件）","项目产出要求
+1.  输出要求的 openInula2.0组件及测试代码
+2.  完善的文档，包括架构设计、API说明、使用指南和开发文档"
+OpenFDE的任务管理器,基础,AndroidX,"项目概述
+OpenFDE 是一款在 Linux 系统上运行的桌面环境，它支持 Linux 和 Android 应用的原生执行。通过 OpenFDE，用户可以无缝运行丰富的 Linux 和 Android 应用程序及游戏，享受一致的使用体验。
+目前，OpenFDE 缺乏一款能够同时管控 Linux 和 Android 程序的任务管理器。当某些应用出现内存泄漏或用户同时开启多个大型应用时，可能会导致系统卡顿。在这种情况下，用户往往难以直观地排查问题原因，从而影响使用体验。
+为了解决这一问题，我们计划开发一款专为 Android PC 化设计的任务管理器。这款工具将能够监控和管理整个设备上正在运行的进程和应用程序，帮助用户实时了解系统资源使用情况，并提供便捷的管理功能，以优化系统性能和稳定性。","项目产出要求
+1. 提供Android和Linux 程序详细进程信息，包括 CPU、内存、磁盘和网络使用情况。
+2.支持结束进程、启动进程。
+3.提供服务管理功能，允许用户启动、停止系统服务。
+4.图形化界面，易于操作并提供详细的帮助文档和提示，方便新手用户。"
+基于django后端vue前端使用nump处理空数据,基础/Basic,"Django, Linux",kytuning是一款自动化基准性能测试工具，能够在页面中展示性能数据。目前kytuning能够正常进行性能测试，性能测试完成后返回服务端测试结果，并能够把测试结果展示在页面中供用户查看，但当数据为空时会导致数据获取失败，其它数据的对比信息也无法展示，本题希望使用nump处理空数据，即使某组或某个数据未获取也不影响其它数据的对比展示。,"项目产出要求
+1、当stream、unixbench、unixbench、lmbench、fio、iozone、jvm2008、cpu2006、cpu2017数据存在空数据时，目前会存在未处理空数据导致页面无法正常显示，此项目希望能够处理空数据，让页面中其他的对比信息能够正确返回。"
+实现在openGemini Go/JAVA客户端中无缝集成OpenTelemetry,基础,"DevOps, Database","实现openGemini的Go/Java客户端深度集成OpenTelemetry，为开发者提供零侵入、全链路、多维度的观测能力，助力构建云原生时代的高效诊断体系。通过标准化协议对接，用户无需修改业务代码即可将数据库请求链路与OpenTelemetry生态无缝打通，实现链路追踪。通过该功能，开发和运维人员可以实时观测客户端的行为，对异常、性能瓶颈等问题进行快速定位和追踪，同时便于与社区通用可观测性平台集成。
+
+架构与数据流
+
+在Go/Java Client中实现Otel Collector，采集客户端查询与写入操作的相关信息，如""请求的耗时""、""响应状态""、""错误信息""等。写入到Jaeger中进行数据存储。
+
+opentelemetry应用开发Demo链接：https://github.com/open-telemetry/opentelemetry-go-contrib/tree/main/examples
+
+openGemini-go-client: https://github.com/openGemini/opengemini-client-go
+
+openGemini-java-client: https://github.com/openGemini/opengemini-client-java","项目产出要求
+1. 完成项目的设计、开发、测试并提供架构和使用以及二次开发的文档
+2. 设计时应符合高可配置性，用户可自定义采集级别和导出端点(exporter)。模块应与现有openGemini 客户端解耦，不影响现有功能的正常运行。
+3. 符合 openGemini开源社区贡献规范，PR 包含具体开发说明与使用演示
+4. 开发完成后合入社区相应代码仓"
+基于LiteFlow框架开发大模型插件以实现类Dify的后端智能体应用表达式编排能力,进阶,"AI, Spring Boot","LiteFlow是国内知名的Java规则引擎，目前被应用在数千家企业核心业务侧，社区人数众多，活跃度高。
+
+目前LiteFlow被广泛应用在逻辑编排场景，拥有灵活的DSL规则表示式以及支持度广泛的脚本语言，实用性和特性都非常适合业务复杂的应用侧。
+
+随着AI大模型的兴起，社区很多开发者把LiteFlow当做一个“后端Dify”来构造自己的智能体逻辑流。并且已经有相当一部分的社区同学已经成功落地了。但是LiteFlow并没有从框架层面对大模型有任何支持，LiteFlow目前提供的组件是极其开放的，大模型实现的部分还需要开发者自己去实现的。
+
+所以这次的课题的目标就是为LiteFlow打造一个AI大模型支持的插件，开发者不用自己再去对接大模型，能够直接引用AI插件已定义好的大模型的各种组件加上LiteFlow原有的强大的编排能力形成一个智能体逻辑流程。
+
+这次课题需要涉及当下大模型中的大部分知识块，包括但不仅限于对接主流平台的API，RAG，FunctionCall，MCP等相关概念。","项目产出要求
+1. 为LiteFlow开发liteflow-ai插件模块
+1.1：提供大模型的组件，这些组件需要对接主流平台以及本地Ollama
+1.2：需要在编排层面对这些大模型组件进行输入输出定义的设计
+1.3：需要从设计上支持多模态输入，流式输出，Function Call等的包装支持
+2. 为大模型插件提供完善的测试用例工程liteflow-ai-test模块，需要对每一个细分功能点，场景进行支持
+3. 为开发好的liteflow-ai插件创建演示工程liteflow-ai-example工程，综合利用liteflow-ai开发的演示工程。"
+为 treeland 实现锁屏管理协议,进阶/Advanced,"Qt, Wayland","Treeland 是一个基于 Wayland 协议的合成器，致力于提供轻量级、模块化且可扩展的桌面环境体验。随着  Wayland 生态的完善，ext-session-lock-v1 协议已经成为管理会话锁定（如锁屏）的标准接口。当前 Treeland  尚未支持该协议，无法与 linux 社区广泛使用的锁屏应用兼容。本项目旨在为 Treeland 实现完整的  ext-session-lock-v1 协议支持，提升其功能完整性和生态兼容性。
+
+waylib 是 treeland 的核心开发库，提供了 wlroot 的 QtQuick 风格封装，此任务的核心工作在于完善此开发库。","项目产出要求
+1. 可以运行 swaylock ，hyprlock 等使用 ext-session-lock 协议的客户端，完成锁屏"
+为 Dubbo Admin 实现多种部署模式和 AI 智能管控运维能力,进阶,"Cloud Native, LLMOps, AI","1. Dubbo Admin作为宏观的控制中心，需要对运行在k8s以及非k8s环境下的Dubbo微服务进行统一的服务管理，流量管控。
+目前Dubbo微服务有三种形态：
+a. universal模式，该模式下dubbo微服务使用传统注册中心（nacos，zookeeper）进行服务发现，运行环境为虚拟机或其他非k8s环境。b. half模式，该模式下dubbo微服务使用传统注册中心进行服务发现，使用k8s作为运行的基础设施。
+c. k8s模式，该模式使用istio和k8s作为注册中心和运行基座。
+目前Admin已经支持了前两种，需要对第三种模式进行完善。
+
+2. 随着微服务集群规模的扩大，企业内异地多活，容灾备份的场景越来越常见。Admin需要对多注册中心，多k8s集群进行支持。
+
+3. Dubbo Admin作为统一的控制面，可以掌握到数据面的运行时数据，服务发现数据，以及可观测数据。当数据面中某个微服务出现问题时，利用服务运行信息以及监控（metric），日志（log），链路追踪（trace）等数据，结合llm，agent等技术，在Admin控制台中提供一个智能机器人，给开发者提供可能的排查方向和问题根源。","项目产出要求
+1. 完善 Dubbo Admin 多种部署模型能力的支持
+2. 提供结合 AI 进行问题诊断能力"
+DragonOS云厂商移植支持,进阶,"Cloud Native, Linux, x86","DragonOS 是一个自主研发、基于 Rust 编写的现代化操作系统，目前已支持在腾讯云CVM上运行。然而，在实际运行中尚存在网络等关键功能不完善的问题，以及一些稳定性问题。例如，运行于腾讯云的 DragonOS  CVM实例，目前暂时无法稳定响应 HTTP 请求。
+本项目旨在进一步提升 DragonOS 在各大云平台上的可用性与稳定性，主要目标包括：
+将DragonOS移植至2个及以上的云平台，包括腾讯云、阿里云、华为云。
+完成sshd的移植，能够通过ssh连接运行DragonOS的云服务器实例
+完成Nginx的适配与部署，让DragonOS的云服务器实例提供稳定的HTTP服务；
+完善自动化初始化配置工具 DragonConfig（Rust 实现，类似 cloud-init），完成云服务器实例启动后的自动初始化；","项目产出要求
+1. 将DragonOS移植至2个及以上的云平台，包括腾讯云、阿里云、华为云。能够正常进入用户态，并完成内核及启动流程的适配
+2. 移植sshd，能够通过ssh连接DragonOS
+3. 成功在DragonOS上部署 Nginx，提供静态网页服务：可通过公网访问，稳定运行72小时以上
+4. 实现DraconConfig自动初始化工具：主要包括网络配置模块、移植必要的网络管理工具等
+5. 技术文档与操作手册：提供完整的文档体系，支撑用户与开发者的使用与二次开发。"
+在skywalking-go中增加trace profiling功能,进阶/Advanced,"DevOps, DevSecOps",暂无简述,暂无产出要求
+增强Volcano Agent以支持Cgroup V2与Systemd,基础/Basic,"Docker, Kubernetes, Cgroups, Linux",暂无简述,暂无产出要求
+基于MindSpore Quantum实现自适应偏置场热启动QAOA算法 ,基础,AI,暂无简述,暂无产出要求
+为 Arthas 实现 JFR 解析和前端UI库,基础,"AIOps, React, RESTful API",暂无简述,暂无产出要求
+k8s任务与k8s集群链接优化,基础/Basic,Kubernetes,暂无简述,暂无产出要求
+Apache ShardingSphere: 增强 SQL Server SQL 解析引擎，适配更多 DDL、DML 语句,基础,MySQL,暂无简述,暂无产出要求
+ArceBoot引导程序设计,进阶,RISC-V,暂无简述,暂无产出要求
+Apache HertzBeat 日志监控能力,进阶/Advanced,"Angular, Spring Boot",暂无简述,暂无产出要求
+实现 dynamic-tp 的自建管理端功能,进阶,"Spring Cloud, Spring Boot",暂无简述,暂无产出要求
+dora-rs 样例开发和改进文档,基础/Basic,"Programming Language, Linux, Ubuntu, ARM, Clang",暂无简述,暂无产出要求
+基于 Rust 的 RROS 实时与非实时代码分离与优化,进阶/Advanced,RTOS,暂无简述,暂无产出要求
+Sermant动态配置能力增强——支持Apollo配置中心,进阶,Cloud Native,暂无简述,暂无产出要求
+BMF DiffusionFlow,进阶/Advanced,"AI, LLM",暂无简述,暂无产出要求
+面向工业制造的具身智能基准测试套件,进阶/Advanced,"Kubernetes, AI",暂无简述,暂无产出要求
+TinyVue组件增加全局配置动效方案,基础,"UI, Vue.js",暂无简述,暂无产出要求
+为RustPilot添加MuJoCo/Nvidia Isaac仿真平台的支持,进阶/Advanced,"Programming Language, ARM, Linux",暂无简述,暂无产出要求
+基于 Occlum 实现 System V 信号量系统调用,基础,Linux,暂无简述,暂无产出要求
+使用仓颉语言编写的洛书运行环境,基础,Programming Language,暂无简述,暂无产出要求
+Cloudpods 大模型一键部署,进阶,"LLM, Docker, Kubernetes",暂无简述,暂无产出要求
+为IvorySQL开发基于uuid-ossp的sys_guid函数,基础,PostgreSQL,暂无简述,暂无产出要求
+uORB 订阅发布机制组件,基础,RTOS,暂无简述,暂无产出要求
+基于OrangePi AIpro和鸿蒙系统的智能网联小车开发,进阶,AI,暂无简述,暂无产出要求
+开源软件 API 图谱构建与基于图谱的开源软件生态评估,进阶/Advanced,LLM,暂无简述,暂无产出要求
+实现 nydusify copy 的不落盘能力,进阶,"AI, Kubernetes, FUSE",暂无简述,暂无产出要求
+mermaid 可视化能力扩展,基础/Basic,UIKit,暂无简述,暂无产出要求
