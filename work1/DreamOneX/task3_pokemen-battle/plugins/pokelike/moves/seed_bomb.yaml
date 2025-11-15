@@ -1,0 +1,12 @@
+key: seed_bomb
+name: Seed Bomb
+element: grass
+effects:
+  - type: damage
+    ratio: 1.2
+  - type: status_apply
+    status: poison
+    chance: 0.15
+    duration_turns: 3
+    params:
+      percent: 0.10

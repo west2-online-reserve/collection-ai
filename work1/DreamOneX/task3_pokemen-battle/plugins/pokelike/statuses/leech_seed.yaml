@@ -1,0 +1,11 @@
+key: leech_seed
+tags:
+  - dot
+  - drain
+stacking:
+  mode: replace
+  max: 1
+duration:
+  type: turns
+  value: 3
+dispellable: true

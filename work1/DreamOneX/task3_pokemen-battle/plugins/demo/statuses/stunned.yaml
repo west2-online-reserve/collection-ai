@@ -1,0 +1,9 @@
+key: stunned
+name: Stunned
+duration_type: turns
+max_stacks: 1
+stack_mode: replace
+modifiers:
+  - stat: speed
+    mode: mul
+    value: 0.0

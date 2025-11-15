@@ -1,0 +1,10 @@
+key: paralysis
+tags:
+  - control
+stacking:
+  mode: replace
+  max: 1
+duration:
+  type: turns
+  value: 2
+dispellable: true

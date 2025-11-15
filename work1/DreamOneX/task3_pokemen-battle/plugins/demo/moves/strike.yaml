@@ -1,0 +1,7 @@
+key: strike
+name: Strike
+element: neutral
+accuracy: 1.0
+effects:
+  - type: damage
+    ratio: 1.0
