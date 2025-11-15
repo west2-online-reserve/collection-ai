@@ -61,14 +61,15 @@ if __name__ == "__main__":
             lang = task["lang"]
             trans_to = task["trans_to"]
             ggml_prompt = task["ggml_prompt"]
+            max_char_per_sentence=task["max_char_per_sentence"]
 
             whisper.generate_subtitle_raw(
-                audio_path, lang, trans_to, ggml_prompt)
+                audio_path, lang, trans_to, ggml_prompt,max_char_per_sentence)
             if PAUSE:
                 input()
 
         if JUMP_TO <= 3:
-            trans_to = task["trans_to"]
+            trans_to = task["llm_prompt_config"]["trans_to"]
             llm_prompt = task["llm_prompt"]
             llm_prompt_trans = task["llm_prompt_trans"]
             sub_raw_path = get_path_by_folder_name(

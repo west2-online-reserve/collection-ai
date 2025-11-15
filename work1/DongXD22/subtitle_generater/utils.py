@@ -12,6 +12,7 @@ STORAGE_PATH = HOME_PATH/"storage"
 
 def run_command(command: list[str], func_name: str) -> bool:
     command_str = ' '.join(command)
+    print(f"运行命令:\n{command_str}")
     try:
         process = subprocess.Popen(
             command,
@@ -109,7 +110,7 @@ def clear_file():
             print("Removing:", folder_path)
         for file_path in folder_path.rglob("*"):
             if file_path.is_file():
-                os.remove(file_path)
+                os.remove(str(file_path))
                 print("Removing:", file_path)
 
 

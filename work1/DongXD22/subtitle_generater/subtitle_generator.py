@@ -8,7 +8,7 @@ class Whisper:
         self.whisper_cpp_path = whisper_cpp_path
         self.ggml_path = ggml_path
 
-    def generate_subtitle_raw(self, file_path: Path, lang: str = 'zh', trans_to: str = 'None', ggml_prompt: str = ''):
+    def generate_subtitle_raw(self, file_path: Path, lang: str = 'zh', trans_to: str = 'None', ggml_prompt: str = '',max_char_per_sentence:str="60"):
 
         ggml_prompt_ = ""
         if lang == 'zh':
@@ -24,7 +24,7 @@ class Whisper:
             "-l", lang,
             "--prompt", ggml_prompt_,
             "-of", str(output_path),
-            "-ml", "80"
+            "-ml", max_char_per_sentence
         ]
 
         command = [arg.strip() for arg in command]

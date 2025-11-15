@@ -26,14 +26,13 @@ class Gemini:
 
 **请遵循以下严格规则:**
 1.  **保持原始 SRT 格式**: 你的输出必须是完整的、格式正确的 SRT 字幕。
-2.  **不要修改序号和时间戳**。
+2.  **不要修改序号，但可以合并时间戳**。
 3.  **只修改字幕文本**。
 4.  **不要添加任何额外内容**: 你的回复中，除了修正后的 SRT 内容，不要包含任何解释、前言或代码块标记。
 
 请开始处理并输出修正后的 SRT 字幕。
 """
 
-        tmp_file_path = None
         output_path = STORAGE_PATH/("subtitles")/file_path.name
         if trans_to != "None":
             output_path = STORAGE_PATH / \
@@ -71,9 +70,6 @@ class Gemini:
                 print(f"api[{self.current_key}]不可用")
                 print(e)
                 self.switch_api()
-
-        print("正在删除:\n", str(tmp_file_path))
-        os.remove(tmp_file_path)
 
     def switch_api(self):
         self.current_key += 1
