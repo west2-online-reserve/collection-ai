@@ -1,0 +1,10 @@
+key: poison
+tags:
+  - dot
+stacking:
+  mode: replace
+  max: 1
+duration:
+  type: turns
+  value: 3
+dispellable: true

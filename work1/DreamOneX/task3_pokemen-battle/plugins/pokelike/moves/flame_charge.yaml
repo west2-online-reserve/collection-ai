@@ -1,0 +1,8 @@
+key: flame_charge
+name: Flame Charge
+element: fire
+effects:
+  - type: charge
+    prepare_turns: 1
+  - type: damage
+    ratio: 3.0

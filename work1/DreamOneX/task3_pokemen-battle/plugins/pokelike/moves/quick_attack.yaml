@@ -1,0 +1,9 @@
+key: quick_attack
+name: Quick Attack
+element: neutral
+effects:
+  - type: damage
+    ratio: 1.0
+  - type: multi_hit
+    extra_hits: 1
+    chance: 0.4

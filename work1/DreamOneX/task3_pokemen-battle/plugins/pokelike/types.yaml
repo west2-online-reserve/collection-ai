@@ -1,0 +1,20 @@
+elements:
+  grass:
+    strong: [water]
+    weak: [fire]
+    passive: grass.heal_each_turn
+  fire:
+    strong: [grass]
+    weak: [water]
+    passive: fire.stack_attack_on_deal
+  water:
+    strong: [fire]
+    weak: [electric]
+    passive: water.mitigate_on_hit
+  electric:
+    strong: [water]
+    weak: [grass]
+    passive: electric.extra_action_on_evade
+  neutral:
+    strong: []
+    weak: []

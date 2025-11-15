@@ -1,0 +1,5 @@
+key: squirtle
+name: 杰尼龟
+element: water
+stats: { max_hp: 80, attack: 25, defense: 20, dodge: 0.20 }
+moves: [aqua_jet, shield]
