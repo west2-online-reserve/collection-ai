@@ -161,6 +161,13 @@ class Play:
         """
         让玩家选择并使用技能
         """
+        # 若本回合因状态影响无法行动，则跳过
+        try:
+            if getattr(self.current_player_pokemon, "can_act", True) is False:
+                print(f"{self.current_player_pokemon.team}的{self.current_player_pokemon.name} 因状态影响无法行动，本回合被跳过！")
+                return
+        except Exception:
+            pass
         print("选择你的宝可梦要使用的技能")
         skills = self.current_player_pokemon.skills
         # 显示可用技能列表
@@ -181,6 +188,13 @@ class Play:
         """
         电脑随机选择并使用技能
         """
+        # 若本回合因状态影响无法行动，则跳过
+        try:
+            if getattr(self.current_computer_pokemon, "can_act", True) is False:
+                print(f"{self.current_computer_pokemon.team}的{self.current_computer_pokemon.name} 因状态影响无法行动，本回合被跳过！")
+                return
+        except Exception:
+            pass
         # 从当前宝可梦的技能中随机选择一个
         computer_skill = random.choice(self.current_computer_pokemon.skills)
         # 使用选择的技能攻击玩家的宝可梦
@@ -205,6 +219,16 @@ class Play:
             self.current_computer_pokemon.can_act = True
         except Exception:
             pass
+
+        # 检查并应用延迟跳过标记（例如玩家上回合被麻痹/冰冻时设置）
+        for p in (self.current_player_pokemon, self.current_computer_pokemon):
+            try:
+                if getattr(p, 'next_turn_forced_skip', False):
+                    p.can_act = False
+                    p.next_turn_forced_skip = False  # 消费标记
+                    print(f"{p.team}的{p.name} 因上一回合的控制效果本回合无法行动！")
+            except Exception:
+                pass
 
         # 应用所有状态效果
         self.current_player_pokemon.apply_status_effect()

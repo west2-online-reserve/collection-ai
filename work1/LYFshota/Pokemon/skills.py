@@ -124,9 +124,15 @@ class Thunderbolt(Skill):
 
         # 随机判断是否触发麻痹效果
         if random.randint(1, 100) <= self.activation_chance:
-            # 触发成功，添加麻痹状态
-            opponent.add_status_effect(effects.ParalyzeEffect())
-            print(f"————{opponent.team}的{opponent.name} 被 {self.name} 麻痹了！————")
+            # 根据目标队伍决定麻痹生效时机：
+            # - 电脑遭到麻痹：立即失去当前回合行动（玩家先手，可造成影响）
+            # - 玩家遭到麻痹：标记下一回合跳过（当前回合已行动或还未进入其行动阶段）
+            if getattr(opponent, 'team', None) == '玩家':
+                opponent.next_turn_forced_skip = True
+                print(f"————{opponent.team}的{opponent.name} 被 {self.name} 麻痹了！将跳过下一回合的行动。————")
+            else:
+                effects.ParalyzeEffect().apply(opponent)
+                print(f"————{opponent.team}的{opponent.name} 被 {self.name} 麻痹了！本回合失去行动权。————")
         else:
             # 触发失败
             print(f"————{self.name} 没有成功麻痹 {opponent.team}的{opponent.name}。————")
@@ -313,19 +319,24 @@ class Ice_Beam(Skill):
         self.damage = damage
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
-        # 计算实际伤害
-        real_damage = self.damage - opponent.defense
-        if real_damage < 0:
-            real_damage = 0
-
-        opponent.receive_damage(real_damage, user)
+        #  receive_damage 统一处理防御与闪避
+        pre_hp = opponent.hp
+        opponent.receive_damage(self.damage, user)
+        actual = pre_hp - opponent.hp
         print(
-            f"————{user.team}的{user.name} 使用了 {self.name}, 对 {opponent.team}的{opponent.name} 造成了 {real_damage} 点伤害————"
+            f"————{user.team}的{user.name} 使用了 {self.name}, 对 {opponent.team}的{opponent.name} 造成了 {actual} 点伤害————"
         )
 
         # 随机判断是否触发冰冻效果
-        if random.randint(1, 100) <= 20:  # 20%几率触发冰冻
-            opponent.add_status_effect(effects.FreezeEffect())
-            print(f"{opponent.team}的{opponent.name} 被 {user.team}的{user.name} 使用 {self.name} 冰冻了！")
+        if random.randint(1, 100) <= 40:  # 40%几率触发冰冻
+            # 根据目标队伍决定冰冻生效时机：
+            # - 电脑被冻结：立即失去当前回合行动
+            # - 玩家被冻结：跳过下一回合行动
+            if getattr(opponent, 'team', None) == '玩家':
+                opponent.next_turn_forced_skip = True
+                print(f"{opponent.team}的{opponent.name} 被 {user.team}的{user.name} 使用 {self.name} 冰冻了！将跳过下一回合的行动。")
+            else:
+                effects.FreezeEffect().apply(opponent)
+                print(f"{opponent.team}的{opponent.name} 被 {user.team}的{user.name} 使用 {self.name} 冰冻了！本回合失去行动权。")
         else:
             print(f"{user.team}的{self.name} 没有成功冰冻 {opponent.team}的{opponent.name}。")
