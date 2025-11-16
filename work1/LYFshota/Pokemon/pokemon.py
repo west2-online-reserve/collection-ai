@@ -32,6 +32,13 @@ class Pokemon:
         """
         使用技能攻击对手
         """
+        # 若当前状态禁止行动，则跳过
+        try:
+            if getattr(self, "can_act", True) is False:
+                print(f"{self.team}的{self.name} 因状态影响无法行动，本回合被跳过！")
+                return
+        except Exception:
+            pass
         print(f"{self.team}的{self.name} 使用了 {skill.name}")
         skill.execute(self, opponent)
 
@@ -428,13 +435,13 @@ class IcePokemon(Pokemon):
         opponent_type = opponent.type
 
         # 冰属性克制关系：
-        # 对火属性伤害减半
+        # 对火属性伤害70%
         if opponent_type == "火":
-            effectiveness = 0.5
+            effectiveness = 0.7
         return effectiveness
-        # 对水属性双倍伤害
+        # 对水属性2.2倍伤害
         if opponent_type == "水":
-            effectiveness = 2.0 
+            effectiveness = 2.2 
         return effectiveness
 
     def begin(self):
@@ -600,7 +607,7 @@ class Elegant_penguin(IcePokemon):
         """
         初始化高雅企鹅的属性
         :param hp: 生命值，默认80
-        :param attack: 攻击力，默认30
+        :param attack: 攻击力，默认35
         :param defense: 防御力，默认25
         :param evade_chance: 闪避几率，默认15%
         """
