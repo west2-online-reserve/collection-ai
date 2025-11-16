@@ -45,6 +45,7 @@ class Play:
         # 战斗
         self.battle()
 
+        time.sleep(1)
         sys.exit()
         
     def isPokemonNumValid(self,numList:list) -> bool:
@@ -262,6 +263,8 @@ class Play:
                     self.teams[gamer].pop(index)
 
                     self.effect[gamer].clear()
+                    self.isMore[gamer]=False
+                    self.isDisabled[gamer]=False
 
                     print(f'\n{play.TEXT[gamer]}的 {battlePokemon.name} 倒下了！')
 
@@ -282,11 +285,11 @@ class Play:
                 if not self.isDisabled[gamer]:
                     isOpponentAttacked=self.act(CHOOSE_SKILL_DICT,gamer,battlePokemon,opponentPokemon) # 受击被动内嵌在该函数的beAttacked
                     
-                    if isOpponentAttacked: # 成功攻击时机被动技能
+                    if isOpponentAttacked==True: # 成功攻击时机被动技能
                         if battlePokemon.ATTR=='fire':
                             battlePokemon.negative(0,self,gamer)
                     else: # 对方躲闪被动技能
-                        if opponentPokemon.ATTR=='elec' and (not self.isDisabled[play.OTHER[gamer]]): # 再次行动，但反击被躲开对方不能再反击
+                        if opponentPokemon.ATTR=='elec' and (not self.isDisabled[play.OTHER[gamer]]) and isOpponentAttacked!=-404: # 再次行动，但反击被躲开对方不能再反击
                             gamer=play.OTHER[gamer]
                             self.isMore[gamer]=True
                             battlePokemon,opponentPokemon=opponentPokemon,battlePokemon

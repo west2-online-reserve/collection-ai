@@ -144,11 +144,13 @@ class Pokemon:
             if result[0]:
                 return True
             else:
-                return False
+                return -404
         else:
-            print(f'但是{play.TEXT[attacked]}的 {self.name} 躲开了!')
-            return False or once
-        
+            if result[0]:
+                print(f'但是{play.TEXT[attacked]}的 {self.name} 躲开了!')
+                return False or once
+            else:
+                return -404
         
 # 定义含有属性的宝可梦
 
