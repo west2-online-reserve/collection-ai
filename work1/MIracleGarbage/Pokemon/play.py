@@ -160,9 +160,13 @@ class Play:
             raise
 
     def changeAttackRate(self):
-        player:Pokemon=play.currentPokemonDict['player']
-        opponent:Pokemon=play.currentPokemonDict['opponent']
+        "重新初始化改变修正率"
+        player:Pokemon=self.currentPokemonDict['player']
+        opponent:Pokemon=self.currentPokemonDict['opponent']
         
+        self.attackRate['player']=1.0
+        self.attackRate['opponent']=1.0
+
         # player attack
         if opponent.ATTR in player.ADV:
             self.multifyAttackRate('player',2.0)

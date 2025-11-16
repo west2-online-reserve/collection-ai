@@ -48,5 +48,16 @@ class Charmander(FirePokemon):
 
     def __init__(self, attack=35, defence=15):
         super().__init__(attack, defence)
+
+class TestPokemonTank(WaterPokemon):
+    name="深海坦克"
     
-POKEMON_LIST=[Bulbasaur,Pikachu,Squirtle,Charmander]
+    MAX_HP=200
+    DODGE=-0.2
+
+    skillList=[skills.AquaJet]
+
+    def __init__(self, attack=50, defence=50):
+        super().__init__(attack, defence)
+    
+POKEMON_LIST=[Bulbasaur,Pikachu,Squirtle,Charmander,TestPokemonTank]

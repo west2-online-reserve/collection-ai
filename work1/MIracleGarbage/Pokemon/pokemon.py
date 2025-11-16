@@ -199,7 +199,7 @@ class WaterPokemon(Pokemon):
         luck=random.randint(0,1)
 
         if luck:
-            print(f'{play.TEXT[gamer]}的 {self.name} 触发了被动技能!展开了一次水盾!')
+            print(f'{play.TEXT[gamer]}的 {self.name} 触发了被动技能!展开了一次小水盾!')
             return attackValue*(1-0.3)
         else:
             return attackValue
