@@ -27,6 +27,26 @@ class Pikachu(ElecPokemon):
     def __init__(self, attack=35, defence=5):
         super().__init__(attack, defence)
 
-   
+class Squirtle(WaterPokemon):
+    name="杰尼龟"
+
+    MAX_HP=80
+    DODGE=0.2
+
+    skillList=[skills.AquaJet,skills.Shield]
+
+    def __init__(self, attack=25, defence=20):
+        super().__init__(attack, defence)
+
+class Charmander(FirePokemon):
+    name="小火龙"
     
-POKEMON_LIST=[Bulbasaur,Pikachu]
+    MAX_HP=80
+    DODGE=0.1
+
+    skillList=[skills.Ember,skills.FlameCharge]
+
+    def __init__(self, attack=35, defence=15):
+        super().__init__(attack, defence)
+    
+POKEMON_LIST=[Bulbasaur,Pikachu,Squirtle,Charmander]

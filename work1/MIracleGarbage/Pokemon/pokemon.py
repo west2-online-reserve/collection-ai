@@ -29,6 +29,9 @@ class Pokemon:
 
         self.attackGain=1.0 # 伤害增益率 
         self.attacked=1.0 # 减少受到伤害的增益
+        self.attackedTime=0 # 减伤增益时间，0时增益回初始1.0
+
+        self.prepared=0 # 蓄力值
 
     def negative(self,attackValue:float,play:'Play',gamer:str):
         "属性被动"
@@ -58,9 +61,9 @@ class Pokemon:
     def getAttack(self):
         return self.attack
 
-    def isMiss(self) -> bool:
+    def isMiss(self,dodgeUp:float) -> bool:
         "自己是否闪避"
-        return random.random()<self.getDodge()
+        return random.random()<self.getDodge()+dodgeUp
 
     def isSkillNumValid(self,num:str,user:Pokemon) -> bool:
         "判断选择的技能编号是否合法"
@@ -106,11 +109,16 @@ class Pokemon:
         "被攻击并扣血,算上防御和减伤，先算减伤（百分比），再算防御（减去）,成功闪避返回False"
         once=False
 
-        if len(result)==3 and result[2]:
+        if len(result)>=3 and result[2]:
             result[2]=False
             once=self.beAttacked(result,play,attacked)
+
+        if len(result)==4:
+            dodgeUp=result[3]
+        else:
+            dodgeUp=0
                 
-        if not self.isMiss():
+        if not self.isMiss(dodgeUp):
             if result[0]!=0:
                 trueAttackValue=result[0]*self.attacked
 
@@ -133,9 +141,12 @@ class Pokemon:
 
                 print(f'{play.TEXT[attacked]}的 {self.name} {result[1].name}了！')
 
-            return True
+            if result[0]:
+                return True
+            else:
+                return False
         else:
-            print(f'但是{play.TEXT[attacked]}的 {self.name} 躲开了!\n')
+            print(f'但是{play.TEXT[attacked]}的 {self.name} 躲开了!')
             return False or once
         
         
@@ -153,7 +164,7 @@ class GlassPokemon(Pokemon):
     def negative(self,attackValue:float,play:'Play',gamer:str):
         "每回合回复 10% 最大 HP 值"
         self.restoreHp(round(0.1*self.MAX_HP))
-        print(f'\n{play.TEXT[gamer]}的 草系被动触发! {self.name} 回复了 {round(0.1*self.MAX_HP)} 点血量! HP: {self.hp}/{self.MAX_HP}')
+        print(f'\n{play.TEXT[gamer]}的 {self.name} 草系被动触发! 回复了 {round(0.1*self.MAX_HP)} 点血量! HP: {self.hp}/{self.MAX_HP}')
         
 
 class FirePokemon(Pokemon):

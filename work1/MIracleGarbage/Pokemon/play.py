@@ -18,7 +18,7 @@ class Play:
 
         self.teams={'player':[],'opponent':[]} # 宝可梦队伍
         
-        self.TEAM_SIZE=1 # 队伍大小
+        self.TEAM_SIZE=3 # 队伍大小
 
         self.currentPokemonDict={'player':None,'opponent':None} # 正在战斗的宝可梦
 
@@ -49,9 +49,6 @@ class Play:
         
     def isPokemonNumValid(self,numList:list) -> bool:
         "判断选择的宝可梦编号列表是否合法"
-        if len(numList)>self.TEAM_SIZE:
-            return False
-
         try:
             for num in numList:
                 numInt=int(num)
@@ -68,7 +65,7 @@ class Play:
         # 对手选择
         self.teams['opponent']=[POKEMON_LIST[memberNum]() for memberNum in random.sample(range(0,len(POKEMON_LIST)),self.TEAM_SIZE)]
 
-        print(f'请选择 {self.TEAM_SIZE} 个宝可梦组成你的队伍:')
+        print(f'请选择 {self.TEAM_SIZE} 个宝可梦组成你的队伍(编号用空格分开):')
         print('\t',end='')
         cnt=1
         for i in POKEMON_LIST:
@@ -77,14 +74,22 @@ class Play:
         print()
 
         # 玩家选择
-        members=input('请输入宝可梦编号:').split()
-        while not self.isPokemonNumValid(members):
-            if len(members)>self.TEAM_SIZE:
-                members=input('宝可梦过多:').split()
-            else:
-                members=input('请输入正确的宝可梦编号:').split()
+        members = [x for x in input('请输入宝可梦编号:').strip().split() if x]
+        jdg=True
+        while jdg:
+            jdg=False
+            while not self.isPokemonNumValid(members):
+                members = [x for x in input('请输入正确的宝可梦编号:').strip().split() if x]
 
-        self.teams['player']=[POKEMON_LIST[number-1]() for number in list(map(int,members))]
+            members=list(map(int,members))
+            if len(members)>self.TEAM_SIZE:
+                members = [x for x in input('宝可梦过多:').strip().split() if x]
+                jdg=True
+            elif len(members)<self.TEAM_SIZE:
+                members = [x for x in input('宝可梦过少:').strip().split() if x]
+                jdg=True
+
+        self.teams['player']=[POKEMON_LIST[number-1]() for number in members]
 
         self.drawLine()
         print('你选择了如下宝可梦队伍：')
@@ -218,9 +223,13 @@ class Play:
                 if gamer=='player':    
                     print('\n================你的回合================')
 
-                # 战斗开始时机的被动技能
-                if battlePokemon.ATTR=='glass':
-                    battlePokemon.negative(0,self,gamer)
+                # 增益消失
+                if battlePokemon.attackedTime==1:
+                    battlePokemon.attackedTime-=2
+                elif battlePokemon.attackedTime==-1:
+                    print(f"\n{play.TEXT[gamer]}的 {battlePokemon.name} 的防御技能失效了！")
+                    battlePokemon.attacked=1.0
+                    battlePokemon.attackedTime=0
 
                 # 遍历状态列表
                 if (not battlePokemon.isFaint()) and (not self.isMore[gamer]):
@@ -231,7 +240,7 @@ class Play:
                             i+=1
                         else:
                             print(f'\n{play.TEXT[gamer]}的 {battlePokemon.name} {self.effect[gamer][i].name}状态解除了!')
-                            if effect[gamer][i].name in effects.disAbleEffectList:
+                            if self.effect[gamer][i].name in effects.disAbleEffectList:
                                 self.isDisabled[gamer]=False
                                 battlePokemon.dodge=battlePokemon.DODGE
                             self.effect[gamer].pop(i)
@@ -248,6 +257,10 @@ class Play:
                     index=self.teams[gamer].index(battlePokemon)
                     self.teams[gamer].pop(index)
 
+                    self.effect[gamer].clear()
+
+                    print(f'\n{play.TEXT[gamer]}的 {battlePokemon.name} 倒下了！')
+
                     # 指派宝可梦
                     if len(self.teams[gamer])<=0:
                         break
@@ -257,6 +270,10 @@ class Play:
                     # 更改修正率
                     self.changeAttackRate()
                 
+                # 战斗开始时机的被动技能
+                if battlePokemon.ATTR=='glass':
+                    battlePokemon.negative(0,self,gamer)
+
                 # 行动:选择技能，使用技能，可能使对手受到伤害
                 if not self.isDisabled[gamer]:
                     isOpponentAttacked=self.act(CHOOSE_SKILL_DICT,gamer,battlePokemon,opponentPokemon) # 受击被动内嵌在该函数的beAttacked

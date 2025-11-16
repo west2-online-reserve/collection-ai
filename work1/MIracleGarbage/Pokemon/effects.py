@@ -64,6 +64,18 @@ class Parasitized(Effect):
         play.currentPokemonDict[play.OTHER[targetName]].restoreHp(round(target.MAX_HP*0.1))
         print(f'{play.TEXT[play.OTHER[targetName]]}的 {play.currentPokemonDict[play.OTHER[targetName]].name} HP: {play.currentPokemonDict[play.OTHER[targetName]].hp}/{play.currentPokemonDict[play.OTHER[targetName]].MAX_HP}')
 
+class Fired(Effect):
+    "「烧伤」状态（每回合受到 10 额外伤害，持续 2 回合）"
+    name="烧伤"
+
+    def __init__(self, time=2):
+        super().__init__(time)
+
+    def cast(self, target:Pokemon,targetName:str,play:'Play'):
+        print()
+        print(f'{play.TEXT[targetName]}的 {target.name} {self.name}了,受到{10}点伤害！',end=' ')
+        target.reduceHp(10)
+        print(f'{play.TEXT[targetName]}的 {target.name} HP: {target.hp}/{target.MAX_HP}')
 
 # 会使宝可梦不能行动的状态
 disAbleEffectList=[Paralysis.name]

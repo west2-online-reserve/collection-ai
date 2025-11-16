@@ -80,4 +80,69 @@ class ParasiticSeeds(Skill):
 
         return (0,effect)
         
+class AquaJet(Skill):
+    "杰尼龟喷射出一股强力的水流，对敌方造成 140% 水属性伤害"
+    name="水枪"
+    
+    @classmethod
+    def cast(cls,player:'Pokemon') -> tuple:
+        "返回技能的伤害与可能产生的状态"     
+        effect=None
+
+        return (player.getAttack()*1.4,effect)
+
+class Shield(Skill):
+    "杰尼龟使用水流形成保护盾，减少下一回合受到的伤害 50%"
+    name="水盾"
+
+    @classmethod
+    def cast(cls,player:'Pokemon') -> tuple:
+        "返回技能的伤害与可能产生的状态"     
+        effect=None
+
+        # 其他行为
+        player.attacked-=0.5
+        player.attackedTime=1
+
+        return (0,effect)
+
+class Ember(Skill):
+    """
+        小火龙发射出一团小火焰，对敌人造成 100% 火属性伤害，
+        并有 10% 的几率使目标陷入「烧伤」状态（每回合受到 10 额外伤害，持续 2 回合）
+    """
+    name="火花"
+
+    @classmethod
+    def cast(cls,player:'Pokemon') -> tuple:
+        "返回技能的伤害与可能产生的状态"     
+        if random.random()<0.1:
+            effect=effects.Fired()
+        else:
+            effect=None
+
+        return (player.getAttack(),effect)
+    
+class FlameCharge(Skill):
+    """
+        小火龙召唤出强大的火焰，对敌人造成 300% 火属性伤害，
+        并有 80% 的几率使敌人陷入「烧伤」状态，
+        这个技能需要 1 个回合的蓄力，并且在面对该技能时敌法闪避率增加 20%
+    """
+    name="蓄能爆炎"
+
+    @classmethod
+    def cast(cls,player:'Pokemon') -> tuple:
+        "返回技能的伤害与可能产生的状态"     
+        if player.prepared==0:
+            player.prepared=1
+            effect=None
+            return (0,effect)
+        else:
+            player.prepared=0
+            if random.random()<0.8:
+                effect=effects.Fired()
+            else:
+                effect=None
+            return (player.getAttack()*3.0,effect,False,0.2)
         
