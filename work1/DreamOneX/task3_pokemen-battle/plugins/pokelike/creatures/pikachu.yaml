@@ -1,0 +1,5 @@
+key: pikachu
+name: 皮卡丘
+element: electric
+stats: { max_hp: 80, attack: 35, defense: 5, dodge: 0.30 }
+moves: [thunderbolt, quick_attack]

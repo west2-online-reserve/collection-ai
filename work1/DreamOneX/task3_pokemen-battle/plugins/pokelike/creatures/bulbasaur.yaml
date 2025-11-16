@@ -1,0 +1,5 @@
+key: bulbasaur
+name: 妙蛙种子
+element: grass
+stats: { max_hp: 100, attack: 35, defense: 10, dodge: 0.10 }
+moves: [seed_bomb, parasitic_seeds]

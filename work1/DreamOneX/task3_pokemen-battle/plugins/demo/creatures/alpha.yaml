@@ -1,0 +1,6 @@
+# plugins/demo/creatures/alpha.yaml
+key: alpha
+name: Alpha
+element: neutral
+stats: { max_hp: 60, attack: 20, defense: 4, dodge: 0.10 }
+moves: [strike]

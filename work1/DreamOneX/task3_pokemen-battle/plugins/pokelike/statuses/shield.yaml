@@ -1,0 +1,10 @@
+key: shield
+tags:
+  - buff
+stacking:
+  mode: replace
+  max: 1
+duration:
+  type: hits
+  value: 1
+dispellable: true

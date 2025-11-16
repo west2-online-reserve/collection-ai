@@ -1,0 +1,10 @@
+key: thunderbolt
+name: Thunderbolt
+element: electric
+effects:
+  - type: damage
+    ratio: 1.4
+  - type: status_apply
+    status: paralysis
+    chance: 0.1
+    duration_turns: 2

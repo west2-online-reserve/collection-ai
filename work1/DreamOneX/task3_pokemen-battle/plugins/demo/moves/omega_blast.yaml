@@ -1,0 +1,13 @@
+key: omega_blast
+name: Omega Blast
+element: neutral
+accuracy: 0.9
+effects:
+  - type: damage
+    ratio: 2.5
+    accuracy: 0.9
+  - type: status_apply
+    status: stunned
+    chance: 0.25
+    params:
+      turns: 1

@@ -1,0 +1,6 @@
+key: aqua_jet
+name: Aqua Jet
+element: water
+effects:
+  - type: damage
+    ratio: 1.4
