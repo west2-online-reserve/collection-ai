@@ -29,7 +29,6 @@ def main():
 
     L, k, x0 = 2, 1, -4
     logistic(L = L, k = k, x0 = x0)
-    
 
 if __name__ == "__main__":
     main()
