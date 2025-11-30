@@ -27,12 +27,18 @@ def fetch_project_list():
         return []
 
 def fetch_project_detail(program_code):
-    #获取详情
+    """
+    Fetch detailed information for a specific project from the Summer OSPP API.
+    Args:
+        program_code (str): The unique code identifying the project.
+    Returns:
+        dict: A dictionary containing the project's detailed information, or an empty dict if the request fails.
+    """
     payload = {"programId": program_code, "type": "org"}
     try:
         res = requests.post(API_DETAIL_URL, headers=HEADERS, json=payload)
         return res.json()
-    except:
+    except Exception:
         return {}
 
 def parse_requirements(req_data):

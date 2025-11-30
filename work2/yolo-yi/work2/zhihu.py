@@ -76,7 +76,7 @@ def scrape_topic_questions(driver, topic_url):
 
                     if len(questions_data_list) >= MAX_QUESTIONS:
                         break
-            except:
+            except Exception:
                 continue  # 防止某个元素抓取报错中断循环
         print(f"当前已收集 {len(questions_data_list)} 个问题链接...")
         if len(questions_data_list) < MAX_QUESTIONS:
@@ -99,8 +99,9 @@ def scrape_details(driver, questions_data_list):
                 driver.execute_script("arguments[0].click();", view_all_btn)
                 time.sleep(4)
         except:
+            # 如果没有“查看全部”按钮，直接跳过即可，不影响后续流程
             pass
-        # 获取详情描述 (保持不变) ---
+        # 获取当前知乎问题的详细描述
         detail = "无详细描述"
         try:
             try:
@@ -109,12 +110,14 @@ def scrape_details(driver, questions_data_list):
                     driver.execute_script("arguments[0].click();", expand_btn)
                     time.sleep(0.5)
             except:
+                # 跳过
                 pass
 
             detail_elem = driver.find_element(By.CSS_SELECTOR, ".QuestionRichText span[itemprop='text']")
             if detail_elem.text.strip():
                 detail = detail_elem.text
         except:
+            # 忽略异常：如果没有详细描述元素，使用默认值 "无详细描述"
             pass
         #获取回答
         answers_combined = "无回答信息"

@@ -19,7 +19,6 @@ def display_status(character_name, current_hp, max_hp):
     """打印格式: 【角色名】HP: 当前血量 / 最大血量"""
     # 在这里写你的代码，用print()函数
     print(f"{character_name} HP: {current_hp} / {max_hp}")
-    pass
 
 
 # 任务二：掷骰子
@@ -171,5 +170,3 @@ def main_battle_loop():
 
         turn = turn + 1
         time.sleep(1)
-
-    pass
