@@ -81,16 +81,16 @@ class ZhihuSpider:
                 show_all = self.driver.find_element(By.XPATH, "//button[contains(text(),'显示全部')]")
                 show_all.click()
                 time.sleep(2)
-            except:
-                pass
+            except Exception:
+                print("捕获了普通异常")
             
             # 获取问题详情
             question_detail = "无详细描述"
             try:
                 detail_element = self.driver.find_element(By.CSS_SELECTOR, ".QuestionRichText")
                 question_detail = detail_element.text.strip()[:300]
-            except:
-                pass
+            except Exception:
+                print("捕获了普通异常")
 
             answers = []
             for scroll in range(15):
@@ -105,7 +105,7 @@ class ZhihuSpider:
                             answers.append(text)
                             if len(answers) >= 20:
                                 break
-                    except:
+                    except Exception:
                         continue                
                 if len(answers) >= 20:
                     break    

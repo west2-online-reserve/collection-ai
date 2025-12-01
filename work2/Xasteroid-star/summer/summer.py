@@ -83,6 +83,8 @@ def extract_project_details(projects):
                 output_requirements = parse_output_requirements(output_requirement_list)
             else:
                 print(f"获取项目详情失败: {response2.status_code}")
+                project_description = "（获取失败）"
+                output_requirements = "（获取失败）"
             # 构建项目信息
             project_info = {
                 '项目ID': project_id,

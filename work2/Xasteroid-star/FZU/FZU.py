@@ -21,6 +21,7 @@ def get_clicktimes(script_text):
         download_json = requests.get(url, headers=headers).json()
         return download_json["wbshowtimes"]
     except Exception:
+        print(f"获取点击次数失败: {type(e).__name__}: {e}")
         return "0"
 
 def get_download_count(node):
@@ -37,7 +38,9 @@ def get_download_count(node):
 informs_list = []
 max_attach = 0  # 记录最大附件数
 urls = []
-for i in range(206, 176, -1):
+PAGE_START = 206 
+PAGE_END = 176 
+for i in range(PAGE_START, PAGE_END , -1):
     url = "https://jwch.fzu.edu.cn/jxtz/{}.htm".format(i)
     urls.append(url)
 
