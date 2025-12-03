@@ -1,0 +1,8 @@
+{
+    "api_keys":[
+
+    ],
+    "whisper_cpp_path":"whisper.cpp\\build_cuda\\bin\\whisper-cli.exe",
+    "ggml_path":"whisper.cpp\\models\\ggml-medium.bin"
+    
+}
