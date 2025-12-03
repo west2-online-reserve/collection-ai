@@ -1,0 +1,5 @@
+key: charmander
+name: 小火龙
+element: fire
+stats: { max_hp: 80, attack: 35, defense: 15, dodge: 0.10 }
+moves: [ember, flame_charge]

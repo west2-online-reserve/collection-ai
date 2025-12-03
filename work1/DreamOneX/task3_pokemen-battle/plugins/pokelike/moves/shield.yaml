@@ -1,0 +1,10 @@
+key: shield
+name: Shield
+element: water
+effects:
+  - type: status_apply
+    status: shield
+    target: actor
+    duration_turns: 1
+    params:
+      ratio: 0.5

@@ -1,0 +1,19 @@
+key: flame_charge
+name: Flame Charge
+element: fire
+effects:
+  - type: charge
+    prepare_turns: 1
+  - type: modifier
+    target: defender
+    stat: dodge
+    value: 1.2
+    operation: ratio
+  - type: damage
+    ratio: 3.0
+  - type: status_apply
+    status: burn
+    chance: 0.8
+    duration_turns: 3
+    params:
+      damage: 15

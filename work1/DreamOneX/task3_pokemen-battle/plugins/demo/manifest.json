@@ -1,0 +1,10 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "types": "types.yaml",
+  "moves": "moves/",
+  "creatures": "creatures/",
+  "statuses": "statuses/",
+  "passives": ["passives:register_passives"],
+  "step_providers": ["steps:build_demo_providers"]
+}

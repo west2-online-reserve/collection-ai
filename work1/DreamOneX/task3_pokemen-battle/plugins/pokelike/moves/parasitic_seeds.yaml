@@ -1,0 +1,9 @@
+key: parasitic_seeds
+name: Parasitic Seeds
+element: grass
+effects:
+  - type: status_apply
+    status: leech_seed
+    duration_turns: 3
+    params:
+      percent: 0.1

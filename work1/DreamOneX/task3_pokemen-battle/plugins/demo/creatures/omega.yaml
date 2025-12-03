@@ -1,0 +1,11 @@
+key: omega
+name: Omega
+element: neutral
+stats:
+  max_hp: 120
+  attack: 40
+  defense: 10
+  dodge: 0.15
+moves:
+  - strike
+  - omega_blast

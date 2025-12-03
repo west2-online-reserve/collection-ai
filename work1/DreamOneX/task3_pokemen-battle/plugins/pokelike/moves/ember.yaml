@@ -1,0 +1,12 @@
+key: ember
+name: Ember
+element: fire
+effects:
+  - type: damage
+    ratio: 1.0
+  - type: status_apply
+    status: burn
+    chance: 0.1
+    duration_turns: 2
+    params:
+      damage: 10
