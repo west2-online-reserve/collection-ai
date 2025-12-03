@@ -92,7 +92,7 @@ class Pokemon:
 
     def begin(self):
         # 新回合开始时触发的方法
-        raise NotImplemented
+        raise NotImplementedError()
 
     def __str__(self) -> str:
         return f"{self.name} 属性: {self.type}"

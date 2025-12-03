@@ -17,7 +17,7 @@ try:
     from longmen_vs_nabiya import (
         display_status, roll_dice, choose_nagato_action,
         calculate_attack_damage, calculate_defense_value,
-        check_critical_hit, nabiya_ai_action, main_battle_loop
+        check_critical_hit, nabiya_ai_action
     )
 except (ImportError, SyntaxError) as e:
     print("❌ 严重错误：无法导入 longmen_vs_nabiya.py！")

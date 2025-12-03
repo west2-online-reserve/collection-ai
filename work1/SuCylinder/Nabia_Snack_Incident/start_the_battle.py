@@ -1,7 +1,6 @@
 # start_the_battle.py
 # 完成所有代码后，运行此文件，观看长门与娜比亚的对决！
 
-import sys
 from longmen_vs_nabiya import main_battle_loop
 
 if __name__ == "__main__":
