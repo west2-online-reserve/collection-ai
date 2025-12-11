@@ -1,0 +1,18 @@
+{
+  "characters": {
+    "学姐": {
+      "affinity": 0,
+      "role": "社团里的艺术少女"
+    },
+    "小白": {
+      "affinity": 73,
+      "role": "课堂上的元气同学"
+    },
+    "姐姐": {
+      "affinity": 0,
+      "role": "食堂里的温柔姐姐"
+    }
+  },
+  "current_target": "小白",
+  "scene_stage": "xiaobai_line"
+}
