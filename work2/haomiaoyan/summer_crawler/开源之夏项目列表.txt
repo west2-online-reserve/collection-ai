@@ -1,0 +1,354 @@
+接口返回总项目数：565
+当前页项目数量：50
+当前页数：3
+
+【项目1】
+项目名称：利用汇编优化riscv架构下musl的memory性能
+所属组织：如意 RISC-Vers 社区
+难度：进阶
+技术标签：[["os","RISC-V"],["os","Linux"],["codelang","Programming Language"]]
+项目编码：25b540163
+
+【项目2】
+项目名称：为 Overleaf LaTeX 协作平台接入 LLM Copilot 功能
+所属组织：北京大学 Linux 俱乐部
+难度：进阶/Advanced
+技术标签：[["datas","AI"],["web","Web Application"]]
+项目编码：25bc30521
+
+【项目3】
+项目名称：基于Agent实现数据分析报告场景应用
+所属组织：DB-GPT
+难度：基础
+技术标签：[["datas","AI"],["datas","Database"],["datas","LLM"]]
+项目编码：25f420441
+
+【项目4】
+项目名称：基于 Dubbo Triple 协议的零信任、高性能、可靠 Steaming 能力实现
+所属组织：Apache Dubbo
+难度：进阶
+技术标签：[["web","Web Application"],["web","Spring Cloud"],["safe","JWT"],["safe","OAuth"],["safe","OpenIDConnect"]]
+项目编码：25a7f0506
+
+【项目5】
+项目名称：Prometheus remote write 请求零分配解析
+所属组织：Apache HoraeDB
+难度：基础
+技术标签：[["cloudnative","Prometheus"],["datas","Non-relational Database"],["web","Apache"]]
+项目编码：2544e0062
+
+【项目6】
+项目名称：量子启发算法超参数搜寻模块开发
+所属组织：昇思MindSpore
+难度：基础
+技术标签：[["datas","AI"]]
+项目编码：25c6d0298
+
+【项目7】
+项目名称：飞桨PaddleNLP-前沿模型模块化设计
+所属组织：飞桨PaddlePaddle
+难度：进阶
+技术标签：[["datas","Natural Language Processing (NLP)"],["datas","AI"]]
+项目编码：2573e0132
+
+【项目8】
+项目名称：基于ZVM自动构建openEuler embedded混合部署系统
+所属组织：openEuler 社区
+难度：进阶/Advanced
+技术标签：[["os","Virtualization"],["datas","Embedded Database"],["os","RTOS"]]
+项目编码：25b970246
+
+【项目9】
+项目名称：GCC-Fortran 的 Function Multi-Versioning 功能实现
+所属组织：清华大学 TUNA 协会
+难度：进阶
+技术标签：[["os","GCC"]]
+项目编码：25c480531
+
+【项目10】
+项目名称：在Seata Console端提供MCP Server
+所属组织：Apache Seata
+难度：进阶/Advanced
+技术标签：[["datas","AI"]]
+项目编码：250640477
+
+【项目11】
+项目名称：基于MindSpore和多视角立体匹配技术的稠密重建模型
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0490
+
+【项目12】
+项目名称：KWDB语法和计算功能扩展
+所属组织：KWDB
+难度：基础
+技术标签：[["datas","Database"]]
+项目编码：25e3b0155
+
+【项目13】
+项目名称：openGauss向量数据库对接airbyte
+所属组织：openGauss 社区
+难度：基础
+技术标签：[["datas","Database"],["datas","AI"]]
+项目编码：2522d0321
+
+【项目14】
+项目名称：研究面向企业级应用Linux系统的性能评价方法及验证工具
+所属组织：openEuler 社区
+难度：基础
+技术标签：[["os","Linux"]]
+项目编码：25b970241
+
+【项目15】
+项目名称：为 Excelize 公式计算引擎添加公式计算函数
+所属组织：Excelize
+难度：基础/Basic
+技术标签：[["codelang","Programming Language"]]
+项目编码：250240002
+
+【项目16】
+项目名称：支持Agent2Agent服务管理模块
+所属组织：Nacos
+难度：进阶/Advanced
+技术标签：[["datas","AI"],["cloudnative","Cloud Native"]]
+项目编码：25ab10294
+
+【项目17】
+项目名称：为 GreptimeDB 实现异步索引构建机制
+所属组织：GreptimeDB
+难度：进阶/Advanced
+技术标签：[["datas","Database"],["cloudnative","Cloud Native"]]
+项目编码：2532c0118
+
+【项目18】
+项目名称：为opentelemetry-go-auto-instrumentation提供eino框架的大模型可观测能力
+所属组织：opentelemetry-go-auto-instrumentation
+难度：进阶
+技术标签：[["os","Perf"]]
+项目编码：254f90153
+
+【项目19】
+项目名称：基于OpenYurt本地部署高可用Kubernetes集群
+所属组织：OpenYurt
+难度：进阶
+技术标签：[["cloudnative","Kubernetes"],["cloudnative","Docker"],["cloudnative","Cloud Native"]]
+项目编码：255fc0171
+
+【项目20】
+项目名称：openInula 2.0 升级迁移工具
+所属组织：openInula
+难度：基础
+技术标签：[["web","Babel"],["web","React"],["web","UI"],["web","Webpack"],["web","Web Application"]]
+项目编码：2590e0197
+
+【项目21】
+项目名称：优化 FIT for Python 的插件使用体系
+所属组织：ModelEngine
+难度：基础
+技术标签：[["codelang","Programming Language"],["dev","DevOps"]]
+项目编码：250500169
+
+【项目22】
+项目名称：物理一致可交互室内仿真场景生成：基于KubeEdge-Ianvs实现
+所属组织：KubeEdge
+难度：进阶/Advanced
+技术标签：[["datas","PyTorch"],["datas","AI"]]
+项目编码：2598a0424
+
+【项目23】
+项目名称：基于 KubeEdge 的云边视频流通信机制扩展
+所属组织：KubeEdge
+难度：进阶
+技术标签：[["cloudnative","Kubernetes"],["safe","WebSocket"]]
+项目编码：2598a0410
+
+【项目24】
+项目名称：secGear新增CCA TEE插件并对接global-trust-authority统一证明框架
+所属组织：openEuler 社区
+难度：进阶
+技术标签：[["os","ARM"]]
+项目编码：25b970262
+
+【项目25】
+项目名称：支持在Windows OS上使用KubeEdge部署工具keadm
+所属组织：KubeEdge
+难度：基础/Basic
+技术标签：[["cloudnative","Kubernetes"],["cloudnative","Docker"]]
+项目编码：2598a0315
+
+【项目26】
+项目名称：EulerPublisher-EUR集成与Web管理界面开发
+所属组织：openEuler 社区
+难度：基础
+技术标签：[["cloudnative","Docker"]]
+项目编码：25b970229
+
+【项目27】
+项目名称：Sentinel 自适应熔断功能的调研和实现
+所属组织：Sentinel
+难度：进阶
+技术标签：[["web","Web Application"]]
+项目编码：25aaf0483
+
+【项目28】
+项目名称：QuCOOP：迭代式求解复合二元优化问题
+所属组织：昇思MindSpore
+难度：基础
+技术标签：[["datas","AI"]]
+项目编码：25c6d0356
+
+【项目29】
+项目名称：基于 WebRTC/WHEP 协议的实现录制回放功能
+所属组织：Live777
+难度：进阶/Advanced
+技术标签：[["web","Web Application"]]
+项目编码：25c0f0017
+
+【项目30】
+项目名称：Scheme-langserver兼容Goldfish Scheme+R7RS
+所属组织：墨客实验室
+难度：进阶
+技术标签：[["codelang","Programming Language"]]
+项目编码：25b740521
+
+【项目31】
+项目名称：面向大语言模型的多级编译优化集成
+所属组织：Buddy Compiler
+难度：进阶
+技术标签：[["os","Compiler"],["os","RISC-V"]]
+项目编码：258d90562
+
+【项目32】
+项目名称：PGO反馈优化可用性增强
+所属组织：openEuler 社区
+难度：基础
+技术标签：[["os","Compiler"],["os","LLVM"]]
+项目编码：25b970252
+
+【项目33】
+项目名称：mugen 框架测试结果智能分析
+所属组织：openEuler 社区
+难度：基础
+技术标签：[["os","RISC-V"]]
+项目编码：25b970221
+
+【项目34】
+项目名称：基于vllm-mindspore实现beamsearch算法功能
+所属组织：昇思MindSpore
+难度：基础
+技术标签：[["datas","AI"]]
+项目编码：25c6d0373
+
+【项目35】
+项目名称：基于 eBPF 实时锁竞争感知的 sched_ext 调度策略优化
+所属组织：Linux内核之旅开源社区
+难度：进阶
+技术标签：[["os","GNU"],["os","Linux"],["os","Perf"],["os","Ubuntu"],["os","x86"],["os","Clang"]]
+项目编码：25aca0558
+
+【项目36】
+项目名称：Sermant 控制面实现用户认证与SSO集成能力
+所属组织：Sermant
+难度：基础
+技术标签：[["cloudnative","Cloud Native"]]
+项目编码：256800473
+
+【项目37】
+项目名称：面向openHiTLS增加国密SM9的快速实现功能
+所属组织：openHiTLS
+难度：进阶
+技术标签：[["safe","AES"],["safe","RSA"],["safe","PKI"],["safe","SSL/TLS"]]
+项目编码：2518b0182
+
+【项目38】
+项目名称：State 存储改造并进行性能压测对比
+所属组织：LF Edge eKuiper
+难度：基础
+技术标签：[["datas","Database"],["datas","Embedded Database"],["datas","Flink"]]
+项目编码：2534b0274
+
+【项目39】
+项目名称：Karmada 官方文档体系优化与国际化建设
+所属组织：Karmada
+难度：基础
+技术标签：[["cloudnative","Kubernetes"]]
+项目编码：255c40339
+
+【项目40】
+项目名称：为 vsag 增加 ARM 指令集支持
+所属组织：vsag
+难度：进阶
+技术标签：[["datas","AI"],["datas","Vector Database"],["os","ARM"],["os","Linux"]]
+项目编码：25c520445
+
+【项目41】
+项目名称：OpenSeek开源共建大模型项目
+所属组织：FlagTree
+难度：进阶/Advanced
+技术标签：[["datas","AI"]]
+项目编码：252170416
+
+【项目42】
+项目名称：OI Wiki 外链自动存档和链接替换系统
+所属组织：OI Wiki
+难度：进阶
+技术标签：[["datas","AI"],["datas","Deep Learning"],["datas","MongoDB"],["datas","Natural Language Processing (NLP)"],["datas","MySQL"],["datas","Scikit-learn"],["datas","SciPy"],["dev","CI"],["dev","CD"]]
+项目编码：255000466
+
+【项目43】
+项目名称：基于 SKF 接口实现支持 OpenSSH 连接认证的 PKCS#11 用户态密码模块
+所属组织：openEuler 社区
+难度：进阶/Advanced
+技术标签：[["os","Linux"]]
+项目编码：25b970250
+
+【项目44】
+项目名称：为doc-apis提供可配置的接口文档出入参下划线驼峰互转功能
+所属组织：doc-apis
+难度：基础
+技术标签：[["web","RESTful API"],["web","Spring Boot"]]
+项目编码：25ee30042
+
+【项目45】
+项目名称：基于图像处理的 VChart 退场特效
+所属组织：VisActor
+难度：基础/Basic
+技术标签：[["web","UIKit"]]
+项目编码：251b90078
+
+【项目46】
+项目名称：跨平台客户端 Monobean 实现代码仓库、GitHub 同步和去中心化传输
+所属组织：Web3 Infrastructure Foundation
+难度：进阶
+技术标签：[["dev","Git"],["os","FUSE"],["web","GTK"]]
+项目编码：251dd0080
+
+【项目47】
+项目名称：GStreamer Backend for vhost-device-sound
+所属组织：RustVMM
+难度：Advanced
+技术标签：[["os","Virtualization"],["os","Emulation"],["os","KVM"],["os","Linux"]]
+项目编码：2587f0330
+
+【项目48】
+项目名称：基于KubeEdge-Ianvs的VLA微调数据配比优化算法
+所属组织：KubeEdge
+难度：进阶/Advanced
+技术标签：[["datas","AI"],["datas","PyTorch"],["cloudnative","Kubernetes"]]
+项目编码：2598a0359
+
+【项目49】
+项目名称：基于 tree-sitter.mbt 进行结构化查找/替换的 Visual Studio Code 插件
+所属组织：MoonBit 社区
+难度：基础/Basic
+技术标签：[["codelang","Programming Language"]]
+项目编码：255650130
+
+【项目50】
+项目名称：NB-CLI 命令行工具交互优化
+所属组织：NoneBot
+难度：基础
+技术标签：[["web","UI"],["dev","DevOps"]]
+项目编码：25e1f0098
+
