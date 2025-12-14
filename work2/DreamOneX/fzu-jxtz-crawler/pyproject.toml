@@ -1,0 +1,22 @@
+[project]
+name = "fzu-jxtz-crawler"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "lxml>=6.0.2",
+    "pandas>=2.3.3",
+    "rich>=14.2.0",
+]
+
+[project.scripts]
+fzu-jxtz-crawler = "fzu_jxtz_crawler.main:main"
+
+[dependency-groups]
+dev = [
+    "lxml-stubs>=0.5.1",
+    "pandas-stubs>=2.3.3.251201",
+    "pytest>=9.0.2",
+]
