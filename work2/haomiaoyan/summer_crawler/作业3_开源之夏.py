@@ -81,11 +81,11 @@ with open("开源之夏项目列表.txt", "w", encoding="utf-8") as f:
         resp_message = requests.post(url_message, headers=headers, json=data_message)
         message_json = resp_message.json()
 
-        # 5. 提取并清理项目简述（含项目背景/任务）
+        # 提取并清理项目简述（含项目背景/任务）
         program_desc_html = message_json.get("programDesc", "")
         program_desc = clean_html(program_desc_html)
 
-        # 6. 解析项目产出要求
+        # 解析项目产出要求
         project_requirements = message_json.get("outputRequirement", [])
         requirements_text = ""  # 初始化总要求文本
 
