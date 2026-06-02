@@ -30,8 +30,10 @@
 
 ## 对整个仓库的整理
 
-对未来的维护者而言，如果你不像拉 1.5 个 G 的史，你可以使用下面这个 clone 命令来修改。
+对未来的维护者而言，如果你不想拉 1.5 个 G 的史，你可以使用下面这个 clone 命令来修改。
 
 ```bash
 git clone --depth=1 --single-branch -b 2025 https://github.com/west2-online-reserve/collection-ai.git
 ```
+
+当然你也可以使用 PR 的方式来修改仓库。
