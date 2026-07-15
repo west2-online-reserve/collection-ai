@@ -1,0 +1,353 @@
+接口返回总项目数：565
+当前页项目数量：50
+
+【项目1】
+项目名称：Optimize NegativeAck feature of Pulsar C++/Go Client.
+所属组织：Apache Pulsar
+难度：Basic
+技术标签：[["datas","Kafka"]]
+项目编码：25ac20097
+
+【项目2】
+项目名称：为 Rainbond 实现 Kubeblocks 集成
+所属组织：Rainbond
+难度：进阶
+技术标签：[["cloudnative","Docker"],["cloudnative","Kubernetes"]]
+项目编码：2567d0310
+
+【项目3】
+项目名称：移植sysboost到RISC-V架构
+所属组织：openEuler 社区
+难度：进阶
+技术标签：[["os","RISC-V"]]
+项目编码：25b970139
+
+【项目4】
+项目名称：用数据库存储代码提升开发效率
+所属组织：如意 RISC-Vers 社区
+难度：基础
+技术标签：[["os","RISC-V"],["os","Compiler"]]
+项目编码：25b540186
+
+【项目5】
+项目名称：铜锁密码库支持密码设备接口（SDF）和智能密码钥匙接口（SKF）功能
+所属组织：铜锁
+难度：进阶
+技术标签：[["safe","RSA"],["safe","PKI"],["safe","SSL/TLS"],["safe","AES"]]
+项目编码：25e4d0149
+
+【项目6】
+项目名称：SeaTunnel on Flink cdc connector 支持schema evolution
+所属组织：Apache SeaTunnel
+难度：进阶/Advanced
+技术标签：[["cloudnative","Flink"]]
+项目编码：258940526
+
+【项目7】
+项目名称：基于高性能RISC-V处理器核“香山”的微架构UT验证——FTQ 与后端及取指令单元交互
+所属组织：香山开源社区
+难度：进阶
+技术标签：[["os","RISC-V"],["os","Linux"],["dev","pytest"]]
+项目编码：25c3e0105
+
+【项目8】
+项目名称：面向RISC-V向量扩展的性能评估基准测试的开发
+所属组织：Buddy Compiler
+难度：进阶
+技术标签：[["os","RISC-V"],["os","ARM"],["os","x86"]]
+项目编码：258d90568
+
+【项目9】
+项目名称：基于RISC-V架构的全同态加密NTT运算加速设计与优化
+所属组织：openHiTLS
+难度：进阶
+技术标签：[["safe","AES"],["safe","RSA"],["safe","SSL/TLS"]]
+项目编码：2518b0045
+
+【项目10】
+项目名称：使用 Nacos 实现 FIT 集群的注册中心
+所属组织：ModelEngine
+难度：基础
+技术标签：[["web","Spring Boot"],["codelang","Programming Language"]]
+项目编码：250500113
+
+【项目11】
+项目名称：Volcano准入控制从Webhook到声明式策略的演进与迁移
+所属组织：Volcano社区
+难度：基础/Basic
+技术标签：[["cloudnative","Kubernetes"],["cloudnative","Docker"]]
+项目编码：253ba0259
+
+【项目12】
+项目名称：MindSpore 框架下纯视觉 3D 检测模型（LSS 类）迁移与优化
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0449
+
+【项目13】
+项目名称：利用 GraphAr Spark API 实现 LDBC SNB Datagen 对 GraphAr 格式的直接输出
+所属组织：Apache GraphAr
+难度：基础/Basic
+技术标签：[["datas","Database"],["datas","Graph Database"],["datas","Spark"]]
+项目编码：25e7a0292
+
+【项目14】
+项目名称：P2P 支持基于 TCP 协议的文件传输
+所属组织：Dragonfly
+难度：进阶
+技术标签：[["cloudnative","Cloud Native"],["cloudnative","Kubernetes"],["safe","TCP/IP"],["cloudnative","Docker"],["cloudnative","Distributed Storage"]]
+项目编码：2572e0013
+
+【项目15】
+项目名称：基于数据依赖的任务编排与 Volcano Global 调度
+所属组织：Volcano社区
+难度：进阶/Advanced
+技术标签：[["cloudnative","Kubernetes"],["cloudnative","Spark"],["cloudnative","HDFS"],["os","Linux"]]
+项目编码：253ba0314
+
+【项目16】
+项目名称：Cloudberry Clean Room 原型系统设计与实现
+所属组织：Apache Cloudberry
+难度：进阶
+技术标签：[["safe","OAuth"],["datas","PostgreSQL"],["datas","Structured Database"]]
+项目编码：25e980391
+
+【项目17】
+项目名称：基于 Box64 实现 x86_64 用户态程序在 AArch64 和 RISC-V 系统上的运行支持
+所属组织：openEuler 社区
+难度：进阶/Advanced
+技术标签：[["os","Linux"],["codelang","Programming Language"],["os","x86"],["os","RISC-V"]]
+项目编码：25b970290
+
+【项目18】
+项目名称：基于MindSpore的YOLOv12实现智能交通分析
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0455
+
+【项目19】
+项目名称：SimpleRenderer ⾼性能渲染优化与结构优化
+所属组织：Simple-XX
+难度：进阶
+技术标签：[["os","x86"],["os","GCC"],["os","Perf"]]
+项目编码：257d60537
+
+【项目20】
+项目名称：国产数据库读写组件开发
+所属组织：大数据流水线系统πFlow
+难度：进阶
+技术标签：[["datas","Database"],["datas","Hadoop"],["datas","HDFS"]]
+项目编码：25aee0370
+
+【项目21】
+项目名称：KubeEdge Dashboard UI优化与多语言（中文）支持
+所属组织：KubeEdge
+难度：基础
+技术标签：[["web","React"],["web","UI"],["web","Material UI"]]
+项目编码：2598a0414
+
+【项目22】
+项目名称：VSCode 插件增强-支持手表模拟器可视化布局
+所属组织：如意 RISC-Vers 社区
+难度：基础
+技术标签：[["os","RISC-V"],["os","Linux"]]
+项目编码：25b540355
+
+【项目23】
+项目名称：Sentinel AI 应用场景 Token 限流调研和实现
+所属组织：Sentinel
+难度：进阶
+技术标签：[["datas","AI"],["web","Web Application"]]
+项目编码：25aaf0482
+
+【项目24】
+项目名称：数据库敏感列智能识别工具
+所属组织：OceanBase
+难度：基础
+技术标签：[["datas","Natural Language Processing (NLP)"],["datas","Database"],["dev","AIOps"]]
+项目编码：25e200049
+
+【项目25】
+项目名称：MateChat模板VSCode插件兼容支持
+所属组织：DevUI
+难度：基础
+技术标签：[["web","UI"],["web","Vue.js"]]
+项目编码：258e10395
+
+【项目26】
+项目名称：为Apollo提供完善的OpenAPI方式接口能力
+所属组织：Apollo开源社区
+难度：进阶
+技术标签：[["web","Spring Boot"],["web","Web Application"]]
+项目编码：25c4c0073
+
+【项目27】
+项目名称：构建AI+硬件陪伴玩具
+所属组织：小胰宝
+难度：基础
+技术标签：[["chip","Chip Design/Verification"],["codelang","Programming Language"]]
+项目编码：25cb90568
+
+【项目28】
+项目名称：基于 Spring AI Alibaba 的本地可观测与调试平台（前端）
+所属组织：Spring AI Alibaba
+难度：基础
+技术标签：[["web","Vue.js"]]
+项目编码：25a1a0443
+
+【项目29】
+项目名称：补充IPsec和offload Authorization的端到端测试
+所属组织：Kmesh
+难度：进阶/Advanced
+技术标签：[["cloudnative","Cloud Native"],["cloudnative","Kubernetes"]]
+项目编码：25ed70263
+
+【项目30】
+项目名称：实现位置共享
+所属组织：Rocket.Chat
+难度：基础/Basic
+技术标签：[["web","Desktop Application"],["web","Electron"],["web","Mobile Application"],["web","npm"],["web","React"],["web","React Native"],["web","UI"],["web","UIKit"],["web","UX"],["web","Web Application"],["web","Yarn"]]
+项目编码：25bd30465
+
+【项目31】
+项目名称：面向 openEuler 的高效并行 I/O 子系统 SIONlib 构建及相关工具链支持
+所属组织：openEuler 社区
+难度：进阶/Advanced
+技术标签：[["datas","HPC"]]
+项目编码：25b970287
+
+【项目32】
+项目名称：openGauss 向量数据库集成Llama Stack
+所属组织：openGauss 社区
+难度：基础
+技术标签：[["datas","Database"],["datas","AI"]]
+项目编码：2522d0425
+
+【项目33】
+项目名称：运行时渲染解决方案
+所属组织：OpenTiny
+难度：进阶
+技术标签：[["web","UI"],["web","Vue.js"]]
+项目编码：2536e0200
+
+【项目34】
+项目名称：为 vsag 增加 PC 端（Windows/macOS）开发和运行支持
+所属组织：vsag
+难度：基础
+技术标签：[["datas","AI"],["datas","Vector Database"],["os","x86"]]
+项目编码：25c520453
+
+【项目35】
+项目名称：基于MindSpore Quantum实现薛定谔-海森堡变分算法
+所属组织：昇思MindSpore
+难度：基础
+技术标签：[["datas","AI"]]
+项目编码：25c6d0301
+
+【项目36】
+项目名称：探索LLVM AArch64架构后端的代码生成优化机会
+所属组织：openEuler 社区
+难度：进阶
+技术标签：[["os","Compiler"]]
+项目编码：25b970264
+
+【项目37】
+项目名称：为 deepin RISC-V 移植 GCC 12 的 RISC-V Vector (RVV) 扩展支持
+所属组织：深度开源社区
+难度：进阶/Advanced
+技术标签：[["codelang","Programming Language"],["os","Complier"],["os","Linux"],["os","RISC-V"]]
+项目编码：258860534
+
+【项目38】
+项目名称：基于算子学习的疾病负担外推与以糖网为例的气象环境——基因互作下的代谢病解析
+所属组织：飞桨PaddlePaddle
+难度：进阶
+技术标签：[["datas","Deep Learning"],["datas","Machine Learning"]]
+项目编码：2573e0144
+
+【项目39】
+项目名称：基于高性能RISC-V处理器核“香山”的微架构UT验证——ICache预取和取指
+所属组织：香山开源社区
+难度：进阶
+技术标签：[["os","RISC-V"],["os","Linux"],["dev","pytest"]]
+项目编码：25c3e0121
+
+【项目40】
+项目名称：多媒体处理框架中的动态流式处理接口C++实现
+所属组织：BMF字节跳动多媒体框架
+难度：基础/Basic
+技术标签：[["datas","AI"],["datas","LLM"]]
+项目编码：256330502
+
+【项目41】
+项目名称：基于MindSpore NLP实现Open-R1算法
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0358
+
+【项目42】
+项目名称：基于MindSpore生成式套件，构建多智能的多Agent交互金融语音客服
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0451
+
+【项目43】
+项目名称：RISC-V架构下CMSIS-DSP半精度和双精度运算函数向量化优化（V扩展指令）
+所属组织：如意 RISC-Vers 社区
+难度：进阶
+技术标签：[["os","RISC-V"],["os","Compiler"]]
+项目编码：25b540348
+
+【项目44】
+项目名称：Dromara孵化器网站优化建设和主网站优化
+所属组织：dromara开源组织
+难度：基础
+技术标签：[["web","Vue.js"]]
+项目编码：25ee40277
+
+【项目45】
+项目名称：开发基于 LLM 的 OpenDigger 项目自动化标签系统
+所属组织：OpenDigger
+难度：进阶/Advanced
+技术标签：[["datas","Data Science"]]
+项目编码：255b40362
+
+【项目46】
+项目名称：提升 Higress Console 对 AI 编码的兼容性
+所属组织：Higress
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：251f80279
+
+【项目47】
+项目名称：kernel: Backport steal-time support for RISC-V
+所属组织：openEuler 社区
+难度：进阶
+技术标签：[["os","Linux"],["os","RISC-V"]]
+项目编码：25b970224
+
+【项目48】
+项目名称：基于MindSpore实现材料属性预测模型MatterSim的迁移开发
+所属组织：昇思MindSpore
+难度：进阶
+技术标签：[["datas","AI"]]
+项目编码：25c6d0357
+
+【项目49】
+项目名称：基于RISC-V架构的KubeVirt虚拟化支持与生态适配
+所属组织：EulixOS
+难度：进阶/Advanced
+技术标签：[["os","RISC-V"],["os","Linux"],["os","Virtualization"],["datas","AI"],["cloudnative","Cloud Native"]]
+项目编码：25a190083
+
+【项目50】
+项目名称：为Zino框架实现AI服务抽象
+所属组织：Zino开发框架
+难度：进阶
+技术标签：[["web","Web Application"],["web","RESTful API"],["datas","AI"]]
+项目编码：2551c0059
+
