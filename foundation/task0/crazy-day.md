@@ -85,7 +85,7 @@ function handleEmergency() {
 
 我打开笔记软件，把今天所有灾难按时间线画成了一张流程图：
 
-![灾难图谱](foundation/task0/images/disaster.png)
+![灾难图谱](images/disaster.png)
 
 神奇的是，当我把混乱可视化之后，大脑突然清晰了。
 
