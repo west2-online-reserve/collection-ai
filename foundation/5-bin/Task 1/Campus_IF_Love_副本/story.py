@@ -1,4 +1,8 @@
-DIALOGUES = {
+from typing import Dict, List
+
+
+# 每个角色对应一组对话，每条对话的键和值都是字符串。
+DIALOGUES: Dict[str, List[Dict[str, str]]] = {
     "学姐": [
         {
             "text": "你是新来的吧？画画过吗？",
@@ -83,7 +87,8 @@ DIALOGUES = {
 }
 
 
-GIFT_EFFECTS = {
+# 礼物名映射到“角色名/默认值 → 好感度变化”。
+GIFT_EFFECTS: Dict[str, Dict[str, int]] = {
     # 通用 / 默认 值
     "鲜花": {"学姐": 10, "小白": 10, "姐姐": 15},
     "编程笔记": {"学姐": 5, "小白": 15, "姐姐": 15},

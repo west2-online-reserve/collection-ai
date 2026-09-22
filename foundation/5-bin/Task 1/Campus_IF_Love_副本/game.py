@@ -1,17 +1,17 @@
-from story import DIALOGUES, GIFT_EFFECTS
-
-import sys
-
 import random
+import sys
+from typing import Dict
+
+from story import DIALOGUES, GIFT_EFFECTS
 
 
 class Character:
-    def __init__(self, name, role, affinity=0):
-        self.name = name
-        self.role = role
-        self.affinity = affinity
+    def __init__(self, name: str, role: str, affinity: int = 0) -> None:
+        self.name: str = name
+        self.role: str = role
+        self.affinity: int = affinity
 
-    def talk(self):
+    def talk(self) -> None:
         print(f"你正在和{self.name}对话...")
         # TODO: 补充具体对话，对话内容可以从剧本里面截取 根据主人公的不同，使用不同的对话（你也可以根据好感度的不同/对话次数的不同 改变对话和选项）
         dialogue = DIALOGUES.get(self.name, [])
@@ -43,14 +43,14 @@ class Character:
                 else:
                     print("输入不合法，请选择 A 或 B 。")
 
-    def give_gift(self, gift):
+    def give_gift(self, gift: str) -> None:
         print(f"你送给 {self.name} 一份 {gift}。")
         # TODO: 完成礼物好感度逻辑（送出不同礼物加不同的好感度） 并调用change_affinity（）函数 传入此次好感度变化的数值value
         default = GIFT_EFFECTS.get(gift, {}).get("default", 0)
         effect = GIFT_EFFECTS.get(gift, {}).get(self.name, default)
         self.change_affinity(effect)
 
-    def change_affinity(self, value):
+    def change_affinity(self, value: int) -> None:
         self.affinity += value
         print(f"{self.name} 的好感度变化 {value} -> 当前好感度：{self.affinity}")
         if self.affinity <= -20:
@@ -59,7 +59,7 @@ class Character:
         elif self.affinity < 0:
             print(f"{self.name} 对你有些不满，请多加注意。")
 
-    def check_ending(self):
+    def check_ending(self) -> bool:
         if self.affinity >= 90:
             print(f"\n你和 {self.name} 的故事进入了关键节点！")
             dialogue = DIALOGUES.get(self.name, [])
@@ -90,16 +90,16 @@ class Character:
 
 
 class Game:
-    def __init__(self):
-        self.characters = {
+    def __init__(self) -> None:
+        self.characters: Dict[str, Character] = {
             "学姐": Character("学姐", "社团里的艺术少女"),
             "小白": Character("小白", "课堂上的元气同学"),
             "姐姐": Character("姐姐", "食堂里的温柔姐姐"),
             "None": Character("None", "无"),
         }
-        self.current_target = self.characters["None"]
+        self.current_target: Character = self.characters["None"]
 
-    def start(self):
+    def start(self) -> None:
         print("========== 游戏开始：校园 if·恋 ==========")
         print("你是一名刚刚踏入大学校园的新生。")
         print("在开学典礼上，拿下压倒性成绩第一的你被选为新生代表发言。")
@@ -113,7 +113,7 @@ class Game:
                 if not self.scene_jiejie():  # 姐姐场景
                     print("\n啥，眼前三妹子都不要？？死现充别玩galgame")
 
-    def scene_senpai(self):
+    def scene_senpai(self) -> bool:
         print("\n【场景一：社团学姐】")
         print("你路过社团活动室，学姐正拿着画板注意到你。")
         print("学姐：『这位新生？要不要来试试？』")
@@ -131,7 +131,7 @@ class Game:
             print("在纵目睽睽下，你扬长而去。")
             return False
 
-    def scene_xiaobai(self):
+    def scene_xiaobai(self) -> bool:
         print("\n【场景二：小白】")
         print("你走进图书馆，发现小白正在奋笔疾书，却被一道算法题难住了。")
         print("小白：『呜呜……这题到底该怎么写呀？』")
@@ -152,7 +152,7 @@ class Game:
             print("小白看着你离去的背影，眼中闪过一丝失落。")
             return False
 
-    def scene_jiejie(self):
+    def scene_jiejie(self) -> bool:
         print("\n【场景三：姐姐】")
         print(
             "你偶然在校外的咖啡店敲代码,一位看起来成熟知性的姐姐似乎对你感兴趣，缓缓朝你走了过来..."
@@ -175,7 +175,7 @@ class Game:
             print("姐姐看着你专注的背影，微微叹了口气。")
             return False
 
-    def story_loop(self):
+    def story_loop(self) -> None:
         """角色线主循环"""
         while True:
             print("\n你要做什么？")
