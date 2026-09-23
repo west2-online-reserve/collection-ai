@@ -1,8 +1,9 @@
 import random
 import sys
-from typing import Dict
+from typing import Dict, Any
 
 from story import DIALOGUES, GIFT_EFFECTS
+from save_manager import load_game, save_game
 
 
 class Character:
@@ -98,6 +99,9 @@ class Game:
             "None": Character("None", "无"),
         }
         self.current_target: Character = self.characters["None"]
+        # 当前剧情位置
+        self.story_block: str = "opening"
+        self.story_line: int = 0
 
     def start(self) -> None:
         print("========== 游戏开始：校园 if·恋 ==========")
@@ -224,3 +228,66 @@ class Game:
                 or self.current_target.check_ending()
             ):
                 break
+
+    def create_save_data(self) -> Dict[str, Any]:
+        """把当前游戏状态转换成json"""
+        return {
+            "version": 1,
+            "story_block": self.story_block,
+            "story_line": self.story_line,
+            "current_target": self.current_target.name,
+            "affinity": self.current_target.affinity,
+        }
+
+    def normal_save(self) -> None:
+        """保存到普通存档"""
+        data: Dict[str, Any] = self.create_save_data()
+        save_game(data, auto=False)
+
+    def auto_save(self) -> None:
+        """保存到即时存档"""
+        data: Dict[str, Any] = self.create_save_data()
+        save_game(data, auto=True)
+
+    def apply_save_data(self, data: Dict[str, Any]) -> bool:
+        """使用存档数据覆盖当前游戏状态"""
+        if not data:
+            return False
+
+        try:
+            target_name: str = data["current_target"]
+
+            if target_name not in self.characters:
+                print("存档角色不存在。")
+                return False
+
+            self.story_block = data["story_block"]
+            self.story_line = data["story_line"]
+            self.current_target = self.characters[target_name]
+            self.current_target.affinity = data["affinity"]
+
+            return True
+
+        except (KeyError, TypeError):
+            print("存档格式不正确。")
+            return False
+
+    def load_nomal_save(self) -> bool:
+        """加载普通存档"""
+        data: Dict[str, Any] = load_game(auto=False)
+
+        if self.apply_save_data(data):
+            print("普通存档加载成功。")
+            return True
+
+        return False
+
+    def load_auto_save(self) -> bool:
+        """加载即时存档"""
+        data: Dict[str, Any] = load_game(auto=True)
+
+        if self.apply_save_data(data):
+            print("即时存档加载成功。")
+            return True
+
+        return False
