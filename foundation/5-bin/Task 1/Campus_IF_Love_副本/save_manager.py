@@ -21,7 +21,7 @@ def save_game(data: Dict[str, Any], auto: bool = False) -> None:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
     if not auto:
-        print("存档成功！")
+        print("存档成功！\n")
 
 
 def load_game(auto: bool = False) -> Dict[str, Any]:
@@ -33,7 +33,7 @@ def load_game(auto: bool = False) -> Dict[str, Any]:
         save_file = NORMAL_SAVE_FILE
 
     if not save_file.exists():
-        print("没有找到对应的存档。")
+        print("没有找到对应的存档，请重新选择。\n")
         return {}
 
     try:
@@ -41,5 +41,5 @@ def load_game(auto: bool = False) -> Dict[str, Any]:
             data: Dict[str, Any] = json.load(file)
         return data
     except (json.JSONDecodeError, OSError):
-        print("存档损坏或无法读取。")
+        print("存档损坏或无法读取，请重新选择。\n")
         return {}

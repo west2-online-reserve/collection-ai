@@ -12,81 +12,59 @@ class Character:
         self.role: str = role
         self.affinity: int = affinity
 
-    def talk(self) -> None:
-        print(f"你正在和{self.name}对话...")
+    def talk(self) -> int:
+        print(f"\n你正在和{self.name}对话...")
         # TODO: 补充具体对话，对话内容可以从剧本里面截取 根据主人公的不同，使用不同的对话（你也可以根据好感度的不同/对话次数的不同 改变对话和选项）
         dialogue = DIALOGUES.get(self.name, [])
         if dialogue:
-            i = 0
-            if self.affinity < 20:
-                i = random.randint(0, 0)
-            elif self.affinity < 40:
-                i = random.randint(1, 1)
-            elif self.affinity < 60:
-                i = random.randint(1, 2)
-            elif self.affinity < 80:
-                i = random.randint(2, 3)
+            dialogue_index: int
+            if self.affinity < 25:
+                dialogue_index = 0
+            elif self.affinity < 50:
+                dialogue_index = 1
+            elif self.affinity < 75:
+                dialogue_index = 2
             else:
-                i = random.randint(1, 3)
+                dialogue_index = 3
 
-            print(dialogue[i]["text"])
-            print(f"A: {dialogue[i]['optionA']}")
-            print(f"B: {dialogue[i]['optionB']}")
+            print(dialogue[dialogue_index]["text"])
+            print(f"A: {dialogue[dialogue_index]['optionA']}")
+            print(f"B: {dialogue[dialogue_index]['optionB']}")
 
             while True:
-                choice = input("请输入选项：")
+                choice = input("请输入选项：").upper()
                 if choice == "A":
-                    self.change_affinity(5)
+                    self.change_affinity(10)
                     break
                 elif choice == "B":
-                    self.change_affinity(-5)
+                    self.change_affinity(-10)
                     break
                 else:
                     print("输入不合法，请选择 A 或 B 。")
 
+            return dialogue_index
+        return 0
+
     def give_gift(self, gift: str) -> None:
         print(f"你送给 {self.name} 一份 {gift}。")
         # TODO: 完成礼物好感度逻辑（送出不同礼物加不同的好感度） 并调用change_affinity（）函数 传入此次好感度变化的数值value
-        default = GIFT_EFFECTS.get(gift, {}).get("default", 0)
+        default = GIFT_EFFECTS.get(gift, {}).get("default", 0)  # 获取默认好感度变化值
         effect = GIFT_EFFECTS.get(gift, {}).get(self.name, default)
         self.change_affinity(effect)
 
     def change_affinity(self, value: int) -> None:
         self.affinity += value
         print(f"{self.name} 的好感度变化 {value} -> 当前好感度：{self.affinity}")
-        if self.affinity <= -20:
-            print(f"你被 {self.name} 讨厌了，故事线结束。")
-            sys.exit(0)
-        elif self.affinity < 0:
-            print(f"{self.name} 对你有些不满，请多加注意。")
 
     def check_ending(self) -> bool:
-        if self.affinity >= 90:
-            print(f"\n你和 {self.name} 的故事进入了关键节点！")
-            dialogue = DIALOGUES.get(self.name, [])
-            if dialogue:
-                i = 4
-                print(dialogue[i]["text"])
-                print(f"A: {dialogue[i]['optionA']}")
-                print(f"B: {dialogue[i]['optionB']}")
-                while True:
-                    choice = input("请输入选项：")
-                    if choice == "A":
-                        self.affinity = 100
-                        print(
-                            f"你成功get到 {self.name} 的心意，{self.name} 也对你心生好感。"
-                        )
-                        print(f"恭喜！你和 {self.name} 的故事进入了结局线！")
-                        return True
-                    elif choice == "B":
-                        self.affinity = 80
-                        print(
-                            f"你没有get到 {self.name} 的心意，{self.name} 显得有些失落。"
-                        )
-                        print(f"当前好感度：{self.affinity}")
-                        return False
-                    else:
-                        print("输入不合法，请选择 A 或 B 。")
+        """检查是否达到结局条件"""
+        if self.affinity >= 200:
+            print(f"你和 {self.name} 的故事已经进入了结局线。")
+            return True
+        elif self.affinity <= -20:
+            print(f"你被 {self.name} 讨厌了，故事线已经结束。")
+            return True
+
         return False
 
 
@@ -104,6 +82,43 @@ class Game:
         self.story_line: int = 0
 
     def start(self) -> None:
+        """游戏启动菜单"""
+        while True:
+            print("========== 校园 if·恋 ==========")
+            print("1. 开始新游戏")
+            print("2. 读取普通存档")
+            print("3. 读取即时存档")
+            print("4. 退出游戏")
+
+            choice = input("请输入选项：")
+
+            if choice == "1":
+                self.start_new_game()
+                break
+            elif choice == "2":
+                if self.load_nomal_save():
+                    if not self.resume_game():
+                        continue
+                    break
+            elif choice == "3":
+                if self.load_auto_save():
+                    if not self.resume_game():
+                        continue
+                    break
+            elif choice == "4":
+                print("退出游戏。")
+                sys.exit(0)
+            else:
+                print("无效输入，请重新选择。")
+
+    def start_new_game(self) -> None:
+        """开始新游戏"""
+        self.story_block = "opening"
+        self.story_line = 0
+        self.current_target = self.characters["None"]
+        for character in self.characters.values():  # 遍历所有角色，重置好感度
+            character.affinity = 0
+
         print("========== 游戏开始：校园 if·恋 ==========")
         print("你是一名刚刚踏入大学校园的新生。")
         print("在开学典礼上，拿下压倒性成绩第一的你被选为新生代表发言。")
@@ -186,7 +201,8 @@ class Game:
             print("1. 和她聊天")
             print("2. 送她礼物")
             print("3. 查看好感度")
-            print("4. 离开（退出游戏）")
+            print("4. 保存游戏")
+            print("5. 离开（退出游戏）")
 
             choice = input("请输入选项：")
 
@@ -194,17 +210,20 @@ class Game:
 
             # 输入1---关于聊天的内容可以自己构思 也可以从剧本中截取
             if choice == "1":
-                self.current_target.talk()
+                self.story_block = self.current_target.name  # 更新故事块
+                self.story_line = self.current_target.talk()  # 更新故事线索
 
             # 输入2----
             elif choice == "2":
                 print("你可以送的礼物有：")
                 for gift in GIFT_EFFECTS.keys():
                     print(f"- {gift}")
+
                 while True:
                     gift_choice = input("请输入你要送的礼物：")
                     if gift_choice in GIFT_EFFECTS:
                         self.current_target.give_gift(gift_choice)
+                        self.story_block = gift_choice  # 更新故事块
                         break
                     else:
                         print("无效的礼物选择，请重新选择。")
@@ -217,22 +236,85 @@ class Game:
 
             # 输入4----
             elif choice == "4":
+                self.normal_save()
+
+            # 输入5----
+            elif choice == "5":
                 print("你选择离开，游戏结束。")
                 sys.exit(0)
 
             else:
                 print("无效输入，请重新选择。")
 
+            # 在每次操作后检查好感度是否达到结局条件。
+            if self.current_target.affinity <= -20:
+                print(f"你被 {self.current_target.name} 讨厌了，故事线结束。")
+                self.exit_game()  # 退出游戏
+            elif self.current_target.affinity < 0:
+                print(f"{self.current_target.name} 对你有些不满，请多加注意。")
+            elif self.current_target.affinity >= 90:
+                print(f"\n你和 {self.current_target.name} 的故事进入了关键节点！")
+                print(f"\n你正在和{self.current_target.name}对话...")
+                dialogue = DIALOGUES.get(self.current_target.name, [])
+                if dialogue:
+                    dialogue_index = 4
+                    print(dialogue[dialogue_index]["text"])
+                    print(f"A: {dialogue[dialogue_index]['optionA']}")
+                    print(f"B: {dialogue[dialogue_index]['optionB']}")
+                    while True:
+                        choice = input("请输入选项：").upper()
+                        if choice == "A":
+                            self.current_target.affinity = 200
+                            print(
+                                f"你成功get到 {self.current_target.name} 的心意，{self.current_target.name} 也对你心生好感。"
+                            )
+                            print(
+                                f"恭喜！你和 {self.current_target.name} 的故事进入了结局线！"
+                            )
+                            self.exit_game()  # 退出游戏
+                            break
+                        elif choice == "B":
+                            self.current_target.affinity = 80
+                            print(
+                                f"你没有get到 {self.current_target.name} 的心意，{self.current_target.name} 显得有些失落。"
+                            )
+                            print(f"当前好感度：{self.current_target.affinity}")
+                            break
+                        else:
+                            print("输入不合法，请选择 A 或 B 。")
+
+            self.auto_save()  # 每次操作后自动保存游戏状态
+
             if (
                 self.current_target == self.characters["None"]
                 or self.current_target.check_ending()
             ):
+                self.auto_save()
+                break
+
+    def exit_game(self) -> None:
+        """退出游戏"""
+        while True:
+            print("\n你要做什么")
+            print("1. 保存游戏")
+            print("2. 离开（退出游戏）")
+            while True:
+                choice = input("请输入选项：")
+                if choice == "1":
+                    self.normal_save()
+                    break
+                elif choice == "2":
+                    print("你选择离开，游戏结束。")
+                    self.auto_save()  # 自动保存游戏状态
+                    sys.exit(0)
+                else:
+                    print("无效输入，请重新选择。")
+            if choice == "2":
                 break
 
     def create_save_data(self) -> Dict[str, Any]:
         """把当前游戏状态转换成json"""
         return {
-            "version": 1,
             "story_block": self.story_block,
             "story_line": self.story_line,
             "current_target": self.current_target.name,
@@ -291,3 +373,31 @@ class Game:
             return True
 
         return False
+
+    def resume_game(self) -> bool:
+        """继续游戏"""
+        if self.current_target == self.characters["None"]:
+            print("当前没有进行中的故事线，请开始新游戏。\n")
+            return False
+
+        if self.current_target.check_ending():
+            print("当前故事线已结束，请开始新游戏。\n")
+            return False
+
+        if self.story_block == "opening":
+            print("当前处于开场剧情，请开始新游戏。\n")
+            return False
+        elif self.story_block in GIFT_EFFECTS:
+            print(f"当前处于送礼物剧情，最近送的礼物是：{self.story_block}。\n")
+        else:
+            print(f"当前处于对话剧情，最近对话的角色是：{self.story_block}。")
+            print(
+                f"最近对话的内容是：{DIALOGUES.get(self.story_block, [{}])[self.story_line].get("text", "")}\n"
+            )
+
+        print("========== 继续游戏 ==========")
+        print(
+            f"当前目标角色：{self.current_target.name}，好感度：{self.current_target.affinity}"
+        )
+        self.story_loop()
+        return True
