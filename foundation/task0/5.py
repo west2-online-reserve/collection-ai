@@ -7,5 +7,3 @@ if count<=2:
      print('YES')
 else:
     print('NO')
-
-    
