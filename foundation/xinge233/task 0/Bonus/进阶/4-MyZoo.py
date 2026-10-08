@@ -1,50 +1,47 @@
 class MyZoo:
-    def __init__(self,animals=None):
-        if type(animals)==dict:
-            self.animals=animals
+    def __init__(self, animals=None):
+        if type(animals) == dict:
+            self.animals = animals
         else:
-            self.animals={}
+            self.animals = {}
         print("My Zoo!")
+
     def __str__(self):
-        report=[]
+        report = []
         for i in self.animals:
             report.append(f"有{self.animals[i]}只{i}")
         return ",".join(report)
-    def __eq__(first,second):
+
+    def __eq__(first, second):
         if first.animals.keys() == second.animals.keys():
             return True
         else:
             return False
+
     def __len__(self):
-        total=0
+        total = 0
         for i in self.animals:
-            total+=self.animals[i]
+            total += self.animals[i]
         print(f"有{total}只动物")
         return total
-        
 
 
 if __name__ == "__main__":
-    test=MyZoo("我偏不传字典")
+    test = MyZoo("我偏不传字典")
     print(test.__dict__)
-    myzoooo = MyZoo({"pig":5,'dog':6}) 
+    myzoooo = MyZoo({"pig": 5, "dog": 6})
     print(myzoooo)
-    myzoooo1 = MyZoo({'pig':1})
-    myzoooo2 = MyZoo({'pig':5})
+    myzoooo1 = MyZoo({"pig": 1})
+    myzoooo2 = MyZoo({"pig": 5})
     print(myzoooo1 == myzoooo2)
-    myzoooo1 = MyZoo({'bird':1})
-    myzoooo2 = MyZoo({'pig':5})
+    myzoooo1 = MyZoo({"bird": 1})
+    myzoooo2 = MyZoo({"pig": 5})
     print(myzoooo1 == myzoooo2)
     len(myzoooo)
-    
-        
 
 
-
-
-
-#return f"""动物名称为{",".join((self.animals).keys())}
-#动物数量为{",".join(map(str,(self.animals).values()))}"""
+# return f"""动物名称为{",".join((self.animals).keys())}
+# 动物数量为{",".join(map(str,(self.animals).values()))}"""
 
 """
 4. 了解类的魔术方法（Magic Method）。创建类 MyZoo，实现以下功能：
