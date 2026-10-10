@@ -1,0 +1,1 @@
+Q A 7 big_joker 9 3 7 A J 6 2 small_joker 2 K 8 8 3
