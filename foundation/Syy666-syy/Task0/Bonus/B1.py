@@ -1,0 +1,11 @@
+x=int(input("x="))
+y=int(input("y="))
+z=int(input("z="))
+#法一
+result=sorted((x,y,z),reverse=True)
+print(result)
+#法二
+a=max(x,y,z)
+b=min(x,y,z)
+c=x+y+z-a-b
+print(a,c,b)
