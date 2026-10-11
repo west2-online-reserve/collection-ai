@@ -9,4 +9,4 @@ for i in range(a, b + 1):
 
 print(cnt)
 for i in ans:
-    print(i, end = ' ')
+    print(i, end=' ')

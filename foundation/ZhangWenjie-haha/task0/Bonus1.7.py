@@ -16,14 +16,17 @@ class Product:
     def income(self):
         return self.__price * (self.__total - self.__remain)
 
-    def setdata(self, idx = None, name = None, price = None, total = None, remain = None):
+    def setdata(self, idx=None, name=None, price=None, total=None, remain=None):
         if idx is not None: self.__idx = idx
         if name is not None: self.__name = name
         if price is not None: self.__price = price
         if total is not None: self.__total = total
         if remain is not None: self.__remain = remain
 
+
 def main():
     pass
 
-main()
+
+if __name__ == '__main__':
+    main()

@@ -12,4 +12,3 @@ for _ in range(m):
     num[a] = num[b] + 1
 
 print("I_love_" * num[1] + name[1])
-

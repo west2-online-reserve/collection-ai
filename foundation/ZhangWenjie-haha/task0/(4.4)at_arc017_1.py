@@ -8,5 +8,5 @@ for i in range(2, n):
 
 if flag:
     print("YES")
-else :
+else:
     print("NO")

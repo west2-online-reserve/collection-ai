@@ -12,7 +12,3 @@ for k in idk:
     del d[k]
 
 print(d)
-
-
-
-

@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from functools import wraps
 
+
 def log_runtime(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -26,10 +27,12 @@ def log_runtime(func):
 
     return wrapper
 
+
 @log_runtime
 def demo():
     pass
     return "end"
+
 
 result = demo()
 print(result)

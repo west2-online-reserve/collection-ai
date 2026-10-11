@@ -8,8 +8,11 @@ def count(num):
                 cnt[int(c)] = 1
     return cnt
 
+
 def main():
     arr = input().split()
     print(count(arr))
 
-main()
+
+if __name__ == '__main__':
+    main()

@@ -1,7 +1,7 @@
 # reference from deepseek
 
 class MyZoo:
-    def __init__(self, animals = None):
+    def __init__(self, animals=None):
         print("My Zoo!")
 
         if animals is None:

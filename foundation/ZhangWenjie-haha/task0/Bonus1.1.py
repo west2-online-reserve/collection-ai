@@ -4,6 +4,7 @@ def normal_sort(nums):
     arr.reverse()
     return arr
 
+
 def bubble_sort(nums):
     arr = nums[:]
     n = len(arr)
@@ -17,6 +18,7 @@ def bubble_sort(nums):
             break
     return arr
 
+
 def insertion_sort(nums):
     arr = nums[:]
     for i in range(1, len(arr)):
@@ -28,20 +30,16 @@ def insertion_sort(nums):
         arr[j + 1] = key
     return arr
 
+
 def main():
     nums = list(map(int, input().split()))
 
     nums = normal_sort(nums)
-    #nums = bubble_sort(nums)
-    #nums = insertion_sort(nums)
+    # nums = bubble_sort(nums)
+    # nums = insertion_sort(nums)
 
     print(*nums)
 
-main()
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    main()
