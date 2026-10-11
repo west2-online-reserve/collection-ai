@@ -1,0 +1,88 @@
+[
+  {
+    "name": "皮卡丘",
+    "max_hp": 80.0,
+    "hp": 80.0,
+    "attack": 35.0,
+    "defense": 5.0,
+    "dod": 30,
+    "skill": [
+      "十万伏特",
+      "电光一闪"
+    ],
+    "alive": true,
+    "attribute": "electric",
+    "buff": {
+      "电被动": -1
+    }
+  },
+  {
+    "name": "妙蛙种子",
+    "max_hp": 100.0,
+    "hp": 100.0,
+    "attack": 35.0,
+    "defense": 10.0,
+    "dod": 10,
+    "skill": [
+      "种子炸弹",
+      "寄生种子"
+    ],
+    "alive": true,
+    "attribute": "grass",
+    "buff": {
+      "草被动": -1
+    }
+  },
+  {
+    "name": "杰尼龟",
+    "max_hp": 80.0,
+    "hp": 80.0,
+    "attack": 25.0,
+    "defense": 20.0,
+    "dod": 20,
+    "skill": [
+      "水枪",
+      "护盾"
+    ],
+    "alive": true,
+    "attribute": "water",
+    "buff": {
+      "水被动": -1
+    }
+  },
+  {
+    "name": "小火龙",
+    "max_hp": 80.0,
+    "hp": 80.0,
+    "attack": 35.0,
+    "defense": 15.0,
+    "dod": 10,
+    "skill": [
+      "火花",
+      "蓄能爆炎"
+    ],
+    "alive": true,
+    "attribute": "fire",
+    "buff": {
+      "火被动": -1
+    }
+  },
+  {
+    "name": "暴鲤龙",
+    "max_hp": 90.0,
+    "hp": 26.5,
+    "attack": 50.0,
+    "defense": 30.0,
+    "dod": 20,
+    "skill": [
+      "破坏光线",
+      "水炮"
+    ],
+    "alive": true,
+    "attribute": "water",
+    "buff": {
+      "水被动": -1,
+      "无法行动": 1
+    }
+  }
+]

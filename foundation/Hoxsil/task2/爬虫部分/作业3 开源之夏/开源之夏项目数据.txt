@@ -1,0 +1,1226 @@
+[
+  {
+    "项目名": "LoongSuite Pilot 支持 RISC-V 架构",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "dev",
+      "AIOps",
+      "dev",
+      "CI",
+      "dev",
+      "LLMOps",
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "（1）背景介绍\n随着 RISC-V 生态在服务器、开发板与国产操作系统（如 openEuler RISC-V）上的快速落地，越来越多研发团队会在 riscv64 环境中使用 AI Coding Agent（Cursor、Claude Code、Codex、Qoder 等）进行日常开发。LoongSuite Pilot 是一个运行在开发者本机的多 Agent 轻量遥测采集平台：可自动发现本机 Agent、部署 Hook/插件、将活动数据归一化为统一 GenAI 事件 Schema，并输出到 JSONL / SLS / HTTP / OTLP Trace。若 Pilot 无法在 RISC-V 上稳定运行，相关团队将缺少统一的本机采集与可观测能力。\n（2）现有工作\n当前 Pilot 已具备较完整的采集与运维能力：\n- 支持多种主流 AI Coding Agent 的发现、部署与采集；\n- 提供安装器、服务管理、版本更新与本地 Dashboard；\n- 核心实现以 TypeScript/Node.js 为主，配套 Bash 安装与发布脚本；\n- 依赖中包含原生模块（如 `sqlite3`、`zstd-napi`），用于本地会话/Token 数据读取与压缩等能力；\n- 已在常见 x86_64 / aarch64（含 macOS arm64）环境完成日常验证与发布。\n（3）现有不足\n- 发布物、安装检测与文档默认面向 x86_64 / aarch64，缺少面向 riscv64 的明确支持声明与验证矩阵；\n- 原生依赖在 riscv64 上可能缺少预编译包，需源码编译或替代方案，当前缺少系统化适配与排障指引；\n- CI/发布流程尚未覆盖 RISC-V 构建、冒烟测试与制品分发；\n- 在 RISC-V Linux 上的 Agent 发现路径、服务拉起、健康检查与升级回滚尚未形成可复现验收标准。\n（4）希望改进的部分\n本议题希望完成 Pilot 面向 RISC-V 的端到端适配，重点包括：\n1. **运行时与原生依赖适配**：确保 Node.js 18+ 环境下核心采集链路可在 riscv64 启动；解决 `sqlite3` / `zstd-napi` 等原生模块的构建、加载与降级策略。\n2. **安装与运维链路适配**：扩展 `installer` / 打包脚本的架构识别（`uname -m` / `process.arch`），支持 riscv64 安装、状态查看、重启与回滚。\n3. **验证与持续集成**：补充 RISC-V 环境构建与冒烟测试（至少覆盖安装、服务启动、基础采集/输出），沉淀可复现文档。\n4. **文档与发布说明**：在安装指南与发布说明中明确 RISC-V 支持范围、已知限制与排障方法。\n（5）最终项目实现的愿景\n学生结项后，LoongSuite Pilot 应能在典型 RISC-V Linux（riscv64）环境中完成「一键安装 → 发现/部署采集能力 → 归一化输出 → 服务运维」闭环；相关改动合入主仓，并留下可持续维护的 CI/文档资产，使后续版本可把 RISC-V 作为一等公民架构持续支持。",
+    "产出要求": [
+      "1. 完成 LoongSuite Pilot 在 Linux riscv64 上的安装与启动适配：安装器可正确识别架构，服务可拉起，`loongsuite-pilot status/info` 等基础运维命令可用。 ",
+      "2. 解决或明确规避关键原生依赖（至少覆盖 `sqlite3`、`zstd-napi`）在 riscv64 上的构建/加载问题，给出可复现步骤与失败降级策略，并保证核心采集主路径可用。  ",
+      "3. 提交可复现的 RISC-V 冒烟验证（安装 → 启动 → 至少一条采集/输出链路）与文档更新（中英文安装/限制/排障），相关代码以 PR 形式合入主仓库。  ",
+      "4. 补充构建/冒烟脚本或 CI 说明，使后续版本可持续验证 riscv64 支持，而不是一次性手工移植。  "
+    ],
+    "技术要求": [
+      "1. 熟悉 TypeScript / Node.js（建议 Node.js 18+），能阅读并修改现有 Collector、Installer 与脚本代码。  ",
+      "2. 了解 Linux 多架构基础（`uname -m`、`process.arch`），具备在 riscv64 环境（真机/虚拟机/QEMU）完成编译、安装与排障的能力；有原生模块（node-gyp/prebuild）经验更佳。  ",
+      "3. 具备基本的 Git/GitHub 协作与测试能力：能提交清晰 PR、补充测试或冒烟脚本，并编写中英文技术文档。",
+      "4. 对 AI Coding Agent、可观测性（日志/Trace）或 OpenTelemetry 有兴趣或基础了解者优先。  "
+    ]
+  },
+  {
+    "项目名": "为 Excelize 添加插入和获取嵌入对象支持",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "Power BI"
+    ],
+    "项目简介": "电子表格办公文档支持使用对象链接和嵌入 (OLE) 来包含其他程序（如 Word 或 Excel）中的内容，该项目旨在为 Excelize 添加插入和获取嵌入对象支持，通过 GetEmbeddedObjects 和 SetGetEmbeddedObject 函数实现对嵌入对象的读取和添加操作，同时支持设置和读取嵌入对象的图标和图形属性。",
+    "产出要求": [
+      "1. 使 Excelize 开源基础库支持通过 GetEmbeddedObjects 和 SetGetEmbeddedObject 函数实现对嵌入对象的读取和添加操作",
+      "3. 在 sheet.go 源代码文件中进行实现",
+      "4. 具有完备的文档和单元测试，在 sheet_test.go 和 vml_test.go 源代码文件中编写单元测试，增量行测试覆盖度达到 100%",
+      "5. 高质量的代码实现，具有良好的性能表现"
+    ],
+    "技术要求": [
+      "1. 熟悉 Excel 软件的使用和基本概念",
+      "2. 熟悉 Excelize 基础库的开源代码",
+      "3. 具备良好的英文国际技术文档阅读能力",
+      "4. 具备一定的计算机基础，熟悉 Go 语言"
+    ]
+  },
+  {
+    "项目名": "KubeEdge-Ianvs 云边 AI Infra 故障修复智能体基准 ",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "LLM"
+    ],
+    "项目简介": "随着大模型推理服务逐渐部署到云端和边缘节点，AI 基础设施故障也从普通应用错误扩展到模型加载失败、GPU 资源不足、容器配置错误、模型文件损坏、异构镜像不兼容和云边版本不一致等问题。这类故障涉及模型、推理框架、容器平台和云边网络等多个层次，依靠人工关联日志、指标和配置进行排查，往往需要较长时间。现有运维智能体和评测框架主要面向通用云环境，难以验证智能体能否修复云边 AI 推理服务，并保证修复后的模型正确性和服务性能。因此，本项目拟在 KubeEdge-Ianvs 中构建云边 AI Infra 故障修复智能体基准，提供可复现的故障注入、智能体诊断与修复、安全审批、结果验证和失败回滚能力，评测智能体在真实故障场景下的修复成功率、处理时延和操作安全性。",
+    "产出要求": [
+      "1. 在 Ianvs 中实现 Python 评测代码框架及 CLI 脚本，包括场景运行、智能体接入和结果评测模块，无需开发独立平台。",
+      "2. 构建不少于 5 个故障场景，覆盖服务配置、模型制品、异构环境和云边状态一致性 4 类故障。",
+      "3. 每个场景重复运行 3 次，故障注入、环境清理和失败回滚的执行成功率均达到 100%。",
+      "4. 在固定模型和配置下，参考智能体平均修复成功率及根因定位准确率均不低于 60%，越权操作次数为 0。",
+      "5. 从修复率、根因定位、修复时间、工具效率、操作安全和推理 SLO 六个维度生成 CSV、JSON 及 Ianvs 排行报告。"
+    ],
+    "技术要求": [
+      "1. 掌握 Python，具备良好的工程开发能力。",
+      "2. 熟悉 Linux、Docker 和 Kubernetes。",
+      "3. 熟悉 KubeEdge 架构及云边通信机制。",
+      "4. 了解 vLLM 等大模型推理服务。\n",
+      "5. 了解 LLM Agent，有故障排查经验者优先。\n"
+    ]
+  },
+  {
+    "项目名": "KubeEdge-Sedna 异构边缘 AI 模型部署适配与预检工具",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "cloudnative",
+      "Cloud Native"
+    ],
+    "项目简介": "随着 AI 推理服务逐渐部署到边缘节点，边缘设备在处理器架构、AI 加速设备和推理运行时等方面呈现明显的异构特征。不同节点可能采用 x86_64、ARM64、RISC-V 等处理器架构，并配置 GPU、NPU 或 CPU 等计算资源。在模型部署过程中，开发者通常需要人工确认节点架构、设备资源、容器镜像、模型格式和推理运行时是否兼容，配置不匹配容易导致镜像启动失败、设备不可用或模型加载异常。本项目拟在 KubeEdge-Sedna 中实现异构边缘 AI 模型部署适配与预检工具。工具将采集边缘节点的处理器架构、AI 加速设备和运行时等信息，形成统一的节点 AI 能力描述；在模型服务下发前，对模型、镜像、运行时和节点资源进行兼容性检查，并根据节点能力匹配适合的模型镜像和推理运行时。项目将支持 x86_64、ARM64、RISC-V 三类处理器架构，并完成至少两种 AI 推理运行时的适配验证。工具将以 Sedna 扩展组件的形式集成，提供能力采集、兼容性检查、部署匹配及结果上报能力，并通过自动化测试验证检查结果的准确性。",
+    "产出要求": [
+      "1. 支持 x86_64、ARM64、RISC-V 三类节点能力采集。",
+      "2. 支持至少两种 AI 推理运行时适配。",
+      "3. 完成不少于 20 个兼容性测试用例，检查准确率不低于 95%。",
+      "4. 完成 Sedna 集成、异构节点验证及使用文档。"
+    ],
+    "技术要求": [
+      "1. 掌握 Go 或 Python 编程。",
+      "2. 熟悉 Linux、Docker 和 Kubernetes。",
+      "3. 了解 KubeEdge 和 Sedna 基本架构。",
+      "4. 了解 x86_64、ARM64、RISC-V 等处理器架构。",
+      "5. 了解常用 AI 模型及推理运行时。"
+    ]
+  },
+  {
+    "项目名": "完善 XA 模式多 DB 支持，对齐 Seata Java 实现",
+    "难度": "进阶",
+    "标签": [
+      "cloudnative",
+      "RabbitMQ",
+      "cloudnative",
+      "Prometheus",
+      "cloudnative",
+      "Grafana",
+      "cloudnative",
+      "Docker",
+      "cloudnative",
+      "Docker Compose"
+    ],
+    "项目简介": "（1）业界背景\nXA 模式依赖数据库原生两阶段提交能力。MySQL XA、PostgreSQL Prepared Transaction、Oracle DBMS_XA 及厂商 XA 驱动在生命周期、XID 格式、恢复扫描和错误码方面均不相同，需要可靠的 RM 适配层。\n（2）已有工作\nSeata Java 已具备普通数据源转 XAConnection 和原生 XADataSource 两条路径。Seata Go 已抽象\nXAResourceFactory\n，完成 MySQL、PostgreSQL 的 Start、End、Prepare、Commit、Rollback、Recover，以及自动提交语句的分支注册流程。\n（3）存在不足\nGo 驱动注册仍固定为 MySQL/PostgreSQL；MariaDB 没有驱动与 XA 工厂；Oracle 虽有文件和工厂，但所有核心操作尚未实现；Kingbase、Oscar、DM 没有类型、驱动和资源适配。厂商驱动缺少类似 Java 原生 XADataSource 的外部扩展入口。\n（4）希望改进点\n复用现有 XAResourceFactory，增加公开驱动描述和厂商适配注册能力。必做 MariaDB 与 Oracle：MariaDB复用并校正 MySQL XA 语义；Oracle完成 DBMS_XA 生命周期、XID 转换、恢复和错误分类。Kingbase、Oscar、DM 作为扩展目标。\n（5）最终目标\nMariaDB 和 Oracle 能完成自动提交与显式事务下的分支注册、一阶段 Prepare、二阶段提交/回滚、故障恢复和连接释放；形成可供其他数据库复用的 XA 适配规范与生命周期契约测试。",
+    "产出要求": [
+      "1. 输出 Java/Go XA 数据库支持、控制语句、恢复机制和错误语义对比文档。",
+      "2. 实现 XA MariaDB，覆盖 Start、End、Prepare、Commit、Rollback、Recover 及 MariaDB 版本差异。",
+      "3. 实现 XA Oracle，替换现有 TODO ，完成 DBMS_XA 调用、XID 映射、恢复扫描和 Oracle 错误分类。",
+      "4. 提供可复用的厂商 XA 适配入口，并给出 Kingbase、Oscar、DM 的扩展设计或至少一个原型适配",
+      "5. 提供配置、权限说明、示例、故障排查文档和 Apache-2.0 合规 PR"
+    ],
+    "技术要求": [
+      "1. 熟悉 XA/2PC、Seata TC/RM 交互、分支状态机和 database/sql/driver。",
+      "2. 正确处理自动提交、显式事务、只读分支、一阶段失败、Prepare 后通信失败、超时和重复回调。",
+      "3. 熟悉 Seata 生态，理解分布式事务思想"
+    ]
+  },
+  {
+    "项目名": "实现 AReno 原生异步策略训练器",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "Deep Learning",
+      "datas",
+      "GPT",
+      "datas",
+      "PyTorch"
+    ],
+    "项目简介": "背景\nAReno 当前的 GRPO/GSPO 实现共用 PolicyOnlyTrainer，每个 step 按顺序执行：\nrollout 生成 n_samples completions 或 agentic trajectories\nreward function 评分\n计算 group-relative advantages\n构造 TrainSequence\n调用 backend train 执行 optimizer step\n这个设计符合 AReno 的 single-node、self-contained 定位，容易理解和调试。但在下面这些场景中，同步 loop 会让 GPU 或 Python Runtime 出现明显等待：\n长输出 RLVR：max_new_tokens 较大，rollout 时间远高于 train 时间\nAgentic RL：工具调用、环境交互、sandbox 操作、reward 计算可能成为瓶颈\n单机多 GPU：有机会将 rollout engine 和 train engine 分配到不同设备组，形成本地异步流水线\n大 n_samples：每个 prompt 需要采样多条 completion，rollout 阶段更容易成为端到端 step time 的主导项\n基于对业界其他开源后训练框架的调研分析，我们充分看到了异步 GRPO 的价值：通过后台 rollout worker、样本队列、staleness 控制和周期性权重同步，让 rollout 和 train 重叠执行。AReno 可以借鉴这一类系统思想，但需要保持 AReno-native：不依赖 vLLM/SGLang 等外部推理后端，不破坏本地一体化训练体验。\n目标\n实现 AReno-native async policy trainer，用于验证 rollout/train pipeline 并发是否能提升单机多 GPU 上的 RL 训练吞吐。\n该能力应优先作为 experimental feature 提供，例如：\n新增 areno.experimental.async_policy\n注册实验性算法入口，例如 async-grpo / async-gspo\n或提供 experimental trainer class，供 CLI/SDK 后续接入",
+    "产出要求": [
+      "1. 设计并实现 experimental async policy trainer",
+      "2. 实现 rollout worker 与 train loop 的生命周期管理",
+      "3. 实现 AReno-native 权重同步方案",
+      "4. 新增最小 smoke recipe，说明如何在单机多 GPU 上试跑 experimental async GRPO",
+      "5.新增 bounded queue 配置"
+    ],
+    "技术要求": [
+      "1. 熟悉 Python async / multiprocessing / queue backpressure",
+      "2. 熟悉 GRPO/GSPO 的 rollout logprobs、advantages 和 loss 输入语义",
+      "3. 熟悉 PyTorch checkpoint/state_dict 或分布式权重同步基础",
+      "4. 熟悉单机多 GPU 资源划分和 CUDA worker 生命周期",
+      "5. 熟悉 AReno Trainer、PolicyOnlyTrainer、algorithm registry 和 backend lifecycle"
+    ]
+  },
+  {
+    "项目名": "为 OpenCodeReview 实现 ACP 服务端支持",
+    "难度": "基础/Basic",
+    "标签": [
+      "datas",
+      "AI",
+      "dev",
+      "Git",
+      "web",
+      "Code Review"
+    ],
+    "项目简介": "OpenCodeReview（简称 OCR，仓库 alibaba/open-code-review）是阿里巴巴开源的 AI 代码评审命令行工具，采用 Go 语言实现、Apache-2.0 协议，已在阿里巴巴内部服务数万开发者并累计发现数百万个代码缺陷。它的核心是「确定性工程 × Agent」混合架构：文件筛选、文件级上下文隔离、规则匹配、评论定位与反思等关键环节由工程逻辑保证正确性，动态决策与上下文检索交由 Agent 完成，因此在同等模型下具备更高的准确率并显著降低 token 消耗。\nAgent Client Protocol（ACP）是一套用于连接「编辑器/客户端」与「AI Agent」的开放协议，其定位类似 LSP：客户端只需接入一次协议，就能调用任意兼容的 Agent，无需为每个 Agent 单独适配。它面向 AI 编程助手场景提供统一的会话交互能力——用户在客户端里向 Agent 发起对话与任务，Agent 实时回传进度、展示工具调用过程、给出带文件与行号定位的结果并支持中途取消。因此，客户端（如 Paseo、Zed、JetBrains 等）实现一次 ACP 即可即插即用地接入各类 Agent，Agent 只要提供 ACP 服务端即可被所有兼容客户端发现和使用，并天然支持「通用编码 Agent 负责写代码、专用 Agent 负责评审」这类多 Agent 协同工作流。\n对 OCR 而言，提供 ACP 支持正好补上了它当前集成方式的短板。OCR 目前面向每个宿主（Claude Code、Codex、Cursor 等）分别维护一套插件或技能，适配成本随宿主数量增长，行为与文档也难以保持一致；而只要实现一个 ACP 服务端，OCR 便能被 Paseo、Zed、JetBrains 等所有兼容客户端直接复用，把「一个宿主一套集成」收敛为「一次实现、处处可用」。更进一步，这一入口让 OCR 能够以标准协议的形式融入多 Agent 协同：由通用编码 Agent 负责编写代码、由 OCR 作为专用评审 Agent 负责把关，分工清晰。与此同时，评审过程还能借助客户端原生 UI 呈现流式进度、结构化的工具调用与可跳转的行级评论，并支持随时取消，交互体验较纯终端输出有明显提升。\n（2）已有的工作\nOCR 目前提供 CLI（ocr review / ocr scan / ocr session / ocr delegate）、VSCode 扩展、CI/CD 集成（GitHub Actions、GitLab CI 等）、多 LLM 供应商适配。\n面向编码 Agent 的集成通过「一个宿主一套插件/技能」的方式完成：Claude Code、Codex、Cursor、OpenCode 等各自维护 plugin / skill。\n社区在 Issue #674 中提出：在使用 Paseo 等工具时，希望通过 ACP 把 OCR 注册为独立 Provider，以便多 Agent 协同工作。维护者已确认价值并在 PR #679 中把「ACP server adapter」写入 H2 2026 路线图，明确方向是「在与核心评审引擎解耦的前提下，把 OCR 暴露为专用评审 Agent」，但该 PR 只是规划占位，\n尚未包含任何实现\n。\n（3）存在的不足\n集成方式碎片化\n：每新增一个宿主 Agent，就要新写一套插件或技能，适配成本随宿主数量线性增长，行为与文档难以保持一致。\n无法被 ACP 客户端消费\n：Paseo、Zed、JetBrains ACP Agent Registry 等客户端已支持通过 ACP 接入任意 Agent，但 OCR 没有 ACP 服务端，无法被这些客户端发现和调度。\n缺少多 Agent 协同入口\n：在「通用编码 Agent 负责写代码、专用 Agent 负责评审」的协同场景中，OCR 没有标准协议入口，只能靠人工执行命令或宿主定制脚本。\n实现耦合风险\n：若直接在核心引擎内部内嵌协议层，会把协议演进（ACP 仍在快速迭代，已有 v1/v2 草案）的不稳定性引入评审主链路。\n（4）希望改进的点\n本项目采用\n独立进程 + 封装\nocr\n二进制\n的方案，与路线图中「协议集成与核心评审引擎解耦」的要求一致：\n新增一个独立的 ACP Server 可执行程序，作为 OCR 的 ACP 封装服务，基于 JSON-RPC 2.0 与客户端通信，支持 stdio 与 Streamable HTTP 两种传输方式；\n该进程不侵入 internal/ 核心评审逻辑，而是以子进程方式调用 ocr review / ocr scan / ocr session，解析其结构化（JSON）输出；\n完整支持能力协商、session/cancel 中断、错误与超时处理、stdout / stderr 严格分离（避免污染协议通道）；\n通过 available_commands_update 暴露 /review、/scan 等斜杠命令及参数提示，降低使用门槛。\n（5）最终项目实现的目标\n交付一个可用、有测试、有中英文文档的独立 ACP Server：用户在 Paseo 等 ACP 客户端中配置一条命令即可把 OpenCodeReview 作为「专用代码评审 Agent」接入，在对话中用自然语言或斜杠命令发起评审，实时看到进度与行级评审意见，并可随时取消；成果以 Pull Request 形式合入 alibaba/open-code-review 上游仓库，落地 ROADMAP 中的 ACP 条目并关闭 Issue #674。",
+    "产出要求": [
+      "1. 独立 ACP Server 可执行程序：以 Go 实现、与核心评审引擎解耦的独立进程（如 cmd/ocr-acp），基于 JSON-RPC 2.0 实现 ACP v1 基础方法 initialize、authenticate（无需鉴权时正确声明空 authMethods）、session/new、session/prompt，完成协议版本与 Agent/Client 能力协商，并同时支持 stdio 与 Streamable HTTP 两种传输方式。",
+      "2. ocr 二进制封装层：以子进程方式调用 ocr review / ocr scan / ocr session，解析其 JSON 结构化输出；负责二进制发现（PATH / 显式路径 / 版本校验）、工作目录与参数拼装、进程生命周期与超时管理、stdout 与 stderr 严格分离（stderr 仅用于日志，绝不污染协议通道）。",
+      "3. 取消、权限与错误处理：正确实现 session/cancel（终止 ocr 子进程并以 cancelled stop reason 结束该轮 prompt）；在需要读写工作区文件时按客户端声明的 fs 能力选择 fs/read_text_file / fs/write_text_file 或本地回退；对参数错误、二进制缺失、模型未配置等场景返回符合规范的 JSON-RPC 错误与可读提示。",
+      "4. 斜杠命令与自然语言入口：通过 available_commands_update 通知向客户端暴露 /review（工作区、分支区间 --from/--to、单 commit）、/scan（全库或指定路径）等命令及输入提示；同时支持从自由文本 prompt 中解析评审意图与范围。",
+      "5. 客户端端到端联调：至少在 Paseo 与另一个 ACP 客户端（如 Zed 或 JetBrains ACP Agent Registry）中完成端到端验证，提交可复现的配置示例、联调步骤与截图/录屏记录。",
+      "6. 测试与工程质量：提供单元测试与协议级测试（使用内存管道 / mock ocr 子进程驱动完整 initialize → session/new → session/prompt → session/cancel 流程），遵循仓库表驱动测试风格，go fmt、go vet、make test 与仓库 CI 全部通过，覆盖率不低于仓库既有要求。",
+      "7. 文档与上游合入：补充中英文使用文档（涵盖 OCR 侧的接入说明，以及在 ACP 生态/客户端注册表等处的相应文档），更新 README.md / README.zh-CN.md 与 ROADMAP.md 相应条目，并以符合 CONTRIBUTING.md 规范的 Pull Request 合入 alibaba/open-code-review（签署 CLA、通过 CI 与社区 Code Review），关联并推动关闭 Issue #674。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Go 语言，具备并发（goroutine、channel、context 取消）与标准库 os/exec、encoding/json、bufio 的实际使用经验，能阅读并遵循仓库既有工程规范与测试风格。",
+      "2. 理解 JSON-RPC 2.0 与 ACP v1 规范，包括初始化与能力协商、会话建立（session/new / session/load）、prompt turn 生命周期、session/update 通知类型、取消语义与 stop reason、权限请求与文件系统方法。",
+      "3. 掌握进程与 stdio 编程：子进程启动与退出码处理、stdout / stderr 分流、行式流式解析、超时与优雅终止（信号 / 进程组），并理解为何 stdio 协议通道上禁止混入日志输出。",
+      "4. 熟悉 Git 与代码评审工作流：理解 diff、merge-base、分支区间与单 commit 评审等概念，了解行级评论定位的基本原理，能在 GitHub 上规范提交 Issue / PR 并响应 Review 意见。",
+      "5. 具备良好的英文读写能力（上游仓库以英文协作，文档需中英双语交付），并能撰写清晰的设计文档与使用说明。",
+      "6. 加分项：有 MCP、ACP、LSP 等协议适配经验，或开发过 IDE / 编辑器插件；了解 LLM Agent 的工具调用与流式输出机制；有开源项目贡献经历。"
+    ]
+  },
+  {
+    "项目名": "Linux/KVM RISC-V Vector 上下文调度优化",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V",
+      "os",
+      "KVM",
+      "os",
+      "Linux",
+      "os",
+      "Virtualization"
+    ],
+    "项目简介": "RISC-V Vector 扩展为每个硬件线程引入 v0-v31 向量寄存器，以及 vstart、vl、vtype、vcsr、vlenb 等控制状态，单次上下文保存/恢复成本显著高于通用整数寄存器。RISC-V 特权架构通过 mstatus/sstatus 中的 VS 状态位跟踪 Off、Initial、Clean、Dirty，使内核可以根据 Dirty 状态判断是否必须保存 Vector 上下文。Linux RISC-V 已支持用户态 Vector 首次使用陷入、vstate 保存/恢复、返回用户态前延迟恢复（TIF_RISCV_V_DEFER_RESTORE）、kernel-mode Vector，以及可抢占 kernel Vector；KVM 侧也已有 vCPU FP/Vector 上下文管理接口。\n当前需要优化的核心问题在于，虚拟化场景下 host task、guest vCPU 与 kernel Vector 使用者共享同一组硬件 Vector 寄存器。KVM 在 vCPU load/put、vCPU 迁移、返回 guest、内核态多次调度以及 kernel Vector 介入时，仍可能采用偏保守的保存/恢复策略；当同一 vCPU 在同一 hart 上连续运行且寄存器内容仍然有效时，重复 restore 会造成不必要开销。同时，迁移、抢占、软中断、CPU hotplug/PM、KVM get/set reg、signal/ptrace 等路径需要明确失效边界，防止 host/guest 状态污染并保证安全隔离。\n本项目参考 arm64 FPSIMD/SVE 中 per-CPU last_state、task CPU 绑定与 TIF_FOREIGN_FPSTATE 的延迟恢复思想，结合 Linux RISC-V 现有 Vector 调度与 KVM vcpu_vector.c 逻辑，设计并实现 RISC-V KVM Vector 上下文调度优化。目标是在不改变用户态 ABI、不破坏 guest/host 隔离和抢占/中断安全的前提下，引入 per-hart Vector 状态所有权/有效性跟踪，推迟 guest Vector 恢复到 vCPU entry 前的最后安全时刻，并在迁移或 kernel Vector 使用后正确失效缓存状态，从而减少 vCPU 调度路径上的冗余 Vector 保存/恢复。",
+    "产出要求": [
+      "1. 完成 RISC-V Vector 特权架构、VS/SD 状态语义、Linux RISC-V Vector 上下文切换、kernel-mode Vector、KVM vCPU FP/Vector 管理路径的调研报告。",
+      "2. 梳理 arch/riscv/kernel/vector.c、kernel_mode_vector.c、arch/riscv/kvm/vcpu_fp.c、vcpu_vector.c、vcpu_load/put、vCPU entry/exit 等关键调用链，输出当前保存/恢复时序图。",
+      "3. 对比 arm64 FPSIMD/SVE 的 per-CPU last_state、CPU 绑定与 TIF_FOREIGN_FPSTATE 延迟恢复机制，形成可迁移到 RISC-V KVM 的设计分析。",
+      "4. 设计 per-hart Vector 状态所有权/有效性缓存机制，明确 host task、guest vCPU、kernel Vector 三类状态的所有权、有效、Dirty、失效和迁移规则。",
+      "5. 实现 guest vCPU Vector 延迟恢复逻辑，将不必要的 restore 推迟到 vCPU entry 前的最后安全时刻，并在同一 vCPU 连续运行于同一 hart 时避免重复加载。",
+      "6. 完善 vCPU 迁移、vcpu_put/load、KVM get/set reg、kernel_vector_begin/end、抢占、软中断、CPU hotplug/PM 等路径的状态保存与失效处理。",
+      "7. 保证用户态 ABI、guest/host 隔离、Vector 状态安全性、抢占安全性和中断/软中断边界不被破坏，并在设计文档中说明关键不变量。"
+    ],
+    "技术要求": [
+      "1. 熟练掌握 C 语言、Linux 内核开发基础，以及必要的 RISC-V 汇编和 CSR 读写知识。",
+      "2. 理解 RISC-V 特权架构、Vector 扩展、v0-v31 向量寄存器、vstart/vl/vtype/vcsr/vlenb 等状态，以及 VS Off/Initial/Clean/Dirty 与 SD 位语义。",
+      "3. 能够搭建和调试 Linux RISC-V KVM/Vector 开发环境，使用 QEMU RISC-V virt 或真实 RISC-V Vector 硬件运行 guest。",
+      "4. 能够使用 kselftest、KVM selftests、perf、ftrace、trace-cmd 或等价工具编写测试、定位问题并量化性能收益。",
+      "5. 能够阅读 Linux 内核邮件列表补丁和英文技术资料，按内核社区习惯拆分补丁、撰写 commit message、运行 checkpatch 并回应 review。",
+      "6. 具备基本自动化脚本能力，可使用 Shell/Python 构建测试脚本、收集日志、对比优化前后指标。"
+    ]
+  },
+  {
+    "项目名": "面向 RISC-V 平台的 KubeRay 与 Ray 适配及性能优化",
+    "难度": "进阶",
+    "标签": [
+      "cloudnative",
+      "Kubernetes",
+      "os",
+      "RISC-V",
+      "os",
+      "Linux"
+    ],
+    "项目简介": "Ray 是面向分布式计算、AI 训练、在线推理和数据处理的重要开源框架，KubeRay 负责在 Kubernetes 上声明式管理 RayCluster、RayJob 和 RayService。当前 Ray 官方发行主要覆盖 x86_64、Linux aarch64/ARM 和 Apple silicon，RISC-V 平台尚未形成稳定的官方安装、镜像、CI 与性能基准路径。随着 RISC-V 服务器、开发板和 AI 加速平台逐步进入云原生与边缘智能场景，Ray + Kubernetes 在 RISC-V 上的性能基准、瓶颈分析和优化实践具备现实价值。\n本项目面向 RISC-V 平台建立 KubeRay 与 Ray 的可复现性能优化闭环：完成 riscv64 Linux/Kubernetes 环境下的 KubeRay/Ray 基础运行验证，建设覆盖 RayCluster 启动、worker 注册、任务调度、对象传输、Ray Serve 请求链路的性能基准，采集与 x86_64 或 aarch64 的对照数据，定位关键性能瓶颈，并提交一个以上可量化验证的性能优化成果。\n项目不以一次性完成 Ray 全量 riscv64 官方发行作为目标，而是以可复现基准、清晰瓶颈分析、优化前后量化对比、上游可接受改进和 RISC-V 性能调优指南为主要产出，帮助社区持续推进 Ray on RISC-V 的工程可用性和性能表现。",
+    "产出要求": [
+      "1. 建立 RISC-V 平台 KubeRay/Ray 基准测试体系。",
+      "2. 覆盖启动耗时、worker 注册、调度延迟和对象传输。",
+      "3. 覆盖 Ray Serve 请求延迟、吞吐和资源占用。",
+      "4. 输出 RISC-V 与 x86_64 或 aarch64 的对照性能数据。",
+      "5. 定位至少 1 个明确性能瓶颈并形成分析报告。",
+      "6. 提交 1 个以上性能优化成果并给出量化对比。",
+      "7. 形成 RISC-V 平台 KubeRay/Ray 性能调优指南。",
+      "8. 输出完整验证报告，包含环境、命令、日志、数据和剩余风险。"
+    ],
+    "技术要求": [
+      "1. 掌握 Linux 基础开发和 Shell 脚本。",
+      "2. 熟悉 Kubernetes、CRD、operator、Pod 和 Service。",
+      "3. 熟悉 Go，能够阅读和修改 KubeRay operator 代码。",
+      "4. 熟悉 Python，能够编写 Ray task、actor、Serve 和 benchmark 脚本。",
+      "5. 了解 C++、Bazel 和 Python wheel 构建链。",
+      "6. 了解 RISC-V Linux、交叉编译和多架构容器镜像。",
+      "7. 熟悉性能测试方法，能使用 Prometheus、Grafana、pprof、perf、py-spy 或火焰图定位问题。"
+    ]
+  },
+  {
+    "项目名": "面向RISC-V架构的OpenJDK安全算法优化 ",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V",
+      "os",
+      "Linux",
+      "safe",
+      "WPA/WPA2"
+    ],
+    "项目简介": "（1）背景：RISC-V 开放指令集架构已进入服务器与 AI 计算市场，以 SG2044 为代表的主流国产服务器芯片基于 rv64gcv（RVA20/22 基础 profile，仅含通用向量扩展 RVV）。RISC-V 向量密码学扩展（Zvkn/Zvkg 系列）尚未普及，此类芯片无法使用密码学硬件指令。\n（2）已有工作：OpenJDK RISC-V 后端已实现 SHA-2（JDK-8319716）、AES（Zvkned）、GHASH（Zvkg）内建函数，但全部依赖 Zvkn/Zvkg 向量密码学扩展；CRC32（JDK 24）、数组 HashCode（JDK 25）已使用通用 RVV 指令实现。\n（3）存在的不足：在无 Zvkn 扩展的芯片上，SHA-2/AES/GHASH 内建函数被强制禁用并回退纯 Java 实现，密码学性能相差数倍到十余倍；SHA-3 在 RISC-V 上完全未实现。\n（4）希望改进的点：使用通用 RVV 基础指令（vmerge/vand/vxor/vror 等）实现 SHA-2 与 AES 的向量化内建函数，使所有 rv64gcv 芯片无需 Zvkn 即可获得接近专用扩展的加速效果。\n（5）最终目标：实现 SHA-256、SHA-512 与 AES 的纯 RVV 向量化内建函数，通过门控与 Zvkn 版本共存，在 SG2044 实机验证相对纯 Java 预期数倍提升；核心完成后尽量完成 GHASH 与 SHA-3。",
+    "产出要求": [
+      "1. 实现 SHA-256 纯 RVV 向量化内建函数；",
+      "2. 实现 AES 纯 RVV 向量化内建函数；",
+      "3. 完成门控集成并与 Zvkn 版本共存；",
+      "4. 输出正确性测试与 JMH 性能报告；",
+      "5. 实现 GHASH 纯 RVV 向量化内建函数；",
+      "6. 实现 SHA-3 纯 RVV 向量化内建函数；",
+      "7. 向 OpenJDK 提交 Pull Request 并推动合入；"
+    ],
+    "技术要求": [
+      "1. 掌握 C/C++，了解 RISC-V 汇编；",
+      "2. 熟悉 Java 编程与 HotSpot 虚拟机结构；",
+      "3. 掌握 RISC-V 指令集，熟悉 RVV 向量扩展；",
+      "4. 熟悉 OpenJDK 内建函数（stub 生成器）框架；",
+      "5. 了解 SHA/AES/GHASH 密码算法原理；",
+      "6. 有性能分析与调优实践经验者优先."
+    ]
+  },
+  {
+    "项目名": "星绽 RISC-V KVM 硬件虚拟化支持",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "KVM",
+      "os",
+      "Virtualization",
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "星绽（Asterinas）是一款面向 Linux 兼容性的 Rust 操作系统内核，当前正在建设基于 x86 VMX 的硬件虚拟化能力。本项目将在既有虚拟化框架基础上，适配 RISC-V Hypervisor Extension（H 扩展），实现 RISC-V 架构下的 KVM Host 能力。\n项目期望支持用户态 VMM（如 QEMU）通过标准 Linux KVM API 创建、配置、运行和销毁 RISC-V 虚拟机；内核负责完成 vCPU 创建与调度、客户机内存映射、Guest/Host 切换、虚拟中断等核心机制，并处理 RISC-V 虚拟化相关的体系结构状态。最终应能够使用 QEMU 启动一个可工作的 RISC-V Linux Guest。",
+    "产出要求": [
+      "1. 完成 RISC-V H 扩展相关的 Host 初始化、能力探测和虚拟化状态管理。",
+      "2. 在星绽中实现 RISC-V KVM 所需的核心接口，支持 QEMU 通过 `/dev/kvm` 完成虚拟机与 vCPU 的创建、配置、运行和销毁。复用与现有 x86 KVM 框架可复用部分的抽象，避免无必要的重复实现。",
+      "3. 支持至少 1 个 vCPU、客户机物理内存映射、Guest/Host 上下文切换及必要的虚拟中断处理。",
+      "4. 提供可重复运行的测试或示例脚本，使用 QEMU 启动 RISC-V Linux Guest，并验证 Guest 能够完成启动并执行基本命令。",
+      "5. 提交实现代码、测试代码、使用文档和设计说明。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Rust，具备阅读和修改大型 Rust 工程的能力。",
+      "2. 了解操作系统基本原理，包括进程/线程、内存管理、中断与异常、系统调用及设备模型。",
+      "3. 了解 RISC-V 特权级架构，具备阅读 RISC-V Hypervisor Extension 规范的能力。",
+      "4. 了解虚拟化基本概念，如 vCPU、VM Exit、二级地址转换、虚拟中断和 KVM API。",
+      "5. 有 Linux 内核、QEMU、KVM、RISC-V 或底层系统开发经验者优先。",
+      "6. 能在 Linux 开发环境中使用 Git、Make、QEMU 等工具完成调试与测试。"
+    ]
+  },
+  {
+    "项目名": "实现 Asterinas RISC-V 进程调试能力",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "Asterinas 是一个使用 Rust 编写、采用 framekernel 架构的通用操作系统内核，兼容 Linux ABI。本项目面向 RISC-V 上缺失的进程调试能力，补齐\n`ptrace`\n系统调用的架构相关层，使 GDB 与 strace 等调试工具能够在 RISC-V 上正常工作。\nAsterinas 已实现 ptrace 的架构中立部分，包括 tracer/tracee 关系管理、停止与唤醒状态机、选项处理与 fork/exec 事件上报。本项目在此基础上构建 RISC-V 的架构相关层，为\n`PTRACE_PEEKUSER`\n、\n`PTRACE_POKEUSER`\n、\n`PTRACE_SINGLESTEP`\n、\n`PTRACE_GETREGS`\n、\n`PTRACE_SETREGS`\n五个请求提供 RISC-V 实现，使调试器能够读写被跟踪进程的寄存器状态。\n项目将围绕 RISC-V 自身的 ptrace ABI 建模。RISC-V 通过\n`PTRACE_GETREGSET`\n和\n`PTRACE_SETREGSET`\n配合 regset 编号访问寄存器，需要建立 regset 分发机制作为寄存器访问的基础路径。项目还需要重新设计 ptrace 的架构抽象边界。当前架构中立层的\n`TraceeState`\n直接保存 x86 的寄存器快照，例如\n`fs_base`\n与\n`gs_base`\n等，RISC-V 上没有对应物，需要将\n`TraceeState`\n寄存器快照与系统调用返回值抽象为架构自定义类型，使中立层不再感知具体架构的寄存器构成。\n最终预期 GDB 能在 RISC-V 上附加进程、读写寄存器、设置断点并继续执行，strace 能跟踪系统调用，LTP 的 ptrace 相关测试在 riscv64 上通过。",
+    "产出要求": [
+      "1. RISC-V ptrace 架构层实现完整：新增 `kernel/src/arch/riscv/ptrace.rs` 提供与 x86-64 对等的接口；消除 `syscall/ptrace.rs` 与请求分发路径上的条件编译门控，且须通过实现 RISC-V 侧达成。",
+      "2. `PTRACE_GETREGSET` / `PTRACE_SETREGSET` 实现完成，至少支持 `NT_PRSTATUS` 与 `NT_PRFPREG`；RISC-V 的 `user_regs_struct` 布局与 Linux uapi 头文件逐字段一致，并有单元测试或编译期断言验证字段偏移。",
+      "3. ptrace 架构抽象边界重新设计：`TraceeState` 中的寄存器快照与系统调用返回值改为架构自定义类型，架构中立层不再出现 `fs_base`、`gs_base`、`orig_rax` 等 x86 专属概念，消除 `ptrace/mod.rs` 的条件编译门控；并提交设计说明，论证该抽象对 x86-64 与 RISC-V 均成立，且后续接入其他架构时无需再引入条件编译。",
+      "4. LTP 的 `ptrace01`–`ptrace11` 中，在 riscv64 上启用并通过的用例数不少于 6 个；未通过用例在屏蔽列表中逐条注明原因，按“内核缺陷 / 环境限制 / 架构上不适用”分类归档。",
+      "5.  新增不少于 3 个针对 RISC-V ptrace 的回归测试并接入构建。",
+      "6. 在 riscv64 上使用 GDB 附加到运行中的进程，完成寄存器读取、断点设置与继续执行；使用 strace 跟踪一个程序，输出可与 Linux 上的结果对比。两项均提交完整操作记录。",
+      "7. 保持 Asterinas 的 x86-64 与 LoongArch 构建、启动及测试行为不受影响，并通过项目要求的格式化、静态检查和相关回归测试。",
+      "8. 学生本人在项目周期内完成相应贡献，代码、测试和文档以 PR 形式提交到项目成果仓库，并在结项审核前完成合入。"
+    ],
+    "技术要求": [
+      "1. Rust 基础，熟悉所有权、trait 与条件编译，能够阅读和修改多 crate Rust 项目，并能编写 `no_std` 代码。",
+      "2. 操作系统知识，理解进程与线程、信号、系统调用、上下文切换与异常处理。",
+      "3. C 语言阅读能力，能够阅读 Linux 内核源码与 LTP 测试用例作为参照。",
+      "4. RISC-V 架构基础，了解通用寄存器与调用约定、特权级与 CSR 概念。",
+      "5. Linux 命令行、Git 和 GitHub PR 协作经验。",
+      "6. 使用 QEMU 进行构建、运行和日志分析的能力。"
+    ]
+  },
+  {
+    "项目名": "完善 Asterinas uevent 与 udev coldplug 兼容支持",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "x86"
+    ],
+    "项目简介": "Linux 内核通过 uevent 将设备注册、注销和状态变化通知给用户空间。systemd-udevd 等设备管理程序监听\n`NETLINK_KOBJECT_UEVENT`\n组播组 1，接收内核产生的\n`add`\n、\n`remove`\n、\n`change`\n等事件，并根据事件中的设备路径、子系统、设备号和设备名称执行规则。\nAsterinas 已通过 PR #2109 实现\n`NETLINK_KOBJECT_UEVENT`\n套接字、组播队列、消息序列化和合成事件参数解析等基础设施，但目前尚未接入真实设备生命周期。设备注册、注销和状态变化不会自动产生 uevent，已有的合成事件解析代码也没有连接到 sysfs 设备对象。\n此外，许多设备在用户空间启动前就已经完成注册，启动阶段产生的 uevent 无法被尚未运行的 udevd 接收。Linux 通过 udev coldplug（启动阶段对已有设备进行枚举并重新触发 uevent）机制解决这一问题：udevd 启动并监听 Netlink 后，\n`udevadm trigger`\n枚举\n`/sys/devices`\n中已有设备，向每个设备的\n`uevent`\n属性写入\n`add`\n，由内核重新生成事件并通过相同的 Netlink 渠道广播。\n本项目将在 Asterinas 新设备模型和 devtmpfs 的基础上，实现真实设备生命周期与 uevent 的连接、根据 sysfs 设备拓扑自动生成事件信息、\n`/sys/devices/.../uevent`\n查询和合成事件触发接口、标准\n`udevadm trigger`\n所需的 coldplug 能力，以及用户空间监听和端到端兼容性测试。\n最终目标是让 Asterinas 中的标准用户空间设备管理程序能够发现启动阶段已经存在的设备，并持续接收运行时设备变化事件。本项目不包括实现新的设备模型、devtmpfs、用户态 udev 守护进程或新的硬件热插拔驱动。",
+    "产出要求": [
+      "1. 设计并实现统一的内核 uevent API，至少支持 `add`、`remove`、`change`。调用者不得自行硬编码 `DEVPATH`、`SUBSYSTEM` 等基础字段，这些信息应从注册后的设备对象和 sysfs 拓扑中获得。",
+      "2. 每条事件必须包含：`<action>@<devpath>`、`ACTION`、`DEVPATH`、`SUBSYSTEM` 和 `SEQNUM`。具有 DevNode 的设备还应包含 `MAJOR`、`MINOR`、`DEVNAME`。设备提供相关信息时，还应支持 `DEVTYPE`、`DEVMODE`、`DEVUID`、`DEVGID`、`DRIVER` 和 `MODALIAS` 等字段。\n\n设备、设备类和总线应能够通过扩展接口，向 uevent 消息追加各自负责的 `KEY=VALUE` 属性。例如，网络设备可提供 `INTERFACE` 和 `IFINDEX`，PCI 总线可提供 `PCI_ID` 和 `MODALIAS`。",
+      "3. 设备生命周期集成",
+      "4. 为可发送事件的设备实现只读接口 `/sys/devices/.../<device>/uevent`。读取时，每行输出一个该设备可以提供的 uevent 属性，至少覆盖具有 DevNode 的设备号和设备名称信息。\n\n写入时解析动作并触发合成 uevent，支持格式 `ACTION [UUID [KEY=VALUE ...]]`。没有 UUID 时添加 `SYNTH_UUID=0`；有 UUID 时在事件中保留相同的 `SYNTH_UUID`；非法动作、UUID 或参数应返回适当错误。\n\n至少验证一个具有 DevNode 的真实设备、一个不具有 DevNode 的设备或内核测试设备、一个字符设备或块设备，并验证 UUID 能够从触发请求传播到接收事件。",
+      "5. 实现只读接口 `/sys/kernel/uevent_seqnum`，并保证并发事件序号唯一性。",
+      "6. 标准工具应能够执行 `udevadm monitor --kernel --property` 和 `udevadm trigger --type=devices --action=add`。`udevadm trigger` 枚举到的已注册设备应能通过写入 `uevent` 属性重新产生 `add` 事件，并由监听器从 `NETLINK_KOBJECT_UEVENT` group 1 接收。",
+      "7. 新增内核测试和用户态回归测试，测试场景不少于 8 个，至少覆盖自动 `add`、自动 `remove`、主动 `change`、具有或不具有 DevNode 的事件字段、合成事件无 UUID、合成事件有 UUID 和扩展参数、非法动作/UUID/参数、group 1 组播过滤、注册失败不产生事件、重复注销不产生重复事件以及并发事件序号唯一性。\n\n至少新增一个 C 用户态监听测试程序，按照 NUL 分隔格式解析 uevent 中的 `KEY=VALUE` 字段，不依赖这些字段的非必要排列顺序。\n\n所有相关内核测试、用户态回归测试和 coldplug 端到端测试都必须分别在 x86_64 和 RISC-V 64（`riscv64`）平台完成，并验证内核构建启动、kernel-mode tests、C 用户态监听、sysfs uevent 读写、事件字段、组播、coldplug、并发序号和错误路径。",
+      "8. 提交 uevent 设计文档，补充模块文档或 Asterinas Book。说明设备注册、注销和状态变化时由内核自动产生 uevent 的调用路径，通过 sysfs `uevent` 属性触发合成事件的调用路径，以及 udev coldplug 批量重新触发已有设备事件的完整流程。\n\n在 Asterinas 上运行 systemd-udevd，验证其能够接收 uevent、执行一条测试 udev 规则，并通过 `udevadm info` 查询规则处理后的设备信息；完成测试和文档交付；代码符合 Asterinas Coding Guidelines；向 Asterinas 社区提交 PR，配合评审者完成审阅和修改，推动 PR 最终合入。"
+    ],
+    "技术要求": [
+      "1. 基本要求：熟悉 Rust，包括 trait、泛型、Arc、锁和原子变量；能够编写基础 C 系统程序；熟悉 Linux、Git 和命令行开发环境；能够在 Docker 和 QEMU 中构建、运行和测试 Asterinas；能够在 x86_64 和 RISC-V 64 两个平台定位和分析测试问题。",
+      "2. 加分项：了解 Linux 设备模型、sysfs、udev 或 Netlink；有操作系统、驱动或内核开发经验；有 RISC-V 或跨架构开发经验；使用过 GDB、strace、udevadm 等调试工具。",
+      "3.不要求申请者此前完整实现过内核子系统，但需要具备阅读 Rust 内核代码和持续调试的能力。"
+    ]
+  },
+  {
+    "项目名": "PMU 驱动与基本 perf 功能支持",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V",
+      "os",
+      "x86",
+      "os",
+      "Perf"
+    ],
+    "项目简介": "Asterinas 是一个使用 Rust 编写、兼容 Linux ABI 的通用操作系统内核。其内核采用 Framekernel 架构：安全内核功能位于\n`kernel/`\n，其中禁止使用\n`unsafe`\nRust；底层硬件访问能力集中在 OSTD 中。\nLinux\n`perf`\n是连接处理器性能监控单元（Performance Monitoring Unit，PMU）与用户态性能分析工具的核心基础设施。它可以统计 CPU cycles、retired instructions、cache miss、branch miss 等硬件事件，帮助开发者判断性能瓶颈来自计算、缓存、分支预测还是调度开销，并为内核和应用优化提供量化依据。\nAsterinas 当前尚未实现\n`perf_event_open`\n系统调用，x86-64 与 RISC-V 架构也缺少 PMU 驱动，因此标准\n`perf`\n工具无法读取硬件性能计数器。本项目要求参赛者为 x86-64 Architectural PMU 和 RISC-V SBI PMU 建立基础 counting 支持，实现精简且行为明确的\n`perf_event_open`\n接口，并最终在两种架构上使用标准\n`perf stat`\n统计 CPU cycles 和 instructions。\n项目重点是硬件计数器的探测、配置、任务级生命周期管理和 Linux 用户态接口兼容，不追求一次性实现完整的 Linux perf 子系统。Sampling、tracepoint、调用栈、事件复用等高级能力不属于必选范围。",
+    "产出要求": [
+      "1. PMU 抽象与驱动：提供架构无关 counting 接口，以及可工作的 x86-64 Architectural PMU 和 RISC-V SBI PMU 后端。",
+      "2. 系统调用实现：完成上述 `perf_event_open`、perf event fd、`read()` 和 `ioctl` 必选子集。",
+      "3. 调度集成：支持 per-task event 的保存、恢复、迁移和资源回收，多个任务之间不得相互污染。",
+      "4. 标准工具演示：在 x86-64 与 RISC-V 64 上使用标准 `perf stat` 成功统计 cycles 和 instructions，各连续运行 10 轮。",
+      "5. 自动化测试：提供驱动配置、属性校验、event 生命周期、错误路径、并发任务和任务迁移等回归测试。",
+      "6. 量化测试报告：记录两种架构的环境、命令、原始输出、10 轮结果和趋势分析，并列出不支持的 perf 能力。",
+      "7. 技术文档：说明抽象设计、寄存器或 SBI 使用方式、锁与 per-CPU 状态、调度交互、Linux ABI 范围和已知限制。",
+      "8. 社区交付：代码遵循 Asterinas 贡献规范，通过与改动相关的格式化、编译、lint 和测试检查，并以便于评审的增量 Pull Request 提交。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Rust，理解 trait、所有权、原子操作、锁和并发状态管理。",
+      "2. 理解 CPU privilege level、寄存器、陷入、per-CPU 数据和任务上下文切换。",
+      "3. 了解 Linux 文件描述符、系统调用 ABI、ioctl 和用户态内存访问。",
+      "4. 能够阅读 Intel SDM、RISC-V SBI specification 和 Linux perf 文档或源码。",
+      "5. 具备 C 或 Shell 测试开发能力，能够构造稳定 workload 并分析计数结果。",
+      "6. 能够使用 QEMU 调试 x86-64 与 RISC-V 系统，并区分虚拟硬件、固件和内核问题。",
+      "7. 必须遵守 Asterinas 的安全边界：`kernel/` 中不得引入 `unsafe` Rust，必要的底层硬件访问应封装在 OSTD 中。",
+      "8. 有体系结构实验、内核驱动、调度器、性能分析或操作系统课程项目经验者优先，但不要求已有 Asterinas 开发经验。"
+    ]
+  },
+  {
+    "项目名": "面向数据中心的RISC-V基础软件生态成熟度评估 ",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Linux",
+      "os",
+      "RISC-V",
+      "os",
+      "Perf",
+      "os",
+      "GCC",
+      "os",
+      "CentOS"
+    ],
+    "项目简介": "RISC-V正在从嵌入式场景向服务器、数据中心和AI计算等高性能场景扩展，服务器基础软件的成熟程度直接影响RISC-V平台的可用性和商业落地。前期研究已围绕RISC-V服务器基础软件成熟度开展量化评估，形成了Sapling和Sequoia两项研究成果。其中，Sapling论文已发表于ICSE 2026，Sequoia进一步提出基于第一性原理的软件成熟度评价方法，从功能完整性FI、性能先进性PA、编译质量CQ和开源开发活跃度ODA等维度，对RISC-V软件运行状态进行量化分析。\n目前相关评测流程已经具备研究基础，但仍存在自动化程度不足、测试数据整理成本较高、结果报告生成不够统一等问题。目前自动化测试框架已具备一定的持续集成和测试执行能力，本项目希望在现有 目前测试流程基础上，面向RISC-V服务器基础软件，开发并优化自动化成熟度评测与报告生成工具。\n本项目将选取若干典型基础软件组件作为示例对象，完成测试任务配置、测试结果采集、性能数据解析、成熟度指标计算和报告输出。最终形成可复用的自动化评测流程，使用户能够通过CI执行测试任务，并自动生成包含FI、PA、CQ等指标的评测结果，为RISC-V服务器基础软件适配和优化提供参考。",
+    "产出要求": [
+      "1. 完成基础软件在RISC-V平台（SG2044\\蓝芯\\K3）的构建编译安装；",
+      "2. 完成自动化测试任务配置；  ",
+      "3. 实现软件功能测试、性能测试；",
+      "4. 实现软件的成熟度评分；",
+      "5. 支持至少 3 个基础软件组件评测；  ",
+      "6. 生成 Markdown 或 HTML 评测报告;",
+      "7. 编写工具使用说明和示例文档;",
+      "8. 输出测试样例和结果复现实验报告。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Linux 基本命令和 Shell 脚本；  ",
+      "2.\t掌握 Python 数据处理开发； ",
+      "3.\t了解 CI基本流程；  ",
+      "4.\t了解 YAML 配置文件编写；  ",
+      "5.\t了解 RISC-V 基础软件编译构建安装更佳；  ",
+      "6.\t了解 perf 性能采集工具更佳； ",
+      "7.\t具备 Markdown/HTML 报告生成经验更佳。"
+    ]
+  },
+  {
+    "项目名": "完善 deepin-ports next 仓库",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Linux",
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "相关背景\ndeepin-ports SIG 是 deepin 社区负责将 deepin 操作系统移植与适配到更多硬件架构（如 ARM64、RISC-V、LoongArch 等）和异构设备（如各种 SoC 开发板、SBC 及特定终端设备）的兴趣小组。\n为满足适配 RISC-V RVA23 Profile 的新一代硬件需求，deepin-ports SIG 在 deepin 25 基础上建立了 next 仓库。该仓库旨在集成最新的工具链与核心基础库，其整体软件版本规划不低于 debian forky。next 仓库一方面为符合 RISC-V RVA23 规范的新硬件提供底层支持与极致性能优化，另一方面也作为 deepin 25 向下一代操作系统版本过渡的技术验证场。\n已有的工作\n在过去的几个月中，deepin-ports SIG 已在四大主流架构（amd64、arm64、riscv64、loong64）上初步完成了 next 仓库的基础框架构建：\nGCC、LLVM、Rust 等关键编译器与工具链，以及 glibc、mesa、openssl 等核心基础库的新版本升级。\n针对端侧大模型（LLM）推理需求，成功打包并集成了开启 RVA23 优化的 llama.cpp 和 ggml。\n针对 SG2044（模拟 RVA23 环境）和 SpacemiT K3 等硬件，完成了包含 next 仓库的系统镜像适配与测试，验证了工具链与新库带来的性能提升。\n存在的不足\n当前 next 仓库叠加在 deepin 25 之上，大量上层软件包尚未基于新工具链进行 rebuild，无法充分发挥新工具链的优化效果与性能优势。\ndeepin 25 仓库内部分软件包未在 GitHub 上维护独立代码库，且源码版本过于陈旧，在新版 GCC/LLVM/glibc 环境下编译时容易出现构建失效（FTBFS）的问题。\n桌面环境（DDE）与 DTK 基础库存在复杂的依赖关系，基础库更新可能导致 API/ABI 破坏，需要向 DTK/DDE 组件提交兼容性补丁（部分已在 Arch Linux 等上游发行版中解决并上游化，但仍需在 deepin 体系内验证）。\n希望改进的点\n基于 next 仓库的工具链对基础库及上层关键软件包进行全面重构，消除 FTBFS 问题。\n清理并修复老旧软件包在新工具链下的编译报错，针对存在 API/ABI 变动的底层库，backport 上游补丁或联动重构建关联软件包，解决兼容问题。\n修复并适配 DTK/DDE 等桌面组件在 next 仓库下的编译构建与运行。\n实现基于 next 仓库构建四大架构（含 RISC-V RVA23 设备）主线 ISO 及启动镜像的流程。\n最终项目实现的目标\n核心目标\n形成一个自洽的 next 基础仓库，覆盖 deepin 主线 ISO 及 deepin-ports 各架构镜像预装的绝大部分核心软件包。\n基于 next 仓库构建出的系统镜像能够成功在四大架构（amd64、arm64、loong64 以及支持 RVA23 的 RISC-V 设备）上引导启动并正常运行。\n保障 next 仓库与 deepin 25 基础仓库的叠加能力，允许用户在 next 系统环境中手动添加 deepin 25 软件源并扩展安装更多应用。\n所有针对 FTBFS 问题的修复 patch、backport 补丁及打包配置文件需全部规范提交至社区仓库。\n可选 / 进阶目标\n进一步挖掘 RVA23 架构特性，为更多关键基础库开启相关的编译选项。",
+    "产出要求": [
+      "1. 软件与成果产出",
+      "2. 测试与验收标准"
+    ],
+    "技术要求": [
+      "1. 系统构建与打包",
+      "2. 工具链与机制理解",
+      "3. 体系结构与交叉编译",
+      "4. 实践经验"
+    ]
+  },
+  {
+    "项目名": "跨平台 deepin-ports 镜像下载、组装和写入工具",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Linux",
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "相关背景\ndeepin-ports SIG 是 deepin 社区负责将 deepin 操作系统移植与适配到更多硬件架构（如 ARM64、RISC-V、LoongArch 等）和异构设备（如各种 SoC 开发板、SBC 及特定终端设备）的兴趣小组。\n针对不同硬件平台的启动流程，deepin-ports 会提供 ISO、完整磁盘镜像、分区镜像等多种镜像格式。用户在拿到镜像后，往往需要手动进行刷写操作。由于不同设备的启动流程不同，部分设备需要刷入特定的 Bootloader，部分分区镜像需要设置偏移量并创建分区表，而写入镜像时还需要\ndd\n、\nfastboot\n等工具，操作门槛较高且容易误操作。\n已有的工作\n过去两年，deepin-ports SIG 发布了针对多款 RISC-V 和 ARM 开发板的 deepin 23 / deepin 25 系统镜像。deepin-ports SIG 也为各 SoC 或开发板编写并维护了对应的安装指南。\n存在的不足\n镜像下载入口较分散，用户需要分别寻找并下载对应设备的系统镜像和厂商特定的 Bootloader/固件，缺乏统一的下载入口。\n用户的宿主机操作系统及架构各异（各类 Linux 发行版乃至 Windows/macOS，ARM/LoongArch/RISC-V），而现有的安装指南大多默认用户运行 Linux 环境。\n手动创建分区表、对齐扇区、写入 Bootloader 以及设置分区的偏移量等操作对于普通用户过于复杂。\n希望改进的点\n修改已有镜像发布和索引流程，实现统一的资源下载，即从 deepin-ports 仓库动态拉取设备列表，自动匹配并下载硬件所需的 Bootloader 与系统镜像。\n能够自动依据设备配置，处理偏移量填充、分区表生成、镜像拼接，并写入目标存储。\n提供清晰的交互界面，支持自动识别并过滤宿主机硬盘，提供清晰的擦写提示，保障跨平台的体验一致性。\n最终项目实现的目标\n核心目标\n实现一个桌面工具，提供友好直观的 UI 界面，支持多个架构和平台。\n该工具能够联网获取 deepin-ports 的设备与镜像清单，支持搜索并下载对应的 Bootloader 和系统镜像文件，支持断点续传与完整性校验。\n该工具能够根据设备配置，完成镜像解压、根据配置创建分区表并组合各个分区，最终生成可写入的完整镜像。\n实现跨平台的存储介质（如 SD 卡、U 盘、NVMe 固态硬盘等）写入。\n可选 / 进阶目标\n提供独立的 CLI 版本，便于自动化构建流程或高级用户直接使用。\n集成 fastboot 支持，可通过预定义配置，按顺序执行 fastboot 命令将镜像写入设备。\n探索利用 WebAssembly + WebUSB 的方案，实现使用 Chromium 系列浏览器即可无需单独下载工具完成部分目标。",
+    "产出要求": [
+      "1. 软件产出：",
+      "2. 测试与验收标准："
+    ],
+    "技术要求": [
+      "1. 掌握 C/C++/Rust/Go/… 等任意一种系统级语言",
+      "2. 技术栈"
+    ]
+  },
+  {
+    "项目名": "为 Lua-LSM 策略执行引入时间与资源约束",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Linux"
+    ],
+    "项目简介": "Lua-LSM 是基于 Linux LSM 框架的可编程内核安全机制：安全策略以 Lua 小程序的形式运行在内核态，通过 securityfs 动态加载与卸载，无需重新编译或重启内核即可调整策略，适用于容器、云原生等需要快速迭代安全策略的场景。\n目前它已能在 x86 与 arm64 上端到端运行：策略可动态装卸、覆盖主要 LSM 钩子做访问控制决策，并提供模块内共享的键值字典用于在策略之间保存状态。但策略代码的执行过程目前不受任何约束，既没有执行时间上限，也没有中止手段，这在投入生产实际使用前是一处必须补齐的短板。一段不会结束的策略，后果取决于它在哪个上下文被调用：在普通系统调用触发的钩子里，比如进程打开文件，该进程会一直阻塞而它此时通常持有文件系统锁，故障会牵连其他访问同一对象的进程；在软中断路径的钩子里，比如网络收包，当前实现为获取 Lua 虚拟机而关闭了抢占，该 CPU 会因此完全失去响应。\n触发上述情形不要求策略作者写出显然的死循环。策略所检查的对象，包括文件路径、扩展属性、报文内容，都由被检查的一方提供，对方可以构造远超预期的输入，让本应很快返回的判断持续占用 CPU。与执行时间相关的还有一个问题：策略执行出错时，当前的处理是返回钩子的默认值，而访问控制类钩子的默认值基本都是允许，这意味着能让策略执行失败或超时的输入就能换取一次放行。如果只是加一个超时、超时后沿用现有出错逻辑，等于把拒绝服务问题换成了策略绕过。\n本项目希望为策略执行建立可预期的资源边界与明确的失败语义，并分两步推进。第一阶段收口内核 Lua 库函数中执行量由输入决定的路径，这部分改动只影响内核 Lua 库，边界清晰、可独立验证，同时从零建立起 Lua-LSM 的策略测试环境。第二阶段在虚拟机层面引入执行时间预算，使超时能被可靠中止、失败方向为拒绝而非放行、反复超时的策略被自动隔离，这部分涉及原子上下文推理与若干前置问题，探索性较强。最终目标是让 Lua-LSM 在面对恶意或异常输入时，策略执行有明确的时间与工作量上限，超时中止后返回拒绝，问题策略可被隔离并留下可追溯记录，并配套可复现的测试与使用文档。",
+    "产出要求": [
+      "1. 内核 Lua 库函数的执行边界与测试基建（要求可合入主线即可）\n字符串库执行量上限：为模式匹配等执行量由输入规模决定的库函数引入上限，超出后报错退出；上限取值需有度量依据，并验证正常使用不受影响。",
+      "2. 虚拟机层的执行时间预算与失败处理（探索性）\n借助解释器执行钩子为每次策略调用设定时间预算，区分普通与原子上下文，超时可靠中止。提供覆盖上述行为的可复现测试，以及说明新增执行约束的策略作者文档。"
+    ],
+    "技术要求": [
+      "1. 语言能力：熟练 C，理解并发原语与内存序，能读写中等规模并发代码。",
+      "2. 熟悉 Linux 内核模块开发流程，了解 LSM 框架的基本概念与钩子模型；理解原子上下文、抢占与 RCU 等基本内核编程约束。",
+      "3. 了解 Lua 语言基础"
+    ]
+  },
+  {
+    "项目名": "基于TravoDDS框架的DDS DataSharing零拷贝与Loaned Messages实现",
+    "难度": "进阶",
+    "标签": [
+      "safe",
+      "Socket",
+      "safe",
+      "TCP/IP",
+      "os",
+      "Linux"
+    ],
+    "项目简介": "（1）相关背景\n在DDS（数据分发服务）的高带宽、低延迟应用场景（如自动驾驶的激光雷达点云传输、工业机器人的视觉数据采集）中，传统DDS实现的读写路径存在“用户内存→序列化→传输层Buffer→网络→接收Buffer→反序列化→用户内存”的双深拷贝问题，导致CPU占用高、延迟大，无法满足实时性要求。业内解决方案是零拷贝传输：基于boost::interprocess创建按Writer GUID命名的共享环形历史段，Writer直接在共享段节点上构造数据，Reader通过共享段映射直接访问物理内存，全程零拷贝。为补齐travodds在实时数据传输上的性能短板，本项目拟基于travodds现有技术栈实现零拷贝机制。\n（2）已有的工作\ntravodds已具备以下零拷贝相关基础能力：\n- 共享内存（SHM）传输层 ：已实现基于boost::interprocess的完整SHM传输。\n- 全局内存池 ： memorypool 实现了“头元数据+连续数据区”的Buffer池化分配。\n- QoS框架与XML加载 ：已具备Durability、Liveliness等与零拷贝兼容的QoS及XML加载能力，可扩展DataSharingQosPolicy。\n（3）存在的不足\n- 无真正零拷贝通路 ：当前写路径强制序列化、读路径强制反序列化，物理内存至少写入2次，未达零拷贝标准。\n- 缺失PayloadPool抽象层 ：无 IPayloadPool / ITopicPayloadPool 接口，无法实现按Topic注册池、Writer/Reader共享池、区分普通池/共享段池的能力，仅靠全局单例MemoryPool无法支撑多Topic零拷贝场景。\n- 完全缺失DataSharing层 ：无 DataSharingPayloadPool （环形段历史）、 DataSharingNotification （无锁通知）、 DataSharingListener （Reader监听线程）等10+核心组件，无法实现共享段的创建、通知与监听。\n- 缺失DataSharing QoS与API ：无 DataSharingQosPolicy （QoS开关）、无 DataWriter::loan_sample / discard_loan （借出API）、无类型元数据 is_plain / is_bounded （零拷贝类型判定）。\n- 缺失Writer/Reader的DS协商逻辑 ：端点匹配时无“双方支持DataSharing→切换DS通道”的分支判断，无法替代RTPS数据发送路径。\n（4）希望改进的要点\n- 实现PayloadPool四层抽象 ：新增 IPayloadPool → ITopicPayloadPool 接口，及Preallocated/Dynamic等4种变体，改造 CacheChange 持有池归属，打通基础池化体系。\n- 实现自包含DataSharing共享段层 ：复用现有boost::interprocess封装，实现 DataSharingPayloadPool （Writer命名环形段）、 DataSharingNotification （无锁通知）、 DataSharingListener （Reader监听线程）等核心组件。\n- Writer/Reader集成DS协商 ：端点匹配时增加DataSharing兼容性判定，对兼容匹配启用DS通知通道，替代RTPS数据发送。\n- 补齐DDS层Loan API与QoS ：新增 DataSharingQosPolicy 、 DataWriter::loan_sample / discard_loan ，改造读路径跳过反序列化。\n- 实现降级回退机制 ：DataSharing不可用时自动回退RTPS路径，保证跨主机/不兼容场景的正常工作。\n（5）最终项目实现的目标\n- 功能目标 ：travodds具备真零拷贝能力，同主机plain/bounded类型数据读写全程物理内存仅写入1次，无任何用户态拷贝。\n- 验证目标 ：提供单元测试用例和示例代码，在ubuntu或openEuler验证通过。",
+    "产出要求": [
+      "1. 实现PayloadPool接口。",
+      "2. 实现DataSharing共享段管理模块。",
+      "3. 实现跨进程通知机制。",
+      "4. 实现DDS层Loan API。",
+      "5. 改造Read/Write路径旁路 ，支持跳过序列化/反序列化的零拷贝分支，同时保留RTPS降级回退机制。",
+      "6. 新增DataSharingQosPolicy配置。",
+      "7.  编写单元测试 ，覆盖新增代码，覆盖率≥70%;\n提供示例代码 ，含Loan Sample写发布、Loaned Sample读订阅、QoS配置启用DataSharing。",
+      "8. 输出详细设计说明文档；\n输出API使用手册 ，含Loan API调用规范、QoS配置参数说明、错误码与调试指引。"
+    ],
+    "技术要求": [
+      "1. 深入理解DDS/RTPS协议栈 ，熟悉SPDP/SEDP发现机制、QoS策略。",
+      "2. 具备Linux系统编程经验。",
+      "3. 熟悉CMake构建系统，掌握Gtest单元测试框架等工程能力。",
+      "4. 参与过ROS 2或DDS通信中间件相关项目开发，有相关经验更优。"
+    ]
+  },
+  {
+    "项目名": "RISCV芯片架构上的AGIROS开发环境构建",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V",
+      "os",
+      "QEMU",
+      "os",
+      "ARM"
+    ],
+    "项目简介": "目前AGIROS操作系统的开发，只能基于本地计算机环境，缺乏在服务器端的调测手段，核心原因是：服务器端无法真实模拟端侧的芯片架构（比如：Risc-v，ARM），在这些芯片架构上也缺乏或无法直接运行合适的代码编程工具（比如：code server未提供RISCV,ARM的二进制包），AGIROS的一些RQT窗口无法在服务器端运行。\n本项目目标是在模拟芯片基础上，运行编辑器，并进行基本调测。",
+    "产出要求": [
+      "1. 在Ubuntu24.04上运行qemu虚拟化RISC-V和ARM64架构，并拉起openEuler，Ubuntu24.04的命令脚本（参考qemu官网ubuntu操作，和openEuler官网，以及AGIROS的资料）。",
+      "2. 在RISC-V和ARM64两种芯片架构，openEuler，Ubuntu24.04两种os系统上，构建code server，形成可直接安装的二进制包。提交code server的源码和构建脚本（一套源码和脚本）。",
+      "3. 在code server中，设计并实现一个AGIROS控制器调试插件，这个插件能和AGIROS control manager和control插件交互，能获取AGIROS的消息等。让这个插件能直观的监控control注册到manager，查看manager和control的消息事件。",
+      "4. 根据code server的监控和调试要求，优化control manager和control插件源码，能够和code server插件配合。"
+    ],
+    "技术要求": [
+      "1. 熟悉分层虚拟化相关概念和工具（QEMU）",
+      "2. 熟悉web化编程思想（前后端分离），TS编程语言",
+      "3. 熟悉ROS2/AGIROS的控制器（control manager，控制器注册，消息管理机制）C++/Python编程语言",
+      "4. 熟练掌握大模型编程，会对加快编程有很大好处。"
+    ]
+  },
+  {
+    "项目名": "RustSBI Prototyper 固件内特权分离架构设计与实现",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "RISC-V SBI 固件运行在最高特权级，负责系统启动、异常与中断处理以及硬件资源管理，其实现缺陷可能影响整个系统软件栈的安全性。RustSBI Prototyper 就是这样的底层 RISC-V SBi 固件，已采用 Rust 实现，并具备基本的平台初始化、机器资源管理和 SBI 服务能力，在一定程度上降低了传统内存安全问题的风险。\n但是，RustSBI Prototyper 目前还有可提升的空间。现有实现仍将底层机器级机制与上层固件功能集中在同一软件层次中，安全敏感操作、平台相关实现和服务策略之间缺少清晰的权限边界，使固件可信计算基范围较大，也不利于对底层\nunsafe\n代码及其安全条件进行独立审查。\n为解决上述问题，本项目拟在 RustSBI Prototyper 中设计并实现固件内特权分离架构，将直接控制机器状态和硬件资源的底层机制集中到受控的基础层，并通过受限且语义明确的安全接口向上层固件服务提供必要能力。项目最终目标是完成 RustSBI Prototyper 的分层重构，形成边界清晰、权限受限、易于审查和扩展的固件架构，并在保持现有启动与 SBI 服务功能的基础上，验证该架构在实际 RISC-V 固件中的可行性。",
+    "产出要求": [
+      "1.项目代码：完成 RustSBI Prototyper 固件内特权分离架构的原型实现，包括底层机器机制与上层固件服务的分层重构代码",
+      "2. 测试代码：提供配套的单元测试、集成测试和 QEMU 启动测试，验证重构后的固件能够正常启动并提供主要 SBI 服务",
+      "3. 持续集成配置：将新增功能和测试接入 RustSBI 的持续集成流程",
+      "4. 技术文档：提交架构设计文档、模块与接口说明、构建运行说明及测试说明",
+      "5. 开源贡献：形成代码提交或 Pull Request，并推动相关实现合入 RustSBI 项目"
+    ],
+    "技术要求": [
+      "1. 熟悉 Rust 语言及其所有权、生命周期和模块化机制",
+      "2. 具备基本的 no_std Rust 或裸机系统开发能力",
+      "3. 了解 RISC-V 特权级架构、SBI 和固件启动流程",
+      "4. 能够阅读基础的 RISC-V 汇编代码和底层系统代码",
+      "5. 熟悉 Git、Cargo 和 QEMU 等开发与调试工具",
+      "6. 具有操作系统、固件或嵌入式系统开发经验者优先"
+    ]
+  },
+  {
+    "项目名": " RISC-V 架构固件漏洞挖掘与修复",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "RISC-V SBI 固件运行在最高特权级，负责系统启动、异常与中断处理以及硬件资源管理，其实现缺陷可能影响整个系统软件栈的安全性。目前在 RISC-V SBI 固件层，由于大模型本身的局限性，代码漏洞、缺陷挖掘的误报严重，尚未对于 RISC-V SBI 尚未形成对应的漏洞、缺陷挖掘与修复工具。\n为解决上述问题，本项目拟采用模糊测试与大模型结合的方法，针对各类 SBI 固件，从规范层、代码层和接口层多个角度进行探索，挖掘漏洞、缺陷，并在验证成功后具备高质量代码修复能力。项目的最终目标是完成通用的 SBI 固件漏洞挖掘与修复工具，并挖掘出非公开的漏洞与缺陷，为 SBI 安全提供坚实的开源贡献。",
+    "产出要求": [
+      "1. 项目代码：完成  RISC-V 架构固件漏洞挖掘与修复工具原型研制",
+      "2. 漏洞/缺陷成果：通过工具发现 OpenSBI 等项目中非重复缺陷/漏洞",
+      "3. 技术文档：提交架构设计文档、模块与接口说明、构建运行说明及测试说明"
+    ],
+    "技术要求": [
+      "1. 熟悉静态代码安全与模糊测试相关技术",
+      "2. 具备一定的独立开发能力，借助大模型而非依赖大模型",
+      "3. 了解 RISC-V 权限架构与 SBI 接口规范",
+      "4.  熟悉 Git、AFL 和 QEMU 等基础工具"
+    ]
+  },
+  {
+    "项目名": "基于openKylin X-Kernel实现RK3588 NPU驱动与边缘AI推理链路",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "os",
+      "ARM",
+      "codelang",
+      "Programming Language",
+      "chip",
+      "Chip Design/Verification",
+      "datas",
+      "Machine Learning"
+    ],
+    "项目简介": "(1)\n相关背景\nRK3588 集成 6 TOPS NPU，常用于边缘网关、机器人、工业视觉和本地大模型轻量推理等场景。现有推理链路通常依赖 Linux 内核驱动、用户态 Runtime 与厂商 SDK，系统栈较厚，难以在教学型或研究型操作系统中展示从设备驱动到模型执行的完整路径。openKylin社区主导的X-Kernel 是基于 Rust 的宏内核实验系统，具备内存安全、模块化和面向现代硬件扩展的优势，适合承载一条可研究、可复现的边缘 AI 推理链路。\n(2)\n已有工作\nX-Kernel 已具备基础内核框架、设备管理与用户态接口扩展能力；RK3588 生态中已有 NPU 相关文档、开源示例和用户态推理工具可参考。社区也积累了 Rust 驱动开发、设备树解析、DMA 缓冲区管理和异步任务调度等实践。\n(3)\n存在不足\n• X-Kernel 目前缺少面向 AI 加速器的真实设备驱动案例。\n• RK3588 NPU 的命令提交、内存映射、中断处理和用户态接口尚未在 Rust 宏内核中形成可复用抽象。\n• 边缘推理通常停留在用户态示例，缺少内核驱动、Runtime 适配、模型部署和性能评估的端到端链路。\n• 缺少针对 NPU 驱动稳定性、错误恢复和推理性能的系统化测试。\n(4)\n希望改进的点\n• 在 X-Kernel 中实现 RK3588 NPU 设备发现、初始化、内存管理、中断处理和任务提交。\n• 设计 Rust 风格的安全驱动接口，封装 unsafe 边界，降低后续设备驱动开发成本。\n• 提供用户态 ioctl/syscall 或字符设备接口，并适配最小推理 Runtime。\n• 完成典型模型的端到端推理演示，例如图像分类或目标检测。\n• 建立功能、稳定性和性能测试，输出可复现实验报告。\n(5)\n最终项目实现目标\n完成一个可在RK3588开发板上运行的openKylin X-Kernel NPU驱动原型，并打通模型加载、张量缓冲区分配、NPU任务提交、结果回收和用户态推理调用链路。项目最终应提供可编译代码、示例程序、测试用例、部署文档和性能评估报告。",
+    "产出要求": [
+      "1. 在openKylin操作系统环境下，完成 RK3588 NPU 设备初始化与资源管理。\n2. 实现 NPU DMA 缓冲区和内存映射接口。\n3. 实现任务提交、中断处理和结果回收流程。\n4. 提供用户态推理 Runtime 适配接口。\n5. 完成至少一个模型的端到端推理 Demo。\n6. 补充驱动测试、部署文档和性能报告。"
+    ],
+    "技术要求": [
+      "1. 掌握 Rust 系统编程和 unsafe 边界封装。\n2. 熟悉操作系统内核与设备驱动基础。\n3. 熟悉 ARM64、MMIO、中断和 DMA 机制。\n4. 了解 RK3588 NPU 或 AI 加速器运行模型。\n5. 了解边缘 AI 推理、模型格式和 Runtime。\n6. 有嵌入式 Linux 或开发板调试经验更优。"
+    ]
+  },
+  {
+    "项目名": "基于大模型与 systemd-coredump 的openKylin Linux 用户态崩溃取证与复现工具",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "x86",
+      "datas",
+      "LLM",
+      "dev",
+      "AIOps"
+    ],
+    "项目简介": "（1）相关背景\n当前，面向 openKylin 操作系统的用户态程序崩溃取证与自动复现工具尚属空白，社区开发者和系统维护者在崩溃诊断方面缺乏标准化、自动化的辅助手段。Linux用户态 C/C++ 应用出现SIGSEGV、SIGABRT、SIGFPE等异常时，systemd-coredump 可以保存coredump及相关元数据，coredumpctl、GDB等工具可以进一步提取调用栈、寄存器、线程和符号信息。但完成一次可靠的崩溃诊断，通常还需要理解ELF/DWARF、调试符号、源码上下文以及崩溃前后的journal日志，并通过反复实验确认根因。对于桌面应用、系统服务和第三方软件维护者，这类问题取证成本较高，重复问题难以归并，最小复现程序也往往依赖人工经验。大模型具备代码与日志理解能力，但如果缺少标准化证据链、隐私控制和可执行验证，容易产生不可追溯或无法复现的结论。\n（2）已有工作\nsystemd-coredump与coredumpctl已提供coredump采集、索引、查询和导出能力；GDB、addr2line、readelf等工具可以分析栈帧、符号和二进制信息；AddressSanitizer等工具也能辅助定位部分内存错误。开源社区已有使用大模型分析日志、调用栈和代码的实践，但这些能力大多以独立工具存在，尚缺少将崩溃证据采集、调用栈归一化、源码检索、AI归因、复现生成和沙箱验证串联起来的通用工作流。openKylin Skills 仓库为系统诊断类 AI 技能提供了可复用的组织与交付形式。\n（3）存在的不足\n● 崩溃证据分散，缺少统一的结构化数据模型。\n● 地址随机化和符号差异导致重复问题难以归并。\n● 缺少调试符号时，工具难以说明结论可信边界。\n● AI 结论常缺少栈帧、日志和源码证据引用。\n● 最小复现代码缺少自动编译执行与相似性验证。\n（4）希望改进的点\n本项目拟构建“崩溃记录选择—证据自动采集—符号与栈帧归一化—崩溃指纹生成—源码和日志检索—大模型根因分析—复现生成—沙箱验证”的完整闭环。系统应从coredumpctl 接收崩溃记录，自动生成结构化证据包，并将同一缺陷在不同地址、不同进程实例中的崩溃归并为稳定指纹；结合项目源码、构建信息及崩溃前后journal日志，由大模型输出按证据支持度排序的根因假设、缺失信息和后续验证步骤；可选生成最小复现程序或测试脚手架，并在容器或受限沙箱中编译执行，通过信号类型、关键栈帧和崩溃指纹判断是否复现成功。所有外发数据默认脱敏，模型不得直接在宿主机执行高权限命令。\n（5）最终项目实现目标\n最终形成一套可在普通x86-64 Linux环境运行的用户态崩溃取证与复现工具，并打包为适用于 openKylin 操作系统的可安装软件包（.deb）基础版本至少支持 C/C++ 用户态程序的 SIGSEGV、SIGABRT 和 SIGFPE三类异常，提供命令行入口、证据采集与脱敏、调用栈归一化、崩溃指纹、源码检索、AI根因分析、复现生成、沙箱验证以及JSON/Markdown报告。项目应提供不少于12个公开故障样例，其中至少10个完成正确的一级错误分类，至少5个生成能够通过验证的复现程序或复现脚手架；须在openKylin x86-64环境完成主要验证，并至少在另一种systemd Linux 发行版上完成兼容性验证。",
+    "产出要求": [
+      "1. 开发 coredump 证据采集与脱敏模块；\n2. 实现调用栈归一化与崩溃指纹；\n3. 实现源码和 journal 上下文检索；\n4. 开发证据约束的大模型根因分析；\n5. 实现最小复现生成与沙箱验证；\n6. 支持三类信号和十二个故障样例；\n7. 完成两种 x86-64 发行版验证；\n8. 输出 JSON 与 Markdown 诊断报告；\n9. 提交自动化测试、文档及可合入 PR。\n10.软件包交付：将工具打包为适用于 openKylin 的 .deb 软件包，确保可通过 dpkg 方式安装使用。"
+    ],
+    "技术要求": [
+      "1. 掌握 Python 与 Linux 命令行开发；\n2. 熟悉 C/C++ 和常见内存错误；\n3. 熟悉 GDB 及 core dump 调试；\n4. 了解 ELF、DWARF 与调试符号；\n5. 熟悉 systemd-coredump 和 journal；\n6. 了解大模型 API 与结构化输出；\n7. 熟悉容器、Git 及自动化测试；\n8. 有崩溃分析或 Agent 经验者优先。\n9. 了解 openKylin 操作系统开发环境，有在 openKylin 上进行系统软件调试的经验更优。"
+    ]
+  },
+  {
+    "项目名": "为Nacos运行支持RISC-V64架构，并保留更多架构支持的扩展能力",
+    "难度": "基础/Basic",
+    "标签": [
+      "os",
+      "RISC-V",
+      "cloudnative",
+      "Cloud Native"
+    ],
+    "项目简介": "(1)项目背景： Nacos基于Java语言开发，理论上应该是能够在任意架构的服务器上运行，但对于一些场景下的特殊技术架构要求，导致目前Nacos可能存在对2类本地数据库的依赖： 第一个是rocksdb，另一个derby， 其中第一个是由于使用了raft协议的java实现jraft，利用rocksdb作为raft-log的存储；第二个是对于单机版本Nacos快速启动时不强制依赖一个外部数据库时使用； 这两个依赖若启动时无法支持一些特殊的服务器架构，比如RISC-V64时，会导致Nacos无法启动和使用，不符合Nacos的通用云原生和AI原生的架构设计。\n(2)已有的工作：Nacos最新分支已经尝试对rocksdb进行升级，但还未在RISC-V64架构上进行测试，derby的版本已经支持了RISC-V64。\n(3)当前的不足：首先，目前还未在RISC-V64架构上进行测试，并不确定当前的rocksdb的升级以及启动参数的修改是否已经能够让Nacos支持RISC-V64架构，其次若有其他的一些特殊运行服务器架构，rocksdb和derby是否能够兼容，仍然需要考虑未来的基础拓展能力。\n(4)希望的点：第一，切实测试当前最新版本内容已经能够支持在RISC-V64架构上的运行，若仍然存在运行错误，通过升级rocksdb版本，修改启动参数或其他预设方案，让RISC-V64架构用户能够顺畅稳定的运行Nacos；第二，为更多服务器运行架构进行技术储备，采用自研jraft-log存储方案（如文件系统，或更换对多服务器架构支持更好的kv数据库等）以彻底解决多服务器运行架构不同导致的Nacos不兼容运行的可能性；第三，在当前支持的jdk版本下，尽可能升级derby的依赖版本，降低因derby低版本所支持的服务器运行架构不兼容运行可能性。\n(5)最终实现的目标：1. 让Nacos最新版本能够简单容易地在RISC-V64架构上运行；2. 使用自研jraft-log存储方案作为可选替代，彻底替换rocksdb的方案，解决多服务器运行架构不同导致的Nacos不兼容运行的可能性。",
+    "产出要求": [
+      "1. 零配置或至多一个配置改动，支持Nacos在RISC-V64架构服务器中运行起来，并通过IT测试",
+      "2. 尽可能升级derby版本，支持Nacos在x64，arm，RISC-V64架构服务器中运行起来，并通过IT测试",
+      "3. 通过自研raft-log存储机制和系统，替代rocksdb，支持Nacos在x64，arm，RISC-V64架构服务器中运行起来，并通过IT测试。"
+    ],
+    "技术要求": [
+      "1. 熟悉Java编程语言",
+      "2. 熟悉raft协议的机制以及raft-log的运作机制",
+      "3. 了解或熟悉文件操作系统中的文件读写的性能优化"
+    ]
+  },
+  {
+    "项目名": "优化 QEMU RISC-V User-mode 性能以加速 openRuyi 打包与构建",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "os",
+      "Linux",
+      "os",
+      "QEMU",
+      "os",
+      "RISC-V",
+      "os",
+      "x86"
+    ],
+    "项目简介": "（1）相关背景\nopenRuyi 的部分打包、rootfs 构建和跨架构软件执行场景需要在 x86-64 Linux 主机上运行 RISC-V 64 位用户态程序。QEMU Linux user-mode 可以直接在宿主系统上执行其他架构的用户态 ELF，并配合 binfmt_misc 等机制透明运行目标架构程序。\n在此类场景中，\nqemu-riscv64\n的执行性能会直接影响软件包安装、scriptlet 执行、rootfs 生成以及其他跨架构构建流程的整体耗时。\n（2）已有工作\nQEMU 已具有成熟的 RISC-V Linux user-mode 支持，可以在 x86-64 Linux 主机上运行 riscv64 用户态程序。openRuyi 可以稳定使用RISC-V Linux user运行riscv64 用户态程序。目前相关功能已经能够满足基本的兼容性和构建需求，具备进一步进行性能分析和优化的基础。\n（3）存在的不足\n在真实 openRuyi 打包和构建场景中，大量 RISC-V 用户态程序需要通过 QEMU 动态翻译执行，QEMU user-mode 带来的指令翻译、运行时状态维护等额外开销会延长整体构建时间。\nQEMU 本身需要同时兼顾大量 guest architecture、host architecture 和使用场景，因此针对\nriscv64 guest -> x86-64 host\n这一具体组合仍存在进一步优化空间。\n（4）希望改进的点\n本项目针对\nriscv64 guest -> x86-64 Linux host\n场景，对 QEMU Linux user-mode 进行性能分析和优化。\n学生需要首先建立可复现的性能基线，通过 profiling 定位主要性能瓶颈，并在保证功能正确性的前提下设计和实现相应优化。\n本项目不限定具体优化方法，也不要求优化方案一开始就泛化到所有 QEMU target 和 host backend。\n（5）最终项目目标\n最终目标是实际缩短 openRuyi 打包和构建过程中由 QEMU RISC-V user-mode 执行产生的时间开销。\n项目开始后将固定 QEMU baseline、测试环境和核心 openRuyi 验收 workload。在相同 x86-64 主机、软件环境和测试配置下，每个测试至少重复运行 5 次，以 wall-clock time 的中位数作为主要性能指标。\n核心 openRuyi 验收场景相对于 baseline 的综合执行时间预计降低\n30% 或以上\n；其他约定测试场景不得出现明显性能回退，并需要通过原有功能及回归测试。\n最终应提交可合并的代码、benchmark/测试脚本以及可复现的性能分析报告。",
+    "产出要求": [
+      "1. 建立可复现的 qemu-user 性能基线",
+      "2. 完成 riscv64-on-x86-64 性能优化",
+      "3. 核心 openRuyi 场景提速不低于 30%",
+      "4. 其他约定场景性能回退不超过 5%",
+      "5. 通过既有功能与回归测试",
+      "6. 提交补丁、基准脚本和性能报告"
+    ],
+    "技术要求": [
+      "1. 熟悉 C 语言和 Linux 用户态开发",
+      "2. 了解 RISC-V ISA 与 ABI",
+      "3. 了解 QEMU/TCG 基本工作原理",
+      "4. 熟悉 Linux 性能分析工具",
+      "5. 具备 Git 和开源协作基础"
+    ]
+  },
+  {
+    "项目名": "基于Kaiwu-PyTorch-Plugin实现均衡传播算法",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "PyTorch"
+    ],
+    "项目简介": "课题背景\n均衡传播（Equilibrium Propagation，EP）是一种面向能量模型的局部学习算法，它通过比较网络在自由相位（free phase）与微扰相位（nudged phase）下的两个平衡状态来估计参数梯度，为研究反向传播之外的训练机制、以及神经网络与物理计算系统的结合提供了一条重要路径。Kaiwu-PyTorch-Plugin 是基于 PyTorch 和 Kaiwu SDK 的能量模型开发工具，已提供 BM、RBM等模型，并支持模拟退火、相干伊辛机（CIM）等求解后端，但目前项目中尚缺少通用的均衡传播训练模块。\n课题的核心挑战在于把连续形式的均衡传播与离散的 Ising/QUBO 求解后端真正打通。一方面，需要在 Kaiwu-PyTorch-Plugin中新增一个可复用的均衡传播模块，使其能够配置输入层、多个隐藏层与输出层，分别执行自由相位和微扰相位，并设置平衡迭代次数、状态更新步长和微扰系数 β，同时兼容 PyTorch 的 Dataset、DataLoader与模型保存机制。另一方面，必须解决连续—离散之间的映射问题：将离散化后的网络能量转换为 Ising 或 QUBO模型，明确离散神经元状态如何编码为二进制变量或 Ising 自旋，说明网络权重、偏置、输入钳制与监督微扰如何映射到 QUBO/Ising系数，并回答两个相位是否使用相同的采样与求解参数、平衡状态应取最低能量解还是样本统计量，以及在离散化精度、求解时间与分类性能之间如何权衡。\n课题目标\n在 Kaiwu-PyTorch-Plugin 中实现一个可复用的均衡传播模块，并调用已有的 SimulatedAnnealingOptimizer 或 CIMOptimizer求解自由相位与微扰相位的平衡状态，最终使用该模块完成至少一个分类任务。模块需提供清晰的 PyTorch API，使用户能够完成模型构建、平衡状态求解、参数更新、预测、保存和加载的完整闭环。",
+    "产出要求": [
+      "1.完整源代码；",
+      "2. 单元测试，至少覆盖：自由相位和微扰相位的能量随迭代下降并趋于稳定；当 β=0且初始状态相同时，两个相位得到一致或数值近似一致的状态；小规模网络上的梯度方向与自动微分或有限差分结果近似一致；训练后模型参数发生合理变化；模型保存和重新加载后预测结果一致；",
+      "3. 一个可直接运行的分类训练示例：在 MNIST、Fashion-MNIST 或 sklearn Digits 数据集上完成实验，并与结构规模相近的反向传播网络比较；",
+      "4. README，包括算法原理、API 说明、随机种子及可复现实验的完整命令；",
+      "5. 实验结果、参数配置和训练曲线，至少报告训练集和测试集准确率、训练损失或分类误差曲线、每轮训练时间、不同 \nβ的影响，以及不同平衡迭代次数对精度和计算时间的影响。"
+    ],
+    "技术要求": [
+      "1、熟练掌握Python代码；\n2、具备完整熟练建模能力，快速掌握Kaiwu SDK的建模使用；\n3、了解神经网络训练、机器学习、能量模型相关算法。"
+    ]
+  },
+  {
+    "项目名": "基于玻尔兹曼机预测与专用量子计算机调度的 GPU 高优先级 / Spot 任务调度",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "PyTorch"
+    ],
+    "项目简介": "大模型训练与推理的爆发，使GPU集群的资源管理从“够用”转向“极限压榨”。生产集群中任务通常分两类：\n高优先级（High-Priority, HP）任务\n具有严格的服务等级目标（SLO），不可被抢占；\nSpot 任务\n以折扣价占用 HP 释放出的空闲容量，但在HP需要资源时会被驱逐。\n两者共存时，调度器要同时满足三个相互冲突的目标——保障 HP 的 SLO、压低 Spot 的驱逐率与排队时延、最大化集群整体分配率。\nASPLOS'26 的 GFS（A Preemption-aware Scheduling Framework for GPU Clusters with Predictive Spot Instance Management）一文指出：静态配额下 Spot 任务在需求高峰被频繁驱逐，而 HP 任务又因 first-fit 启发式导致排队过长，集群平均分配率长期低于 40%。GFS 给出了一条“预测—配额—调度”的闭环范式：先用\n轻量预测模型\n给出各租户未来 HP GPU 需求的\n分布\n（而非点估计），再据分布动态调整 Spot 配额，最后用一个\n考虑抢占代价的调度策略\n把 HP 放到合适的节点、必要时驱逐 Spot。其调度子问题被建模为混合整数线性规划（MILP），是 NP-hard问题。\n在Kaiwu-PyTorch-Plugin与Kaiwu SDK的能量模型 / Ising生态中实现一个端到端的GPU HP/Spot调度器，包含两个核心模块：\nBM预测模块：\n用BM/RBM作为能量基生成模型，建模HP需求的联合分布，条件化后给出未来HP需求的预测分布（均值 μ̂ 与波动 σ̂），实现“较为准确”的 HP 需求估计；\nQUBO/真机调度模块：\n将GFS的抢占感知调度MILP转写为无约束二次二值优化（QUBO）问题，约束以惩罚项嵌入，调用Kaiwu的\nCIMOptimizer模块\n求解，产出真实且不违规的调度动作——HP任务零SLO违约、驱逐仅作用于Spot，使排队时间、完成时间、驱逐率三类指标同时达标。\n本课题要求参赛者在Kaiwu体系内打通“BM 预测 → QUBO/真机调度 → SLO 校验”的完整链路，并在阿里 2026 发布的 GPU 集群数据集与自调研数据集上验证。",
+    "产出要求": [
+      "1. 数据集",
+      "2. 时序划分：按时间顺序切分（chronological split），训练 / 验证 / 测试不交叉；预测采用滚动窗口；",
+      "3.  完整源代码 + 单元测试，至少覆盖：  \nBM 训练后自由能单调下降、低能样本可复现；\n  - 小规模算例上 QUBO 解与暴力枚举/CPLEX 等价最优一致；\n  - 惩罚权重不足时出现违约、权重足够时零违约（验证 $$\\lambda$$ 取值规律）；\n  - HP 任务在任何场景下均不被驱逐（零 SLO 违约）；\n  - 模型保存重载后预测与调度结果一致。",
+      "4. 可直接运行的调度示例：在主数据集上完成端到端 trace-driven 仿真；",
+      "5. README：算法原理、API 说明、随机种子与可复现命令、数据集获取与预处理；",
+      "6. 实验报告：\n"
+    ],
+    "技术要求": [
+      "1、熟练掌握Python代码；\n2、具备完整熟练建模能力，快速掌握Kaiwu SDK的建模使用；\n3、了解神经网络训练、机器学习、能量模型相关算法"
+    ]
+  },
+  {
+    "项目名": "为客户端实现自定义输出可共用的框架",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "os",
+      "CentOS",
+      "os",
+      "Clang",
+      "os",
+      "GCC",
+      "os",
+      "GDB",
+      "os",
+      "GNU",
+      "os",
+      "Linux",
+      "os",
+      "Ubuntu",
+      "codelang",
+      "Programming Language",
+      "safe",
+      "TCP/IP"
+    ],
+    "项目简介": "背景：\nvolclava拥有多个客户端查询命令，可以获得到不同内容的集群详细信息，例如可以通过如下方式返回集群内的机器信息：\n目前问题：\n目前这两种格式存在的问题是：简洁信息格式，提供的行列式信息有限；详细信息格式，给用户解析客户端输出带来一定难度。\n现在需要提供一种新的“自定义格式化”的客户端输出，用户可以指定自己感兴趣的字段、定义列宽、定义字段分割符，这样既能给用户带来获得信息的自由，又能更加容易地解析返回结果，比如：\n期待的改进：\n目前我们拥有bjobs -o自定义格式化输出，但是做的比较简洁，不支持指定列宽和定义字段分割符，扩展字段也不容易。现在我们想构建一套通用的“自定义格式化输出”的框架，bjobs -o/bhosts-o/bqueues/lshosts -o 能够共用这套代码，完成格式化输出，新命令想要支持-o，也能快捷的应用这套代码框架，想要支持新的字段，也能方便扩展。\n“-o” 格式化输出的语法要求支持以下两种：\n\"\nfield_name\n[:[-][\noutput_width\n]] ... [delimiter='\ncharacter\n']\"\n\"\nfield_name\n[%[-][\noutput_width\n]] ... [delimiter='\ncharacter\n']\"\n例如：",
+    "产出要求": [
+      "1. 实现一套“自定义格式化输出”的框架，客户端把-o类型的查询请求发给服务器端后，服务器收集请求的字段",
+      "2. 应用上述框架，优化bjobs -o的实现，实行bhosts -o/bqueues -o/lshosts -o",
+      "3. 有相关设计和使用文档"
+    ],
+    "技术要求": [
+      "1. 要求有扎实的 C/C++ 语言编程功底，具备优秀的数据结构、算法基础，能编写高质量代码。熟悉 Python、Shell 等脚本语言，可用于自动化和辅助开发。掌握 TCP/IP、UDP 等网络协议。"
+    ]
+  },
+  {
+    "项目名": "面向 SkillHub 的 Agent Skill 创建与验证平台",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "LLM",
+      "web",
+      "Web Application"
+    ],
+    "项目简介": "1. 相关背景：\n随着大模型 Agent 和 MCP 生态的发展，Agent Skill 已成为扩展 Agent 能力、复用领域知识和沉淀工作流程的重要方式。Skill 通常由 `SKILL.md` 及配套的脚本、参考文档和资源文件组成，可以被不同 Agent Runtime 加载并用于完成特定任务。\nSkillHub 是面向企业场景的开源 Agent Skill 注册和治理平台，提供 Skill 的发布、发现、版本管理、安全扫描、审核和分发能力。然而，用户从实际需求创建一个可用 Skill，仍然需要手动编写 Skill 文件、配置运行环境，并通过多次试错验证其实际效果。\n2. 已有的工作：\nSkillHub 是一个面向企业场景的 Agent Skill 注册与治理平台。项目当前已实现 Skill 包上传、包结构校验、\nSKILL.md\n元数据解析、版本管理、命名空间与权限治理、安全扫描、审核发布、搜索和下载等基础能力，并提供配套的后端服务、前端页面和开放 API。\n在生态集成方面，SkillHub 已提供 SkillHub CLI 和 ClawHub 兼容接口，可支持 OpenClaw 等兼容客户端接入；同时，项目已具备与 Astron Agent 等 Agent 生态集成的基础。现有系统已覆盖 Skill 从上传、版本创建、包校验、安全扫描到审核发布的主要管理流程。\n3. 存在的不足：\n目前 SkillHub 缺少面向 Skill 作者的统一创建和验证入口。用户难以将自然语言需求转化为结构化 Skill，也缺少对 Skill 文件结构、触发条件、工具调用和实际执行效果的系统性验证。\n现有 Skill 创建过程与运行环境之间联系不足。用户通常需要在不同工具之间切换，手动加载 Skill、运行 Agent、查看日志并分析失败原因，验证结果也难以与 SkillHub 的版本和发布流程关联起来。\n4. 希望改进的点：\n本项目希望设计并实现一个面向 Skill 作者的创建与验证平台，支持用户从需求描述开始创建 Skill 草稿，编辑\nSKILL.md\n及配套资源，并关联 Agent、工具、MCP 和运行环境。\n平台应支持运行验证任务，展示 Agent 消息、工具调用、执行日志和结果信息，并根据验证结果定位问题、生成修复建议和重新验证。验证合格后，平台应能够将 Skill 草稿提交为 SkillHub 版本，并衔接现有的安全扫描、审核和发布流程。\n5. 最终实现的目标：\n完成 Agent Skill 从需求描述、草稿创建、运行验证、问题修复到 SkillHub 版本提交的最小闭环。\n最终用户能够在一个统一的平台中创建符合规范的 Agent Skill，在受控运行环境中验证其基本行为，根据验证结果进行修改和回归验证，并将合格结果纳入 SkillHub 现有的版本管理、安全扫描、审核和发布流程。",
+    "产出要求": [
+      "1. 支持技能草稿编辑、资源配置、受控验证及结构行为校验",
+      "2. 支持Skill定位修复、差异确认、重验留痕、提交发布及示例文档"
+    ],
+    "技术要求": [
+      "1. 掌握 Java、Python 或 TypeScript",
+      "2. 熟悉 React 或 Web 前端开发，REST、WebSocket 或 SSE",
+      "3. 了解 Agent、MCP 和工具调用机制",
+      "4. 了解会话管理和异步任务处理"
+    ]
+  },
+  {
+    "项目名": "面向 RustSBI 的 Agent Infra",
+    "难度": "基础/Basic",
+    "标签": [
+      "datas",
+      "AI"
+    ],
+    "项目简介": "当前 AI vibe-coding 生成代码的速度大大增加，但在基础软件领域，AI 生成的代码质量良莠不齐，很难达到社区贡献的代码质量水准。除此之外，传统的 coding 急需一种新的 infra 设施来适应这些变化，尤其是面向 RISC-V 的世界。\n我们需要去构建和完善一套面向 RustSBI 固件的 agent infra，承担对 CI/CD 的改进，实现代码 review，并对整个 RustSBI 的基础设施进行加固与改进：\n• 自动化进行 PR 的测试审核与发版验证，将发布相关的问题自动构建、提交 issue 并给出修复方案\n• 分析 RustSBI 依赖的上游特性，及时更新 report 给社区的核心与活跃贡献者\n• 提供一套基于 agent 的测试框架方案，对代码进行更全面的测试\n目前 RustSBI 已经提供了一些 skill 实现了部分功能，但还没有一整套体系化的 infra。我们希望改进的核心，就是把 RustSBI 开发过程中的关键环节全部引入 agent 实行加固和完善。\n最终该项目实现的目标：\n1. 完善 CI/CD 基础设施，在关键环节引入 agent 进行优化。\n2. 为整个开发流程给仓库引入一系列 skill，包括代码 review、代码编译、代码调试、提交补丁、提交 commit 和提交 PR，提供统一的规范范式。\n3. 本地开发时，能够按照 RustSBI 的设计文档和开发者文档 guideline 生成相关的补丁草稿。\n4. 打通整套 CI 和 GitHub 的集成，对发现的问题自动提交 issue，甚至针对一些重复体力劳动自动生成相关 PR（尤其是和 RISC-V 相关的部分，因为 RustSBI 是面向 RISC-V 的固件）。",
+    "产出要求": [
+      "1. 完善 CI/CD 基础设施，在关键环节引入 agent 进行优化。",
+      "2. 为整个开发流程给仓库引入一系列 skill，包括代码 review、代码编译、代码调试、提交补丁、提交 commit 和提交 PR，提供统一的规范范式。",
+      "3. 本地开发时，能够按照 RustSBI 的设计文档和开发者文档 guideline 生成相关的补丁草稿。",
+      "4. 打通整套 CI 和 GitHub 的集成，对发现的问题自动提交 issue，甚至针对一些重复体力劳动自动生成相关 PR（尤其是和 RISC-V 相关的部分，因为 RustSBI 是面向 RISC-V 的固件）。"
+    ],
+    "技术要求": [
+      "1. 本项目需要具备以下能力：\n\n1. 熟悉使用 GitHub Actions 的 YAML 配置文件\n2. 熟悉 Agent 的基本原理及 Skill、Plugin、MCP Server 等基本组成部分，理解 Agent 的执行机制\n3. 熟悉 Skill 的格式，能够基于 Agent 自己构建一套完整的 workflow\n4. 了解主流常见的大模型（LLM），包括它们的运行特征，以及各自的代码生成风格、调试风格和对话风格\n5. 对 RISC-V 有相关了解\n6. 对固件和嵌入式有一定了解和基础，熟悉 RustSBI 及其开发流程\n7. 具备良好的代码品味"
+    ]
+  },
+  {
+    "项目名": "基于容器隔离的 Agent Skill 自动化评测平台",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI",
+      "cloudnative",
+      "Kubernetes",
+      "cloudnative",
+      "Cloud Native",
+      "dev",
+      "DevOps"
+    ],
+    "项目简介": "相关背景：SkillHub 是面向企业的开源 Agent Skill 管理与分发平台，支持 Skill 包发布、版本管理、权限控制和私有化部署。Skill 被 Agent 执行时可能访问文件、运行脚本和调用工具，仅检查 Skill 文件结构无法判断其真实执行效果。因此，需要在 SkillHub 中建设一套可复现、可控的 Skill 评测执行平台。\n已有的工作：SkillHub 已具备 Skill 包管理、版本管理、Namespace、RBAC、审计日志、对象存储以及 Docker/Kubernetes 部署基础，并提供通用的服务端和前端开发框架。这些能力可用于管理评测任务权限、输入文件和结果产物，但评测任务、数据集、执行器和报告链路需要在本项目中实现。\n存在的不足：SkillHub 尚未形成可复用、可控的本地评测执行闭环，缺少统一的评测任务模型、评测集规范、Runner 和任务级隔离环境。Skill 执行过程中的网络、文件、进程和资源边界尚未明确，评测集自动生成、用户数据集导入、任务超时、异常退出、临时资源清理、执行日志、Agent 轨迹和服务重启后的任务收敛机制也需要建设。\n希望改进的点：在 SkillHub 中实现评测任务、数据集和报告模型，并定义统一 Runner 协议，支持任务创建、状态查询、取消、日志读取和报告读取。评测集来源字段定义为 `USER_PROVIDED` 和 `MODEL_GENERATED`，界面分别展示为 `custom` 和 `auto`。`custom` 接收用户提供的测试集和校验规则；`auto` 在数据准备阶段调用一个真实模型生成相同 Schema 的测试集，校验通过后冻结快照。系统还需接入一种真实 Agent 运行时，在 Docker 隔离环境中加载并执行 Skill，再由规则评测器判定结果并生成报告。\n最终实现的目标：SkillHub 能够完成 Skill 评测任务的创建、排队、隔离执行、状态查询、结果存储和最小化报告展示。实际演示使用一个真实模型和一种真实 Agent 运行时完成端到端评测；自动化测试使用录制的模型响应，不依赖真实密钥，但必须经过同一任务、Runner 和报告流程。`custom` 和 `auto` 两种评测集来源均为必做能力。",
+    "产出要求": [
+      "1. 评测执行与安全保障",
+      "2. 任务管理与项目交付"
+    ],
+    "技术要求": [
+      "1.   掌握 Java",
+      "2. 熟悉 Spring Boot，REST API 和数据库开发",
+      "3. 了解 Docker 和 Linux 进程，React 和 TypeScript，Agent、LLM 和 Skill 执行"
+    ]
+  },
+  {
+    "项目名": "为 Easy-Es 引入一套 AI Harness 自动化PR流水线",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "Database"
+    ],
+    "项目简介": "1）相关背景\nEasy-Es 是一款基于 Elasticsearch 的国产 ORM 框架，致力于降低开发者使用 ES 的门槛。随着开源社区的发展和 AI 技术的成熟，传统的社区维护模式（依赖核心作者人工处理 Issue、设计功能、编写代码）面临响应速度慢、人力成本高的问题。在 AI 时代，利用大模型（LLM）和自动化工具（Harness）来辅助甚至主导项目的演进，实现“AI 驱动的开源项目自治”，已成为提升社区活力的重要趋势。\n（2）已有的工作\n目前 Easy-Es 社区已经积累了一定的用户群体和 Issue 反馈，社区作者目前采用手动方式在 GitHub/Gitee 上收集需求，并在本地进行架构设计与代码提交。同时，业界已有部分项目开始尝试使用 AI 辅助编程（如 GitHub Copilot），但在“全自动化的需求挖掘到 PR 提交”这一完整链路（Harness）上尚处于探索阶段。\n（3）存在的不足\n需求响应滞后\n：依赖作者人工浏览 Issue 和跟踪 ES 官方动态，效率低下，容易遗漏高价值需求。\n维护压力集中\n：核心作者承担了从需求分析、架构设计到编码测试的全部工作，随着作者精力转移，项目迭代速度可能放缓。\n缺乏自动化流程\n：目前没有一套系统能够自动抓取互联网信息（GitHub/Gitee Issue、ES 官方 Release），结合现有框架功能进行智能选题，并自动完成设计文档与代码实现。\n（4）希望改进的点\n本项目旨在为 Easy-Es 引入一套\nAI Harness 自动化流水线\n，具体改进包括：\n智能感知\n：通过 Skills 自动爬取 GitHub/Gitee 仓库 Issue，并监控 Elasticsearch 官方发展动向。\n自动选题与决策\n：结合当前框架已实现的功能，AI 自动评估并优先筛选高价值需求；支持触发人（Maintainer）从推荐列表中选择，或由用户自主指定功能选题。\nAI 深度挖掘与演进\n：对于选定需求，AI 进行深度挖掘，产出进化方向，并依次自动完成架构设计、详细设计。\n质量把关\n：每个核心阶段（设计、编码、测试）的产出均需经过“自动 Review + 人工审核”双重把关，确保代码质量。\n端到端交付\n：最终自动完成代码实现、单元测试，并生成 Pull Request，实现从“需求”到“代码合并”的半/全自动化流转。\n（5）最终项目实现的目标\n构建一个可运行的\nEasy-Es AI Harness 系统\n，实现：\n自动化闭环\n：打通“信息爬取 -> 需求分析 -> 架构设计 -> 代码生成 -> 自动 PR”的完整链路。\n社区减负\n：使社区作者能够从繁琐的日常维护中逐渐淡出，转而通过配置和审核 AI 的产出，即可保证项目紧跟技术潮流，快速响应社区用户群体的需求。\n可落地的 Demo\n：在开源之夏期间，产出一套可落地的自动化流程，至少实现 1-2 个由 AI 自动挖掘并生成的、高质量的功能模块 PR。",
+    "产出要求": [
+      "1.开发基于 Skills 的爬虫模块，自动抓取 GitHub/Gitee 的 Issue 及 ES 官方动态",
+      "2. 构建 AI 自动选题与进化方向挖掘机制，支持人工审核及用户自主指定功能",
+      "3. 实现架构与详细设计文档的自动化生成，并接入自动 Review 与人工把关流程",
+      "4. 完成从代码实现、单元测试到自动提交 Pull Request 的端到端闭环能力",
+      "5. 输出系统使用说明文档，并基于真实需求演示生成至少 1 个高质量 PR"
+    ],
+    "技术要求": [
+      "1. 了解Python 编程，了解 Java 基础，熟悉AI 工程化语言特性,熟练掌握vibe coding",
+      "2. 熟悉 LLM 应用开发，熟练 Prompt 工程与 RAG 技术，了解爬虫技术",
+      "3. 有 AI 辅助编程或自动化流水线开发相关实践经验更优"
+    ]
+  },
+  {
+    "项目名": "为 Sa-Token 框架接入 hutool-json 序列化组件",
+    "难度": "基础",
+    "标签": [
+      "web",
+      "Spring Boot",
+      "cloudnative",
+      "Redis"
+    ],
+    "项目简介": "Sa-Token 是一个一站式 Java 权限认证框架，在数据存取时需要先对数据进行序列化/反序列化操作。\n目前框架接入的 json 序列化组件有：jackson、jackson3、fastjson、fastjson2、fory-json、snack3、snack4，\n还欠缺对 hutool-json 模块的接入\n。\n接入 hutool-json 后，可以为开发者提供更多的数据序列化方案，对于深度使用 hutool 工具的开发者来讲，将可以减少其它第三方 json 框架的引入，直接使用 hutool 原生 json 模块进行数据序列化操作。",
+    "产出要求": [
+      "1. 新增 sa-token-hutool-json 插件模块并完成 Maven 工程配置；\n2. 基于 Hutool JSON 实现 SaJsonTemplate 序列化/反序列化接口；\n3. 实现 SaTokenPlugin SPI 插件，支持框架自动注入 JSON 转换器；\n4. 定制 SaSession 类型转换逻辑，保证 Session 存取数据类型正确；\n5. 覆盖对象、Map、null、SaSession 等场景的单元测试用例；\n6. 在 sa-token-bom 与父模块中完成依赖版本统一管理；\n7. 更新官方文档 json-extend，提供 Maven/Gradle 依赖示例；\n8. 在仓库自带的 sso、oauth2、apikey 相关 demo 示例中测试此插件，无报错，可正常运行；\n9. 提交符合社区规范的 PR，并通过 Mentor Code Review 合并。"
+    ],
+    "技术要求": [
+      "1. 具备扎实的 Java 语言功底与一定的 Web 后端开发实践经验；\n2. 熟悉 Maven 多模块工程，了解开源项目的依赖管理与协作规范；\n3. 熟悉 Hutool JSON 模块，掌握对象、集合等常见数据的序列化转换；\n4. 能阅读 Sa-Token 源码，理解 SaJsonTemplate 插件 SPI 扩展方式、理解 SaSession 序列化/反序列化链路；\n5. 具备基础安全开发意识，关注 JSON 反序列化等常见风险与边界处理；\n6. 做事严谨细致，能主动研读现有插件实现，自测覆盖关键场景；\n7. 熟练使用 Git 分支开发与 Pull Request 协作，沟通反馈及时；\n8. 敬畏生产：Sa-Token 已在国内大量企业级系统中落地，插件质量直接关系用户安全，须审慎交付、对代码负责。"
+    ]
+  },
+  {
+    "项目名": "为 Sa-Token 框架新增 Jackson3 无类型信息 JSON 序列化插件",
+    "难度": "基础",
+    "标签": [
+      "web",
+      "Spring Boot",
+      "cloudnative",
+      "Redis"
+    ],
+    "项目简介": "Sa-Token 是一个一站式 Java 权限认证框架，在 Session 存储、Redis 持久化等场景下需要对对象进行 JSON 序列化与反序列化。\n目前框架已有 sa-token-jackson3 插件，序列化时会写入 @class 类型信息，便于 Session 多态还原，并配合 JSON 全局类型白名单机制保障反序列化安全。与此同时，框架中的 fastjson2、fory-json、snack3 等插件采用“\n不在 JSON 中写入类型信息\n”的纯 JSON 方式，使用更简洁、也更贴近部分团队的既有习惯。\n为满足 Spring Boot 4 / Jackson3 技术栈下、又希望对齐 fastjson2 等组件使用方式的场景，需新增 sa-token-jackson3-plain 插件（在序列化时舍弃类型信息），作为 sa-token-jackson3 的补充选项，供开发者按需选用。",
+    "产出要求": [
+      "1. 新增 sa-token-jackson3-plain 插件模块并完成 Maven 工程配置；\n2. 基于 Jackson3 实现不写 @class 类型信息的 SaJsonTemplate 序列化/反序列化接口；\n3. 实现 SaTokenPlugin SPI 插件，支持框架自动注入 JSON 转换器；\n4. 定制 SaSession 类型转换逻辑，保证 Session 存取及 getModel(key, Class) 行为正确；\n5. 覆盖对象、Map、null、SaSession 等场景的单元测试用例，行为对齐 fastjson2；\n6. 在 sa-token-bom 与父模块中完成依赖版本统一管理；\n7. 更新官方文档 json-extend，提供 Maven/Gradle 依赖示例，并说明与 sa-token-jackson3 的适用场景差异；\n8. 在仓库自带的 sso、oauth2、apikey 相关 demo 示例中测试此插件，无报错，可正常运行；\n9. 提交符合社区规范的 PR，并通过 Mentor Code Review 合并。"
+    ],
+    "技术要求": [
+      "1. 具备扎实的 Java 语言功底与一定的 Web 后端开发实践经验；\n2. 熟悉 Maven 多模块工程，了解开源项目的依赖管理与协作规范；\n3. 熟悉 Jackson 3（tools.jackson）序列化配置，理解多态类型信息与纯 JSON 模式差异；\n4. 能阅读 Sa-Token 源码，理解 SaJsonTemplate 插件 SPI 扩展方式及 SaSession 序列化/反序列化链路；\n5. 具备基础安全开发意识，理解 JSON 反序列化风险，不引入不必要的多态类型暴露；\n6. 做事严谨细致，能主动研读 jackson3、fastjson2 等现有插件实现，自测覆盖关键场景；\n7. 熟练使用 Git 分支开发与 Pull Request 协作，沟通反馈及时；\n8. 敬畏生产：Sa-Token 已在国内大量企业级系统中落地，插件质量直接关系用户安全，须审慎交付、对代码负责。"
+    ]
+  },
+  {
+    "项目名": "构建 Nacos Agentic Resource Hub，支持跨 Namespace 的资源共享、发现与复用",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "AI"
+    ],
+    "项目简介": "背景\nNacos AI Registry 已支持 MCP Server、Agent、Prompt、Skill、AgentSpec 等多类 Agentic Resource，并提供 Namespace 隔离、版本管理、生命周期管理和可见性控制等基础能力。\n随着 Agentic Resource 数量不断增加，跨 Namespace 的共享和复用需求逐渐突出。现有可见性能力主要解决资源的访问范围问题，尚未形成统一的全局共享入口：资源所有者难以将经过验证的稳定版本便捷地分享给其他用户，资源使用者也缺少集中发现、查看和复用优质资源的方式。\n本课题希望建设以共享为核心的 Nacos Agentic Resource Hub。资源所有者可以将已发布版本共享至全局目录，其他用户可以统一发现和使用这些资源，并将其导入自己的 Namespace；具备相应权限时，也可以在同一 Nacos 集群内直接完成 Namespace 之间的资源复制。整个过程需要妥善处理权限、版本、来源追溯、冲突检查和生命周期约束，同时为后续新增 Agentic Resource 类型保留扩展能力。\n目标\n建设 Nacos Agentic Resource Hub，为 MCP Server、Agent、Prompt、Skill、AgentSpec 提供统一的共享与发现入口。\n支持用户将共享资源导入自己的 Namespace，并在具备相应权限时进行同集群跨 Namespace 复制。\n完善共享过程中的权限控制、版本管理、来源追溯及生命周期约束。\n保证能力可扩展且向后兼容，支持后续接入新的 Agentic Resource 类型。",
+    "产出要求": [
+      "1. Agentic Resource Hub",
+      "2. 跨 Namespace 资源复用",
+      "3. 产品入口与扩展能力",
+      "4. 测试与文档"
+    ],
+    "技术要求": [
+      "1. 熟悉 Java、Spring Boot 及 REST API 开发。",
+      "2. 了解持久化、事务和基本的数据一致性问题。",
+      "3. 理解 Namespace、多租户、权限控制和资源可见性等概念。",
+      "4. 了解版本管理及草稿、评审、发布、下线等资源生命周期。",
+      "5. 具备单元测试、集成测试和端到端测试经验。",
+      "6. 具备基础的 React、TypeScript 前端开发能力。",
+      "7. 熟悉 Maven、Git 和 Markdown。",
+      "8. 具有 SDK、CLI 或可扩展系统设计经验者优先。"
+    ]
+  },
+  {
+    "项目名": "Asterinas 可靠 OverlayFS 支持",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "x86"
+    ],
+    "项目简介": "Asterinas 是一个使用 Rust 编写、兼容 Linux ABI 的通用操作系统内核。其内核采用 Framekernel 架构：安全内核功能位于\n`kernel/`\n，其中禁止使用\n`unsafe`\nRust；底层不安全能力集中在 OSTD 中。\nOverlayFS 是 Linux 容器栈中常用的联合文件系统。它将一个或多个只读 lower layer 与可写 upper layer 合并为统一视图，并通过 copy-up、whiteout 和 opaque directory 等机制呈现文件的创建、修改与删除。可靠的 OverlayFS 对容器镜像分层和容器可写层具有重要意义。\nAsterinas 已有 OverlayFS 原型，支持基本挂载、多 lower layer、目录合并、copy-up、whiteout、opaque directory 和部分扩展属性操作；仓库也已具备 xfstests 运行框架。但现有 OverlayFS 仍存在\n`rename`\n未实现、并发操作可能竞态、whiteout 与 workdir 行为尚未完全对齐 Linux、同步与异常路径不完整、回归测试覆盖不足等问题，尚不能作为可靠的容器可写层使用。\n本项目要求参赛者以 Linux 用户可见语义为基准，完善 Asterinas OverlayFS 的核心功能和可靠性，并建立可重复运行的 OverlayFS xfstests 测试配置。最终成果还需完成一次容器场景兼容性验收；该项不要求参赛者开发或维护容器运行时。",
+    "产出要求": [
+      "1. 内核实现：可合入 Asterinas 的 OverlayFS 功能与可靠性改进，必选范围内不得遗留已知 panic、死锁或数据错误。",
+      "2. 测试基础设施：OverlayFS 专用 xfstests 配置、用例列表、运行脚本和必要的测试镜像生成逻辑。",
+      "3. 容器兼容性验证：在社区协助下，使用成果内核通过 Kata 或 CoCo 常规模式的 OverlayFS 基本文件操作验收，并保留可核验日志。",
+      "4. 技术文档：说明实现设计、锁与状态不变量、与 Linux 的语义差异、未支持特性、测试方法和已知限制。",
+      "5. 社区交付：代码遵循 Asterinas 贡献规范，通过与改动相关的格式化、编译、lint 和测试检查，并以便于评审的增量 Pull Request 提交。",
+      "6. 验收以可复现结果为准。仅提供演示视频、一次性运行结果，或仅增加测试而未解决核心 OverlayFS 缺陷，均不视为完成项目。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Rust，理解所有权、trait、泛型、错误处理和常用并发原语。",
+      "2. 理解 inode、dentry、mount、page cache、xattr、hard link、rename、fsync 等 VFS/文件系统概念。",
+      "3. 能够阅读 Linux OverlayFS 文档或源码，并通过实验确认用户可见语义和错误码。",
+      "4. 具备 C 或 Shell 测试开发能力，能够定位 xfstests 失败原因。",
+      "5. 愿意通过小步提交、基准数据和代码评审持续与社区协作。",
+      "6. 有 Linux 内核、文件系统、容器运行时或操作系统课程项目经验者优先，但不要求已有 Asterinas 开发经验。"
+    ]
+  },
+  {
+    "项目名": "面向复杂问答的结构感知 GraphRAG 引擎",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "Graph Database",
+      "datas",
+      "LLM",
+      "web",
+      "GraphQL",
+      "datas",
+      "Vector Database",
+      "datas",
+      "Deep Learning",
+      "datas",
+      "Natural Language Processing (NLP)",
+      "datas",
+      "Non-relational Database",
+      "datas",
+      "Data Science",
+      "datas",
+      "Machine Learning"
+    ],
+    "项目简介": "随着大语言模型在知识问答、智能搜索和企业知识助手等场景中的广泛应用，检索增强生成（Retrieval-Augmented Generation，RAG）已成为降低模型幻觉、引入外部知识和提供来源引用的重要技术。现有 RAG 系统通常依赖向量相似度或关键词匹配召回文本片段，适合处理局部语义匹配问题，但在面对跨实体、多跳关系和证据分散的复杂问题时，容易遗漏关键中间实体，或者召回大量语义相似但无法共同支撑答案的文本。\nGraphRAG 将实体、关系和原始文档组织成图结构，并通过图上的关联关系补充传统文本检索。GeaFlow 已具备图数据建模、图存储、图查询和图计算能力，\ngeaflow-ai\n模块也已包含图实体、Embedding 索引、子图搜索和语义化等基础能力，为实现结构感知的 GraphRAG 检索提供了良好基础。但目前仍缺少面向复杂问答的统一数据映射、受预算约束的多路召回、图扩展、证据组织、路径追踪及标准化评测能力。\n本项目拟在 GeaFlow 上设计并实现一个可解释、可配置、可复现的结构感知 GraphRAG 检索引擎。项目首先建立原始文档、文本块、实体、图节点和图边之间的统一映射，使检索结果能够回溯至原始证据；随后实现向量检索、BM25 检索和实体锚点识别，并以锚点为起点进行受预算约束的 1～2 Hop 图扩展；对多路召回产生的文本和子图候选进行合并去重、预算控制和可插拔重排序，最终输出包含证据正文、图路径、来源引用和分阶段得分的结构化结果。\n引擎需要支持 Vector-only、Graph-only 和 Hybrid 三种检索模式。其中 Vector-only 作为传统 RAG 基线，Graph-only 用于验证图结构本身的检索能力，Hybrid 模式综合文本相关性与图结构信息。所有模式应尽可能复用统一的数据模型、预算配置和结果协议，保证实验结果可比较。\n项目还将建立固定版本的 Benchmark，至少接入 HotpotQA 和 2WikiMultiHopQA 两个公开多跳问答数据集，完成数据导入、索引构建、检索、证据组织、回答和评测的端到端流程。评测需要比较 Vector-only、等预算 Vector Overfetch、Graph-only 和 Hybrid GraphRAG，并报告 Evidence Recall@K、答案 EM/F1、路径命中率、检索延迟和上下文 Token 成本。对于图检索产生的每个命中，系统应能够输出完整的\nquery -> seed -> edge/path -> evidence -> source\n追踪链路。\n项目最终形成一套面向复杂问答的 GraphRAG 检索能力，为 GeaFlow 在知识问答、智能搜索和大模型知识增强等场景中的应用提供可复用的基础组件。",
+    "产出要求": [
+      "1.  建立文档、文本块、实体和图节点统一模型。\n2. 实现两个固定数据集的可复现导入流程。\n3. 实现向量检索与 BM25 文本检索能力。\n4. 实现实体锚点和受限 1～2 Hop 图扩展。\n5. 支持 Vector、Graph 和 Hybrid 三种模式。\n6. 实现候选合并、去重和检索预算控制。\n7. 提供可插拔的候选证据 Rerank 接口。\n8. 输出 Evidence、图路径和原始来源引用。\n9. 提供稳定、可配置的 Java 检索 API。\n10. 建立多跳问答固定 Benchmark。\n11. 对比 Vector、Overfetch 和 GraphRAG。\n12. 报告召回、答案、路径、延迟和 Token 指标。\n13. 提供关键模块的单元测试和集成测试。\n14. 提供英文文档、示例程序和实验报告。\n15. 可选提供 GraphRAG 检索 MCP 工具。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Java，掌握集合、泛型、接口设计和 Maven。\n2. 了解 Python，能够编写数据处理和评测脚本。\n3. 理解图的节点、边、路径及 BFS 等基本算法。\n4. 了解向量检索、BM25、Embedding 和 Rerank。\n5. 理解 RAG、上下文构造和大语言模型基本流程。\n6. 能够阅读并扩展 GeaFlow 现有 Java 模块。\n7. 能设计稳定的数据模型和可扩展检索接口。\n8. 能使用 JUnit 或 TestNG 编写自动化测试。\n9. 能设计公平、可复现的对照及消融实验。\n10. 能使用 Git 进行协作并遵守项目代码规范。\n11. 不得硬编码模型密钥、内部地址或个人凭据。\n12. 新增第三方依赖必须完成许可证兼容性检查。\n13. 核心流程不得依赖不可复现的在线实时数据。\n14. 关键配置、错误和预算截断应有明确日志。\n15. 需提供英文 README、API 说明和运行示例。"
+    ]
+  },
+  {
+    "项目名": "为 Excelize 添加获取形状支持",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "datas",
+      "Power BI"
+    ],
+    "项目简介": "目前 Excelize 开源电子表格文档基础库已经支持添加 187 种 Excel 原生形状（Shape），本课题的目标是在此基础上，添加 GetShapes 函数实现对读取形状的支持，可根据给定的工作表名称和单元格坐标获取执行形状列表，形状列表包含形状名称和图形属性信息。",
+    "产出要求": [
+      "1. 使 Excelize 开源基础库支持通过 GetShapes 函数获取形状列表",
+      "2. 在 shape.go 源代码文件中进行实现",
+      "3. 具有完备的文档和单元测试，在 shape_test.go 源代码文件中编写测试，增量行测试覆盖度达到 100%",
+      "4. 高质量的代码实现，具有良好的性能表现"
+    ],
+    "技术要求": [
+      "1. 熟悉 Excel 软件的使用和基本概念",
+      "2. 熟悉 Excelize 基础库的开源代码",
+      "3. 具备良好的英文国际技术文档阅读能力",
+      "4. 具备一定的计算机基础，熟悉 Go 语言"
+    ]
+  },
+  {
+    "项目名": "为 Libra 版本管理工具增加 AI Memory 功能",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "AI",
+      "dev",
+      "Git"
+    ],
+    "项目简介": "Libra\n（\ngithub.com/libra-tools/libra\n）致力于构建\nAI Agent 原生的版本控制与协同追溯系统\n。在传统的 AI 辅助编程与自动化 Agent 工作流中，Agent 的“上下文/记忆”通常散落于临时 Session 中，难以持久化，更无法与代码仓库的版本演进（Commit / Checkpoint / Revert）进行严格的时间与状态对齐。\n根据项目规划文档\ndocs/development/tracing/memory.md\n，Libra Memory 模块定位为\n具备事件溯源（Event-Sourcing）与版本联动能力的 Agent 记忆层\n。",
+    "产出要求": [
+      "1. 完成 docs/development/tracing/memory.md 设计文档，包括 Benchmark 方案；",
+      "2. 根据 docs/development/tracing/memory.md 的文档完成功能和测试；",
+      "3. 完成 Benchmark 的测试，并且发布 Memory Benchmark 文章；"
+    ],
+    "技术要求": [
+      "1. 代码质量： 通过 cargo clippy 与 cargo fmt 静态检查，符合 Libra 项目的 Rust 代码规范；",
+      "2. 测试覆盖率： 核心逻辑单元测试覆盖率需达到 100% ；",
+      "3. 架构合规： 完全遵循 docs/development/tracing/memory.md 设计原则；",
+      "4. 文档与 CI： 提供清晰的模块 README、API 接口文档，并在 GitHub Actions 中通过所有 CI 构建；"
+    ]
+  },
+  {
+    "项目名": "cgroups-rs 架构重构与 v1.0.0 正式版发布",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Cgroups",
+      "os",
+      "Virtualization",
+      "os",
+      "Linux"
+    ],
+    "项目简介": "cgroups-rs\n是 Rust 生态中用于操作 Linux Control Groups (cgroups) 的核心库，广泛应用于容器运行时及相关基础设施项目（如 Kata Containers 的\nruntime-rs\n和\nkata-agent\n）。\n然而，当前版本的\ncgroups-rs\n在设计与实现上存在以下核心问题：\n模块耦合严重\n：代码中将底层\ncgroupfs\n的文件系统操作、\nsystemd\nD-Bus 交互逻辑以及 OCI Spec 数据结构紧密耦合在一起，缺乏清晰的抽象分层，导致维护成本极高。\n硬编码与特定场景侵入\n：代码中包含针对特定场景（如 Docker-in-Docker / DinD）的硬编码逻辑，破坏了通用库的洁净性。\n遗留 Bug 与技术债\n：社区累积了多个未修复的 issue，缺乏现代化 Rust 库的工程质量与鲁棒性。\n为了提升库的通用性、可维护性和稳定性，本项目旨在对\ncgroups-rs\n进行全面重构，实现\ncgroupfs\n驱动、\nsystemd\n驱动与 OCI spec 解耦，修复已知遗留问题，并最终推动\ncgroups-rs\n发布\nv1.0.0\n稳定版本。",
+    "产出要求": [
+      "1. 架构重构",
+      "2. 功能与 Issue 修复（可选）",
+      "3. 单元测试与 CI",
+      "4. 文档与 API 稳定性"
+    ],
+    "技术要求": [
+      "1. Rust 语言能力：熟练掌握 Rust 编程，理解 Rust 所有权模型、Trait 抽象、错误处理 (thiserror/anyhow) 以及异步/同步 I/O 设计。",
+      "2. Linux 底层知识：熟悉 Linux cgroups (v1 与 v2) 的基本原理、文件系统结构以及与 systemd 的交互机制。",
+      "3. 开源工程经验：了解 Git/GitHub 工作流，具备编写干净 Rust 代码、单元测试及 Markdown 文档的能力。",
+      "4. 加分项：有容器 runtime（如 runc, crun, kata-containers）或 OCI 规范开发经验者优先。"
+    ]
+  },
+  {
+    "项目名": "恢复 openRuyi 基础组件的上游测试与构建根适配",
+    "难度": "基础/Basic",
+    "标签": [
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "目前 openRuyi 的部分基础软件包保留了空的 %check 或历史测试豁免，其中部分阻塞依赖已在仓内具备，部分测试还需要处理构建根、共享库路径或测试运行环境。当前问题会使软件包构建通过，但缺少对上游行为的实际验证。例如，genimage、lua-json、lmdb、libtomcrypt 的测试未被有效执行，部分历史注释已经过时，且测试失败原因、可复现方式和合理跳过范围没有形成统一记录。因此，本项目计划恢复选定软件包的上游测试，补齐测试依赖或构建根适配，确保测试失败会使 RPM 构建失败，并留下可复现的验证记录。最终目标是在不依赖外网、特权容器或宿主系统服务的前提下，恢复至少三个基础组件的有效上游测试，并完成剩余候选的根因分析和维护建议。",
+    "产出要求": [
+      "1. 完成四个候选包的测试基线审计",
+      "2. 恢复 genimage 的上游测试",
+      "3. 恢复 lua-json 的上游测试",
+      "4. 恢复 LMDB 或 LibTomCrypt 的实际测试",
+      "5. 提供另一核心包的根因与复现记录",
+      "6. 提供构建日志和测试跳过说明"
+    ],
+    "技术要求": [
+      "1. 了解 Linux RPM 打包与 BuildRequires，熟悉 RPM Spec",
+      "2. 能阅读 Makefile 和 Autotools 测试日志",
+      "3. 具备基础 C、Lua 与 Shell 调试能力",
+      "4. 能使用 Git 提交可独立审阅的 PR"
+    ]
+  },
+  {
+    "项目名": "vsag 多核高并发检索性能优化",
+    "难度": "进阶",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "Database",
+      "datas",
+      "Embedded Database"
+    ],
+    "项目简介": "背景：\n在多 CPU 核服务器上，向量检索的并发 QPS 往往无法随核心数线性增长。图索引遍历、向量访问、距离计算和结果堆维护均对内存带宽与 CPU 缓存敏感；高并发下共享数据访问会引发内存带宽饱和、缓存争用、false sharing 和跨 NUMA 节点访存，限制检索吞吐。\n任务目标：\n在 vsag 现有框架中建立可复现的多核性能基线，定位高并发检索的扩展性瓶颈，并实现至少一种优化方案。在固定硬件、数据集、索引和检索参数下，目标是在中高并发场景相对基线取得不低于 15% 的 QPS 提升；召回率相对基线变化不超过 1%，P99 延迟不恶化超过 10%。\n主要工作：\n1. 阅读并分析 vsag 检索链路，包括图索引遍历、向量访问、距离计算和结果堆维护。\n2. 搭建多核并发基准测试，测量 1、2、4、8、16、32 并发度下的 QPS、P50/P99 延迟、召回率和扩展效率。\n3. 使用 perf、火焰图或等效工具分析热点函数、缓存未命中、内存带宽占用和线程争用。\n4. 设计并实现优化方案，可包括数据分块改善缓存局部性、内存对齐与 padding 消除 false sharing、线程绑定、NUMA 感知的内存分配或查询路由、批处理或调度优化。\n5. 对比优化前后的扩展曲线和性能数据，分析优化收益、适用条件与局限性。\n周期：\n3 个月，包含调研与基线建立、方案设计与实现、性能评测、文档和报告整理。",
+    "产出要求": [
+      "1. 在 vsag 仓库提交至少 1 个可评审的代码 PR，完成编译、格式检查及相关单元测试；优化不得引入数据竞争、明显内存泄漏或检索正确性回归。\n2. 提供可复现的基准脚本、测试配置和使用说明，覆盖 3～5 个公开或项目已有数据集；测量 1、2、4、8、16、32 并发下的 QPS、P50/P99 延迟、召回率及扩展曲线。\n3. 在固定环境、数据集和参数下，中高并发场景 QPS 较基线提升不少于 15%；召回率变化不超过 1%。未达目标时需提供瓶颈数据与分析。\n4. 提交性能剖析报告，包含 perf/火焰图等热点、缓存或内存带宽证据；提交实验报告、优化设计说明和使用文档。"
+    ],
+    "技术要求": [
+      "1. 熟练使用 C++17 ，具备多线程并发编程、调试和性能优化经验。\n2. 熟悉 Linux 开发环境，能够使用 perf、perf stat、火焰图等工具分析 CPU 热点、缓存未命中、内存带宽和锁竞争。\n3. 了解 CPU 缓存层级、缓存一致性、false sharing、内存带宽和 NUMA 等系统基础知识。\n4. 了解向量检索和近似最近邻搜索基础，理解 HNSW 等图索引检索流程者优先。\n5. 能阅读和修改开源 C++ 工程，熟悉 Git、CMake、单元测试及性能基准测试。\n6. 会使用 AI 编程辅助工具即可，不作为核心要求。"
+    ]
+  },
+  {
+    "项目名": "基于Agent实现自然语言驱动的数据看板生成与发布",
+    "难度": "基础",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "LLM"
+    ],
+    "项目简介": "DB-GPT 已具备自然语言问答、SQL 生成、Python 分析和图表生成能力，但目前生成的分析结果尚未形成统一的 Dashboard 结构，缺少从分析目标理解、指标与维度规划、筛选器设计、组件查询绑定到看板保存、编辑、刷新和发布的完整能力。\n本项目计划设计统一的 Dashboard schema，用于描述看板标题、说明、全局筛选器、指标卡、图表、明细表、页面布局和数据查询绑定关系。在此基础上，系统需要根据用户的自然语言需求识别业务主题、核心指标、分析维度和筛选条件，自动选择适合的图表类型并生成看板组件；为每个组件生成并保存 SQL，使用户能够刷新数据以及查看、调试组件查询；同时提供看板预览、组件增删改、图表类型切换、筛选器配置、布局调整、保存、发布和分享等能力。\n最终应实现从“自然语言描述分析目标”到“生成可持续使用的数据看板”的完整流程，形成 Dashboard schema、自然语言看板规划、组件生成、数据查询绑定、看板编辑与发布等通用能力",
+    "产出要求": [
+      "1. 基于当前的数据助理设计并实现 Dashboard schema完整的模块代码以及设计方案文档",
+      "2. 完成看板编辑发布及两个演示案例以及对应的文档或者宣传视频demo"
+    ],
+    "技术要求": [
+      "1. 熟悉 React、JS/TS、Next.js 前端技术栈，后端需要熟悉Python",
+      "2. 掌握 SQL，熟悉数据可视化技术",
+      "3. 了解 LLM 应用开发，有 BI 经验更优"
+    ]
+  },
+  {
+    "项目名": "Jeandle Code Buffer 的精确分配机制",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "os",
+      "LLVM",
+      "os",
+      "Compiler"
+    ],
+    "项目简介": "1. 背景\nJeandle 是基于 LLVM 的 Java JIT 编译器，其编译产出是一份完整的、已发射的目标文件（ELF object），随后在 JVM 侧通过 JeandleCompiledCode::finalize 将其解析并装配进 Code Cache （JVM 中用于管理 JIT 编译代码的内存） 中。\n当前 JeandleCompiledCode::finalize 在分配 Code Buffer （容纳解析完成的 JIT 代码） 时采用经验估算的固定大小分配。而Jeandle 编译产出的代码大小变化范围很大，现有策略带来两个问题：\n内存浪费：对小方法，“宁大勿小”的估算显著高估，浪费 Code Cache 内存。\n编译被扩容拖慢：当实际产出超过预分配额度时，会触发 CodeBuffer::expand。expand 执行的是“按 100% 倍率（最低 4K）重新申请新 Code Buffer → 内容拷贝 → 修正 relocation”的昂贵操作，且会在 finalize 过程中被多次触发，显著拖慢编译速度。\n综上，Jeandle 当前“固定估算分配 + 惰性多轮扩容”的策略与 “已具备精确度量条件” 的现实存在落差，需要一套面向编译产物的精确预分配机制。\n2. 目标\n设计并实现一个在\nJeandleCompiledCode::finalize\n分配 Code Buffer 时的大小估算机制，将容纳 Jeandle 编译产出代码所需的 Code Buffer 大小精确求出，帮助 Code Buffer 一次性分配到位。具体目标：\n精确度量 Jeandle 编译产物的各个段大小：遍历 ELF 段表，精确累加最终被保留到 Code Buffer 中的各个段的 sh_size 及其对齐 padding。\n根据上一步 Jeandle 编译产物中的各个段大小计算 Code Buffer 所需的容量大小。\n一次性分配：根据计算出的 Code Buffer 大小对其进行一次性精准内存分配。\n正确性与性能验证：\n通过现有测试，保证功能正确性无回退；\n量化收益：统计 finalize 阶段的 CodeBuffer::expand() 触发次数（目标：常规路径降为 0）、Code Buffer 实际占用 vs. 预分配的内存浪费率、以及单方法 finalize 耗时，给出前后对比数据。",
+    "产出要求": [
+      "1. 设计并实现一个在 JeandleCompiledCode::finalize 分配 Code Buffer 时的大小估算机制，将容纳 Jeandle 编译产出代码所需的 Code Buffer 大小精确求出，帮助 Code Buffer 一次性分配到位。"
+    ],
+    "技术要求": [
+      "1. 了解代码链接的基本原理",
+      "2. 熟悉 C++ 编程"
+    ]
+  },
+  {
+    "项目名": "面向 RISC-V 的 llama.cpp RVV 算子优化",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Linux",
+      "os",
+      "Perf",
+      "os",
+      "RISC-V",
+      "datas",
+      "AI"
+    ],
+    "项目简介": "（1）相关背景\nllama.cpp 是当前最流行的开源大语言模型（LLM）推理框架之一，其核心计算引擎 GGML 已支持多种硬件架构的高性能推理。RISC-V Vector Extension（RVV）采用向量长度无关（VLA）的编程模型，为不同 VLEN 的处理器提供了统一的向量化编程接口。llama.cpp/GGML 目前已在 RISC-V 平台上实现了较为全面的 RVV 支持，涵盖量化点积、矩阵乘法、数据类型转换及 SIMD 抽象层等核心模块。随着 RISC-V 生态的快速发展和 VLEN=1024 处理器（如 SpacemiT K3/X100 等）的涌现，llama.cpp 在 RISC-V 平台上的算子覆盖度和性能优化——特别是面向宽向量硬件的适配——仍有较大提升空间。\n（2）已有的工作\nllama.cpp 的 GGML 引擎已针对 RISC-V 平台完成了以下 RVV 优化工作：\n1. 量化点积内核：在 arch/riscv/quants.c 中实现了 25 种量化类型的 RVV 向量化点积，其中 q3_K、q6_K、iq1_s、iq1_m、iq2_s、iq3_xxs、iq4_xs 等 7 种类型拥有 VLEN=1024 专用路径；\n2. Repack GEMV/GEMM：在 arch/riscv/repack.cpp 中实现了 q4_0、q4_K、q2_K、iq4_nl、q8_0 等类型的 16x1 及 8x8 布局 GEMV/GEMM 内核；\n3. tinyBLAS RVV：在 llamafile/sgemm.cpp 中实现了支持 f32×f32、bf16×bf16、f16×f16 的 RVV 矩阵乘法模板（LMUL=4 固定编译配置）；\n4. 数据类型转换：利用 zvfh/zvfhmin/zvfbfmin 扩展实现了 f32↔f16、bf16→f32 的向量化转换；\n5. SIMD 抽象与向量运算：在 simd-mappings.h 和 vec.h/vec.cpp 中将通用 SIMD 接口映射到 RVV intrinsics，相关浮点点积、scale、silu、softmax 等均基于 vsetvl 动态适配 VLEN；\n6. SpacemiT 专用优化：在 spacemit/ 子目录下实现了针对 SpacemiT SoC（VLEN=1024）的 Flash Attention、RMS Norm、Layer Norm、逐元素运算等专用 RVV 内核，以及 IME 加速的矩阵乘法；\n7. CI 支持：已有原生 RISC-V CI（ubuntu-24.04-riscv 运行器）和 SpacemiT 交叉编译 CI。\n（3）存在的不足\n1. 部分关键算子完全缺少 RVV 实现。SSM（Mamba-2）scan 算子（ops.cpp:9732）和 Gated-Delta-Net 算子（ops.cpp:11278）仍使用纯标量路径，无任何向量化加速，存在显著性能瓶颈；\n2. 大量量化点积内核缺少 VLEN=1024 专用路径。25 种量化类型中仅 7 种拥有 VLEN=1024 优化，其余 18 种在 VLEN=1024 硬件上回退到 vl256 或 vl512 路径，仅利用 1/4 至 1/2 的向量寄存器宽度。其中 q4_0、q4_1、q5_0、q5_1、q8_0、q5_K 等基础高频类型甚至无 VLEN 分发逻辑；\n3. tinyBLAS RVV 的 LMUL 策略固定。LMUL=4 在编译期硬编码，在 VLEN=1024 下可能导致 tile 配置偏小、寄存器利用率不理想，缺少运行时 VLEN 感知的 LMUL 选择；\n4. SpacemiT 后端部分功能被禁用。MXFP4 repack 分发、Q4_1 256-column interleave、GATED_DELTA_NET 算子路由均已实现但被注释或禁用，未能充分发挥硬件能力；\n5. 通用 RVV 算子库不完整。Flash Attention、RMS Norm、Layer Norm 等高性能内核仅存在于 SpacemiT 专用路径（绑定 VLEN=1024 检查），缺少面向通用 RISC-V 平台的可复用实现。\n（4）希望改进的点\n本项目基于 K3（VLEN=1024）硬件平台进行开发与验证，从以下五个任务方向中选择至少三个完成：\n1. 扩展关键算子的 RVV 向量化实现。为 SSM（Mamba-2）scan 算子和 Gated-Delta-Net 算子编写高效的 RVV 向量化内核，消除纯标量执行瓶颈；将 SpacemiT 专用的 Flash Attention、RMS Norm、Layer Norm 等高性能内核抽象为不依赖特定硬件检查的通用 RVV 实现，使其他 VLEN=1024 及未来更宽向量处理器可直接受益；\n2. 面向 VLEN=1024 的量化点积内核优化。为仍使用通用 RVV 路径或回退到 vl256 的基础高频量化类型（q4_0、q4_1、q5_0、q5_1、q8_0、q1_0、q5_K、mxfp4 等）编写 VLEN=1024 专用内核，合理选择 LMUL 使数据格式驱动的子块填满完整寄存器，减少每条指令的有效代价；\n3. 完善 SpacemiT 后端算子覆盖。启用被禁用的 MXFP4 repack 分发和 Q4_1 256-column interleave；实现 GATED_DELTA_NET 算子的 SpacemiT 加速路由；探索为 IQ 量化类型（iq1_s、iq2_s、iq3_s、iq4_nl 等）添加 IME 加速支持的可行性；\n4. 优化 tinyBLAS RVV 的 VLEN=1024 适配。针对 VLEN=1024 评估并调整 LMUL 策略（如从 LMUL=4 改为 LMUL=1 或 LMUL=2），优化 tile 配置以增加累加器数量和寄存器利用率；完善 bf16 计算路径在 tinyBLAS 及其他关键算子中的支持；\n5. 基于 K3 平台的性能分析与调优。利用 perf 或 QEMU 分析热点算子在 VLEN=1024 下的指令执行特征、Cache 行为及访存模式；建立基于 llama-bench 的 K3 性能基准测试集，形成可复现的性能分析实验，并将分析结论转化为实际的代码优化或参数选择策略。\n（5）最终项目实现的目标\n完成上述五项任务中的至少两项，并在 llama.cpp/GGML 的 RISC-V 后端完成不少于三个算子的代码级优化或能力增强。算子应在 K3（VLEN=1024）平台上，相对于项目基线达到不低于 1.10× 的几何平均加速比。项目最终向 llama.cpp 上游贡献不少于三个 Pull Request，并至少被上游合并两个。",
+    "产出要求": [
+      "1. 完成五项任务目标中的至少两项，并提交对应代码、测试或分析成果；",
+      "2. 完成不少于三个 llama.cpp/GGML 算子的代码级优化或能力增强；",
+      "3. 相对固定 baseline，该算子测试集几何平均加速比不低于 1.10×；",
+      "4. 所有优化通过对应的 GGML 正确性测试，不引入明显性能回退；",
+      "5. 向 llama.cpp 上游提交不少于三个 Pull Request，并最终至少被合并两个；",
+      "6. 输出优化设计文档、功能验证报告及完整性能测试报告；",
+      "7. 若完成性能分析任务，提交可复现的分析配置、数据及分析报告；",
+      "8. 所有任务方向的贡献不与立项时已有的开放 PR 重叠。"
+    ],
+    "技术要求": [
+      "1. 掌握 C/C++，熟悉 Linux、CMake 和 Git 开发流程；",
+      "2. 熟悉计算机体系结构、Cache 层次及 SIMD/向量化编程；",
+      "3. 熟悉 RISC-V RV64 指令集及 RVV 基本编程模型；",
+      "4. 理解 VLEN、VL、SEW、LMUL、VLMAX 及 vsetvl 等 RVV 核心概念；",
+      "5. 了解 llama.cpp/GGML 的推理流程及量化计算机制；",
+      "6. 了解 LLM 推理中的关键算子（矩阵乘法、注意力机制、归一化、SSM 等）；",
+      "7. 有深度学习算子或底层性能优化经验者优先。"
+    ]
+  },
+  {
+    "项目名": "VSAG中Merge能力支持和性能优化",
+    "难度": "基础",
+    "标签": [
+      "datas",
+      "AI",
+      "datas",
+      "Database",
+      "datas",
+      "Embedded Database"
+    ],
+    "项目简介": "随着 RAG、智能推荐、图片与文本检索等应用的普及，向量数据库需要持续写入大量高维向量数据，并将数据分布在不同机器、分片或存储层中以满足扩展性和性能需求。为加快近似最近邻查询，系统通常会预先为各批数据构建图索引；但当小索引持续积累、集群节点缩减、分片重组或冷热数据需要统一管理时，多个已有图索引需要被合并为一个新的索引。\n目前，图索引合并通常需要从原始向量数据重新构建索引，该方式计算成本高、耗时长，并可能对在线服务的资源与稳定性造成影响。已有图索引中已经保存了部分有效的邻居关系和局部图结构，但尚缺乏一种能够充分利用这些已有结构、在不完全重建索引的前提下完成高效合并的通用方案。\n本项目希望研究并设计一种可扩展的图索引合并方法，利用多个已有图索引中的邻居关系和图结构，将其高效合并为覆盖全部数据的新图索引。合并后的索引应保持良好的连通性和搜索路径质量，保证近似最近邻查询的召回率与查询性能；同时尽量减少合并过程中的距离计算次数、构建时间和系统资源开销，以适配常见向量数据库的实际应用场景。",
+    "产出要求": [
+      "1. 在 VSAG 仓库提交至少 1 个可评审代码 PR，实现至少一种图索引的合并能力，支持将多个已有索引合并为覆盖全部向量的新索引；提供配置项、单元测试和使用说明，代码通过既有编译及相关测试。  \n2. 提供可复现的基准脚本、配置和原始结果，至少在 2 个数据集或数据规模配置上测试，并覆盖不同子索引数量、数据分片方式或索引规模。  \n3. 在相同数据集、索引参数和目标召回率下，与从原始向量全量重建索引的基线比较，合并方案在至少 1 个配置上实现不低于 1.5 倍的构建或合并加速，或显著减少距离计算次数；合并后索引覆盖全部数据，召回率相对基线下降不超过 1 个百分点，查询性能不得明显下降。  \n4. 提交实验与性能剖析报告，包含环境、数据规模、合并耗时、加速比、距离计算次数、内存占用、QPS、延迟、召回率、连通性分析、异常处理和限制；提交设计说明及使用文档。"
+    ],
+    "技术要求": [
+      "1. 熟练使用 C++17，具备 C/C++ 工程开发、调试、内存管理和性能优化能力，熟悉 Git、CMake 和单元测试。  \n2. 具备图数据结构和图算法基础，理解图索引的邻居关系、连通性、路径搜索和邻居选择等机制。  \n3. 了解向量检索和近似最近邻搜索基础，理解 HNSW 等至少一种 VSAG 图索引的构建、检索及召回率评测流程。  \n4. 熟悉 Linux 开发环境，能够使用 perf、perf stat、火焰图等工具分析 CPU 热点、缓存未命中、内存带宽和锁竞争。  \n5. 了解 CPU 缓存层级、缓存一致性、内存带宽、NUMA 和多线程并发等系统基础知识；具备大规模数据处理经验者优先。  \n6. 会使用 AI 编程辅助工具即可，不作为核心要求。"
+    ]
+  },
+  {
+    "项目名": "Dubbo-Go Triple 协议性能分析与优化",
+    "难度": "进阶/Advanced",
+    "标签": [
+      "safe",
+      "TCP/IP",
+      "safe",
+      "WebSocket",
+      "safe",
+      "HTTP",
+      "cloudnative",
+      "Kubernetes"
+    ],
+    "项目简介": "项目背景\nApache Dubbo-Go 是 Apache Dubbo 的 Go 语言实现，Triple 是 Dubbo 3 的核心 RPC 协议，承担云原生、多语言互通和高性能服务调用能力。\n社区已有 Dubbo-Go、Dubbo-Java 与 gRPC-Go 的 benchmark 对比工具\nhttps://github.com/apache/dubbo-go/pull/3502。现有测试显示，Dubbo-Go\n已经优于 Dubbo-Java，但与 gRPC-Go 仍存在明显差距。该差距可能来自网络层实现，也可能来自 Triple 协议栈中的序列化、buffer、header、metadata、stream 抽象等开销。\nDubbo-Go Triple 当前主要基于 Go 标准库 net/http、x/net/http2 以及社区自研的 Triple 协议封装实现。相比 gRPC-Go 的自研网络库，Dubbo-Go 需要兼顾更复杂的 Dubbo 生态兼容性，包括：\nTriple 与 gRPC 协议兼容\n多 codec 支持，例如 protobuf、JSON、Hessian2、MsgPack\ngeneric call / non-IDL / IDL 场景支持\nattachment / metadata 传递\nfilter / interceptor 扩展机制\n与 Dubbo-Java 的跨语言互通\n这些能力带来了更强的通用性，但也可能在高频调用路径中引入额外成本。现有 benchmark 显示，在小包高并发和大包传输场景下，Dubbo-Go 与 gRPC-Go 仍有较大差距。因此，需要围绕 Triple 热路径进行系统化 profiling 与优化。\n本项目希望基于现有 benchmark 和 profiling 工具，分析 Dubbo-Go Triple 的性能瓶颈，并在保证兼容性的前提下进行优化。\n项目目标\n基于现有 benchmark，分析 Dubbo-Go Triple 与 gRPC-Go 的性能差距。\n使用 pprof、trace、benchstat 等工具定位 Triple 调用链路中的性能瓶颈。\n优化 Triple unary 调用路径中的关键开销。\n降低请求延迟、内存分配和 GC 压力。\n形成可复现的性能分析报告。\n向 Dubbo-Go 社区提交可 review、可合入的 PR。\n主要工作内容\n基于现有 Benchmark 进行性能分析\n基于社区已有 benchmark 工具，完成 Dubbo-Go、Dubbo-Java 与 gRPC-Go 的性能对比，并根据需要补充少量测试场景或指标采集。\n性能瓶颈定位\n使用 Go benchmark、pprof、trace、benchstat 等工具分析 Triple 调用链路，定位主要耗时点和内存分配来源。\nTriple 热路径优化\n根据 profiling 结果选择优化点，围绕 Triple unary 调用路径进行优化，并通过 benchmark 验证优化效果。\n可选任务：Codec 序列化可插拔层\n梳理 Dubbo-Go Triple 当前 codec 机制，探索更清晰、更易扩展的序列化可插拔层。该任务为可选进阶方向，不要求作为基础验收内容。\n建议优化方向\n申请者可根据 benchmark 和 profiling 结果选择合适方向推进，包括但不限于：\nTriple unary 调用链路优化\nEnvelope 读写与大包传输优化\nBuffer 分配与复用优化\nHeader / Metadata 处理优化\nCodec marshal / unmarshal 热路径优化\n可选：再评估 net/http2 的替代或增强：例如更细控制 HTTP/2 frame、连接池、write buffer、流复用参数，甚至单独实验 netpoll/gnet。\n可选：Codec 序列化可插拔层设计\n具体优化方案不预设，申请者需要通过 profiling 数据说明瓶颈来源、优化思路和预期收益。\n涉及模块\n主要涉及：\nprotocol/triple/\nprotocol/triple/triple_protocol/\ntools/benchmark/\n可能涉及：\nprotocol/base/\nfilter/\ncluster/\nremoting/\n具体修改范围以 profiling 结果为准。",
+    "产出要求": [
+      "1. 一份 Dubbo-Go Triple 性能瓶颈分析报告。",
+      "2. 优化前后的 benchmark 对比数据。",
+      "3. 至少 4 个 Dubbo-Go 社区 PR。",
+      "4. 必要的测试用例和文档更新。",
+      "5. 可选：codec 序列化可插拔层设计或原型实现。"
+    ],
+    "技术要求": [
+      "1. 熟悉 Go 语言。",
+      "2. 了解 Go benchmark、pprof 或性能分析方法。",
+      "3. 了解 RPC、HTTP/2、protobuf 或 gRPC 基本原理。",
+      "4. 能够阅读中大型 Go 项目源码。",
+      "5. 具备基本 Git / GitHub 协作能力。"
+    ]
+  },
+  {
+    "项目名": "让 AgentSight 扛住生产级流量：eBPF 采集管线的内存与稳定性攻坚",
+    "难度": "进阶",
+    "标签": [
+      "dev",
+      "DevOps"
+    ],
+    "项目简介": "AgentSight 是一套面向 AI Agent 的可观测工具，不改一行 Agent 代码，用 eBPF 在内核层零侵入地抓取 LLM API 调用、token 消耗与进程行为，数据流经\nProbes → Parser → Aggregator → Analyzer → GenAI → Storage\n管线，完成 HTTP/HTTP2/SSE 解析、请求—响应关联与 token 计量，最终落存储并可视化，目前已能端到端跑通一条完整 trace。但在高流量、长时间运行下，它存在内存开销偏高与稳定性不足的问题：采集入口在下游积压时缺乏背压、连接缓存仅按数量约束而缺少字节量与存活时间维度的控制，导致内存易随负载增长、在途连接可能被挤出而丢失关联；热路径遇到异常输入时还容易 panic，长时间运行也存在资源不能及时释放的隐患。本项目希望在不牺牲采集完整性的前提下，让采集管线在持续高负载下内存有明确上界、面对异常输入能容错降级不崩溃、并建立可复现的压测基线。最终目标是让 AgentSight 采集管线达到生产可用：持续高负载下内存有稳定上界、不随运行时间线性增长，全程无 OOM 与 panic 退出、采集完整性不回退，配套 before/after 量化报告",
+    "产出要求": [
+      "1. 基线与压测：可复现的负载生成与基准脚本；内存/吞吐/延迟/丢弃率的 before/after 量化报告。\n",
+      "2. 内存治理：让管线在持续高负载下内存有上界的实现（含设计说明与取舍依据）。",
+      "3. 异常输入容错与资源泄漏治理的实现；对应的回归测试。"
+    ],
+    "技术要求": [
+      "1. 语言能力：熟练 Rust，理解所有权/生命周期与常用容器的内存行为，能读写中等规模并发代码。",
+      "2. 了解 AI Agent 的多步决策与轨迹概念"
+    ]
+  },
+  {
+    "项目名": "Kata DAN CNI：面向 Kubernetes OVN 的无侵入式可扩展网络接入组件",
+    "难度": "进阶",
+    "标签": [
+      "os",
+      "Virtualization",
+      "os",
+      "x86",
+      "os",
+      "Linux",
+      "os",
+      "RISC-V"
+    ],
+    "项目简介": "Kata Containers 的 Directly Attachable Network（DAN）允许 Kata 虚拟机直接使用主机侧网络设备。Kata runtime-rs 读取以 sandbox ID 命名的 DAN JSON 文件，创建虚拟机网络设备，并在 Guest 内配置 MAC、IP、路由等网络信息。\nKube-OVN 已具备 IPAM、MAC/IP 分配、OVN Logical Switch Port（LSP）、ACL 和 logical flow 管理能力，但其节点 CNI 的普通路径会创建 veth 并接入 Open vSwitch（OVS）。对于 Kata DAN，如果先创建普通 veth，再创建使用相同 OVN\niface-id\n的 TAP，会产生端口竞争和资源清理冲突。\n本项目计划使用 Rust 开发一个独立的 DAN CNI 组件。在不修改 Kube-OVN Controller 和节点 CNI 源码的前提下，组件复用 Kube-OVN 已有的控制面分配结果，为 Kata创建直接网络 endpoint 和 DAN JSON；对于普通 Pod，则透明委托给原 Kube-OVN CNI。\n本项目所称“无侵入式”是指不修改 Kube-OVN / OVN-kubernetes 源代码。项目允许新增 DAN CNI 代码、调整 CNI conflist、增加 Kubernetes RBAC，并使用 DaemonSet 安装 CNI 二进制和配置。DaemonSet 只负责安装和部署，不要求学生开发额外的常驻 RPC 服务。",
+    "产出要求": [
+      "1. Rust CNI核心程序 实现 CNI ADD、DEL 和基础 CHECK等\n2. 可扩展 backend框架，定义与具体 backend无关的 NetworkContext、BackendState和 DanDevice数据模型；提供 backend注册、配置解析、能力校验和选择机制等\n3. Provider抽象框架，定义与具体 Provider无关的 PodIdentity、NetworkSelection、NetworkAllocation和 LogicalPort；使用 fake Provider证明新增 Provider不需要修改 CNI命令分发、host-tap backend和 DAN生命周期等\n4. 支持 Kube-OVN 只读适配器（最低结项必须完成）\n5. 支持 Host-tap backend（最低结项必须完成）\n7. 测试和质量保障，必须通过社区 CI 并给出测试报告等\n8. 文档和部署资源，架构及资源所有权文档等"
+    ],
+    "技术要求": [
+      "1. Rust 错误处理、trait、并发和基本系统编程；\n2. K8S、CNI、Linux TAP、Open vSwitch 等；\n3. 阅读 Kata Containers 和 Kube-OVN 代码的能力；\n4. 编写单元测试、集成测试和技术文档的能力。"
+    ]
+  }
+]
