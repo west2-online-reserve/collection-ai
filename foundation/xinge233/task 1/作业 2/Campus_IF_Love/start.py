@@ -34,7 +34,7 @@ while True:
             game.current_target.talk_times = data["talk_times"]
             game.story_loop()
 
-        except FileNotFoundError:
+        except Exception:
             print(file_error)
     elif main_choice == "3":  # 读档
         if confirm(menu_text[2]):
@@ -45,7 +45,7 @@ while True:
                 game.current_target.talk_times = data["talk_times"]
                 game.story_loop()
 
-            except FileNotFoundError:
+            except Exception:
                 print(file_error)
     elif main_choice == "4":  # 退出游戏
         if confirm(menu_text[3]):

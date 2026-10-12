@@ -26,6 +26,7 @@ def save(
     talk_times: typing.Literal["self.talk_times"],
     save_method: typing.Literal["save", "Qsave"] = "save",
 ) -> None:
+    BASE.mkdir(parents=True, exist_ok=True)
     if save_method == "save":
         save_path = BASE / "save.json"
 
@@ -199,7 +200,7 @@ class Game:
                         self.current_target = self.characters[data["wife"]]
                         self.current_target.affinity = data["affinity"]
                         self.current_target.talk_times = data["talk_times"]
-                    except FileNotFoundError:
+                    except Exception:
                         print(file_error)
             elif choice == "6":  # 离开
                 if confirm(choice_text[6]):

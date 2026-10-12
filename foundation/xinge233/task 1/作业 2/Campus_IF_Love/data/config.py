@@ -236,7 +236,7 @@ choice_text={4:"存档",5:"读档",6:"离开",7:"重新开始"}
 
 #start.py中的文本
 
-load_fail="读取存档失败，未找到存档文件。"
+load_fail="读取存档失败，存档文件不存在或已损坏。"
 load_finish="已从{path}读取存档。"
 main_menu=["校园·if 恋（Campus IF Love）\n","1.开始游戏","2.继续游戏","3.读档","4.退出游戏"]
 main_choice_text="请输入选项："
