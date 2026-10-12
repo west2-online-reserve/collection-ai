@@ -9,5 +9,3 @@ if is_prime:
     print("YES")
 else:
     print("NO")
-        
-    
