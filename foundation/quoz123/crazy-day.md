@@ -22,4 +22,4 @@
 
 夯中夯：[**《大人帝国的反击》**](https://www.bilibili.com/list/ml2587242231?oid=17457536&bvid=BV1WW41187VR)。
 
-![电影切面](https://www.bing.com/images/search?q=%e5%a4%a7%e4%ba%ba+%e5%b8%9d%e5%9b%bd&FORM=RESTAB)
+![电影切面](.assets/image.png)
