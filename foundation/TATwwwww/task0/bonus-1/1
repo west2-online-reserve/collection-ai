@@ -1,0 +1,6 @@
+x=int(input("请输入："))
+y=int(input("请输入："))
+z=int(input("请输入："))
+list=[x,y,z]
+list.sort(reverse=True)
+print(list)

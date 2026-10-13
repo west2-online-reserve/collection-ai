@@ -1,0 +1,10 @@
+def count_num(arr):
+    res={}
+    for i in  arr:
+        if i in res:
+            res[i]+=1
+        else:
+            res[i]=1
+    return res
+test=[1,2,2,2,3,3,3,3,3]
+print(count_num(test))
