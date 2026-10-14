@@ -42,7 +42,6 @@ def write_files(filename, cards):
         for card in sort_card(cards):
             f.write(f'{card}  ')
 
-        f.close()
 
 
 file1 = "player1.txt"
