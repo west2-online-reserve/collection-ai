@@ -1,5 +1,5 @@
 # PyCharm IDE配置目录
-.idea/
+../../.idea/
 
 # Python缓存
 __pycache__/
