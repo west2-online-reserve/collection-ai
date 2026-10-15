@@ -74,3 +74,15 @@ print(x)
 ## dict
 
 ```python
+d = {
+    "2601" : "A",
+    "2602" : "B",
+    "2603" : "C"
+}
+d1 = {
+    num : name
+    for num, name in d.items()
+    if int(num[-1])%2 != 0
+}
+print(d1)
+```
