@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 *.pyo
 
+.python-version
+pyproject.toml
+uv.lock
+foundation/hao888myt/task2/zhi_hu/cookies.json
