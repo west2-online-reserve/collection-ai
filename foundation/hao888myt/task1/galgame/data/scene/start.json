@@ -1,0 +1,104 @@
+{
+  "group_1": {
+    "type": "dialogue_group",
+    "dialogues": [
+      {
+        "name": "",
+        "content": "你是一名刚刚踏入大学校园的新生。"
+      },
+      {
+        "name": "",
+        "content": "在开学典礼上，拿下压倒性成绩第一的你被选为新生代表发言。"
+      },
+      {
+        "name": "",
+        "content": "在全场上千人的注视下，你气质非凡，发言流畅，很快成为焦点人物。"
+      },
+      {
+        "name": "",
+        "content": "消息迅速传开，关于'神秘新生代表'的讨论充斥着整个校园。"
+      },
+      {
+        "name": "",
+        "content": "于是，在这个新的舞台上，你与三位不同的女生产生了交集……"
+      },
+      {
+        "name": "",
+        "content": "你回到教室，教室内的三位女生立刻引起了你的注意。"
+      },
+      {
+        "name": "",
+        "content": "一位白色头发的女生趴在桌子上，旁边放着《Python入门》，似乎在为什么苦恼着。"
+      },
+      {
+        "name": "",
+        "content": "一位学姐模样的女生坐在窗边，手里拿着画笔勾勒着什么。"
+      },
+      {
+        "name": "",
+        "content": "后排的一名女生手里拿着一本书，专注地看着，完全没察觉到你的到来。"
+      },
+      {
+        "name": "",
+        "content": "你决定上前找一位女生搭话。"
+      }
+    ],
+    "group_to": "group_2",
+    "file_to": "start"
+  },
+  "group_2": {
+    "type": "choice_group",
+    "desc": "你的选择是？",
+    "choices": [
+      {
+        "character": "jie_jie",
+        "content": "sds",
+        "group_to": "group_1",
+        "file_to": "start",
+        "effects": [],
+        "conditions": []
+      },
+      {
+        "character": "jie_jie",
+        "content": "好感度够了",
+        "group_to": "group_1",
+        "file_to": "start",
+        "effects": [],
+        "conditions": [
+          {
+            "type": "required_affinity",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "character": "jie_jie",
+        "content": "sds",
+        "group_to": "group_jiejie",
+        "file_to": "start",
+        "effects": [
+          {
+            "type": "modify_affinity",
+            "value": 1
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  "group_jiejie": {
+    "type": "dialogue_group",
+    "dialogues": [
+      {
+        "name": "姐姐",
+        "content": "嗯？"
+      },
+      {
+        "name": "我",
+        "content": "你好"
+      }
+    ],
+    "group_to": "group_2",
+    "file_to": "start"
+  }
+}
