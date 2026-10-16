@@ -4,6 +4,7 @@ import random
 import time
 
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.options import Options
 
@@ -35,6 +36,7 @@ if __name__ == "__main__":
 
     for cookie in cookies:
         driver.add_cookie(cookie)  # type: ignore
+    time.sleep(3)
 
     driver.get("https://www.zhihu.com/topic/19845595/top-answers")
     time.sleep(3)
@@ -81,7 +83,7 @@ if __name__ == "__main__":
                 By.CLASS_NAME, "QuestionHeader-title"
             ).get_attribute("textContent")
             question = question.strip() if question else ""
-        except:  # noqa: E722
+        except NoSuchElementException:
             question = ""
 
         try:
@@ -89,7 +91,7 @@ if __name__ == "__main__":
                 By.CSS_SELECTOR, ".QuestionRichText"
             ).get_attribute("textContent")
             question_detail = question_detail.strip() if question_detail else ""
-        except:  # noqa: E722
+        except NoSuchElementException:
             question_detail = ""
 
         answers = driver.find_elements(By.CSS_SELECTOR, ".RichContent-inner")[:20]
