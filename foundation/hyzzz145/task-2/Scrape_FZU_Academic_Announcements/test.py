@@ -57,6 +57,6 @@ xml = """
 
 tree = etree.XML(xml)
 text = tree.xpath("/div/div/div/li/a")
-text2 = text[0].xpath("/div/div/div/li/a/text()")
+text2 = text[0].xpath("/text()")
 
 print(text2)

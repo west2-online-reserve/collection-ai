@@ -66,6 +66,8 @@ c = reduce(lambda x,y:x*y,[1,2,3,4,5,6])
 ## dict
 
 - dict.keys() 生成的是 dict_keys 类型，而非列表，要让它成为列表，需要 list() 。
+- .get(key,‘若无要返回的内容’)：用于提取字典对应键的值
+- .item 可以获得键值元组
 
 ## 正则表达式
 

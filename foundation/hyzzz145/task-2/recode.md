@@ -141,3 +141,238 @@
           - 用二进制模式写入文件：open("test.html", "wb")
           - encoding="unicode"：返回 Python 字符串 str
           - 用文本模式写入文件：open("test.html", "w", encoding="utf-8")
+
+## 10 月 11 日
+
+- 知乎话题抓取
+  - 直接请求，放回 403 状态码，即禁止访问
+  - 我得去学习 `selenium`
+- `selenium` （模拟用户上网行为）
+  - `webdriver`
+    - 浏览器选择方法；如（`Edge(service,option)`）
+      - `get(url)`；输入网址，打开特定网页
+      - `find_element(By.属性,value:"值")`
+        - `send_keys(str)` 发送内容
+        - `click()`：点击
+        - `txet`：读取内容
+        - `get_attribute`：获得标签属性
+      - `save_screenshot('herf')`，截取当前图片，但不会自动创建文件夹
+      - `quit()`：退出页面
+      - `page_source`：获得 html
+      - `service`：
+      - `close()`:关闭标签页
+      - `maximize_window()`：最大化
+      - `minimize_window()`：最小化
+      - `set_window_size(int,int)`：自定义大小
+      - `fullscreen_window()`：全屏
+      - `back()`：退后
+      - `forward()`：向前
+      - `refresh()`：刷新
+      - `title`：获得标题
+      - `current_url`：获得链接
+      - `execute_script("arguments[0].scrollIntoView({block: 'center'});",element)`：一般用于互动到某个页面
+    - `support`
+      - `ui.WebDriveWait(drive,time)`：等待加载,最多等待 time 秒
+        - `until(EC)`
+      - `expected_conditions`
+        - `visibility_of_element_located((By.,''))`：内容存在且可见
+        - `presence_of_all_elements_located()`：等待页面 DOM 中出现所有匹配该定位条件的元素
+    - `common`
+      - `by.By`；用于上方属性，属性记得大写
+        - xpath
+        - 属性
+        - css
+      - `keys.Keys.RETURN`：回车键
+- 学习一下 css
+  - `#title` 表示对 `id` 为 “title” 的起效
+  - `.title` 表示对 `class` 为“title” 的起效
+
+## 10 月 12 日
+
+- 会话
+  - `request.session`
+    - `post(url,data)`：其中 data 为一个字典
+      - `.cookies`
+  - 获得 cookies 之后再进行请求
+- head
+  - referer 防盗链
+- `selenium.webdrive.Edge()`
+  - `add_cookie(cookie)`添加cookie
+  - `get_cookie()`：获得列表，列表元素为 cookie 的字典
+- `json`
+  - `dump(json,f)`：写入文件
+  - `dumps`：写入字符串
+    - 写入通用参数，`ensure_ascii=False`：中文正常显示，否则输出`\uXXX`
+    - `indent = 2`：缩进美化
+  - `load`：从文件读取对象
+  - `loads`：从字符串读取对象
+- 学习了 `breakpoint()` 调试
+  - `p x`：打印变量 x
+  - `l`：显示当前代码上部
+  - `n`：进行下一行代码
+  - `q`：退出调试
+
+## 10 月 13 日
+
+- 知乎话题爬取
+  - 哎，在使用 selenium get_element 时，使用 xpath 进行抓取，总是要看运气。·
+
+## 10 月 14 日
+
+- 知乎话题爬取
+  - bug 还是太多了，我决定还是先让 chatgpt 生成一个无 bug 的版本，如何纠错
+  - 哎就这样吧，搞半天只能爬取一个话题。明天去学点编程思想吧
+
+## 10 月 15 日
+
+- 开始源之夏
+- `repr()`是一种函数，用于把对象返回为开发者表示形式
+- `traceback`是一个内置模块
+  - `print_exc`会把当前正在处理的异常打印下来
+- 有时候爬取 json 的时候，请求失败要记得看看写没写 padload。
+- 排查问题的代码
+
+  ``` python
+  print("状态码：", resp.status_code)
+  print("请求方法：", resp.request.method)
+  print("请求网址：", resp.request.url)
+  print("请求体：", resp.request.body)
+  print("响应类型：", resp.headers.get("Content-Type"))
+  print("响应正文：", repr(resp.text[:1500]))
+  ```
+
+- re
+  - `sub(re,"",text)`：替换text的东西
+    - 例子：要去除 html 的<>类标签，使用 re.sub(r'<[^>]*>','',text)
+  - "^" 在 [] 里指非的意思
+- `for a,b in dict.items()`：可以使 a 为键，b 为值
+- 已完成源之夏
+
+## 10 月 16 日
+
+- `urllib.parse`
+  - `unquote(text)`：可以用于解码
+
+## 10 月 17 日
+
+- 语法报错
+  - `SyntaxError`：无效语法，不符合语法格式。
+    - 关键字命名
+    - 错误符号
+    - 语法不完整：符号不成对
+  - `NameError`：变量名错误
+  - `ValueError`：传入值错误
+  - `IndentationError`：缩进错误
+  - `ZeroDivisonError`：除数是 0
+  - `IndexError`：索引错误
+  - `FileNotFoundError`：未找到文件
+  - `AttributeError`：属性错误
+  - `UnboundLocalError`：引用未定义的局部变量
+  - `KeyError`：未找到对应的键值
+  - `TypeError`：无效类型
+  - `OverflowError`：数值运算超出最大限制
+  - `NotImplementedError`：尚未实现的方法
+  - `ModuleNotFoundError`：模块未找到
+  - `try...except`：异常处理
+  - `assert`：断言
+- 在请求一个 url 时，问号后面的可以用 param 字典参数来代替
+- numpy（*made by chatgpt*）
+  - `array(list)`：把列表转为数组
+    - 数组有 `np.int32` `np.int64` `np.float32` `np.float64` `np.bool_` `np.str_`
+    - `astype`：把数组类型转换
+    - `reshape(1，4)`：把有4  个元素数组改为（1，4）的形式，参数也可以填 -1 自动计算
+  - `zeros(n)`：创造 n 个 0 的数组，其中类型为浮点数。n 可以是 (2,3)，也可以是一个数
+  - `arange(stop)` / `arange(start, stop, step)`：按步长生成连续数值，包含 `start`，不包含 `stop`。
+    - `np.arange(10)`：生成 `0` 到 `9`。
+    - `np.arange(1, 10, 0.5)`：生成 `1` 到 `9.5`，步长为 `0.5`。
+  - `random`
+    - `random(size)`：生成 `[0, 1)` 范围内的随机小数。
+      - `np.random.random(5)`：生成 5 个随机数。
+      - `10 * np.random.random((10, 5)) + 10`：生成形状为 `(10, 5)`、范围约为 `[10, 20)` 的随机数。
+    - `randint(low, high, size)`：生成随机整数，包含 `low`，不包含 `high`。
+      - `np.random.randint(2, 5, (3, 5))`：生成形状为 `(3, 5)`、范围为 `2` 到 `4` 的整数。
+    - `randn(2, 3)`：生成形状为 `(2, 3)`、标准正态分布的随机数。
+    - `normal(loc, scale, size)`：按指定均值、标准差和形状生成正态分布随机数。
+      - `np.random.normal(0, 1, (2, 3))`：均值为 `0`、标准差为 `1` 的随机数组。
+      - `np.random.normal(500, 70, (3, 7))`：生成形状为 `(3, 7)` 的随机数组。
+  - `索引与切片`
+    - `arr[indices]`：按索引取值，顺序与索引列表一致
+      - `np.arange(0, 100, 10)[[0, 2, 3, 1]]`：结果为 `[0, 20, 30, 10]`
+    - `arr[start:stop]`：包含起点、不包含终点；二维数组默认切行
+      - `arr[:, 1:3]`：取所有行的第 2、3 列
+    - `arr[condition]`：按条件筛选元素
+      - `arr[arr > 4]`：筛选大于 `4` 的元素
+  - `转置与复制`
+    - `arr.T`：转置二维数组；一维数组转置后仍是一维
+    - `copy()`：创建独立副本；直接赋值会让变量共享同一个数组
+      - `part = arr[:3].copy()`：修改 `part` 不影响原数组
+      - `arr2 = arr`：修改 `arr2` 会影响 `arr`
+  - `翻转`
+    - `fliplr(arr)`：左右翻转二维数组
+    - `flipud(arr)`：上下翻转；一维数组也可使用
+  - `拼接与分割`
+  - `concatenate(arrays, axis)`：拼接数组；`axis=0` 按行，`axis=1` 按列
+  - `split(arr, indices, axis)`：按指定索引位置分割数组
+    - `np.split(np.arange(10, 100, 10), [2, 8])`：按索引 `2`、`8` 分成三段
+  - `数学与统计`
+    - `dot(a, b)`：计算点积
+      - `np.dot(np.arange(5), np.arange(5))`：结果为 `30`
+    - `abs(arr)`、`sin(arr)`、`exp(arr)`、`log(arr)`：绝对值、正弦、指数、自然对数
+    - `pi`：圆周率
+    - `max`、`sum`、`prod`、`mean`、`std`：最大值、求和、求积、均值、标准差
+      - `axis=0`：按列计算；`axis=1`：按行计算
+      - `np.max(np.arange(10).reshape(2, 5), axis=0)`：结果为 `[5, 6, 7, 8, 9]`
+      - 函数名前加 `nan` 可忽略 NaN，如 `np.nanmean(arr)`、`np.nansum(arr)`
+  - `条件定位`
+    - `where(condition)`：返回满足条件的位置索引；二维数组返回行、列索引
+      - `np.where(arr > 600)`：返回大于 `600` 的元素所在位置
+
+## 10 月 18 日
+
+- pandas（made by chatgpt）
+  - 基础
+    - `import pandas as pd`：导入 Pandas，并简写为 `pd`
+    - `print(value)`：输出内容
+      - `print("hello world")`
+  - `Series`
+    - `Series(data, index)`：创建带索引的一维数据
+      - `pd.Series({"a": 1, "b": 2})`：字典键作为索引，值作为数据
+      - `pd.Series([1, 2, 3], index=["a", "b", "c"])`：用 `index` 指定索引
+    - `sr.values`：获取底层数组；通常是 NumPy 数组
+  - `DataFrame`
+    - `DataFrame(data, index, columns)`：创建二维表
+      - `pd.DataFrame({"年龄": [12, 35], "性别": ["女", "男"]})`：用字典按列创建
+      - `pd.DataFrame({"年龄": p1, "性别": p2})`：用 Series 建表，按索引对齐数据
+      - `df.T`：行列转置
+    - 二维数组含数字和字符串时，数组可能会把所有值统一成字符串；按列创建更容易保留类型
+  - 选择与修改
+    - `loc[行标签, 列标签]`：按标签选择
+      - `df.loc["1号"]`：选一行
+      - `df.loc[["1号", "2号"]]`：选多行
+      - `df.loc["2号", "年龄"] = 1`：修改指定单元格
+    - `iloc[行位置, 列位置]`：按整数位置选择
+      - `df.iloc[1]`：选第 2 行
+      - `df.iloc[:]`：选择所有行
+    - `iloc[行切片, 列切片]`：按位置切片或翻转
+      - `df.iloc[:, ::-1]`：反转列顺序
+      - `df.iloc[::-1, :]`：反转行顺序
+  - 读取与概览
+    - `read_csv(path, index_col=0)`：读取 CSV；将第 1 列设为索引
+      - `pd.read_csv("data.csv", index_col=0)`
+    - `head(n)`：查看前 `n` 行，默认 5 行
+    - `describe()`：查看数值列的描述性统计
+  - 缺失值
+    - `isna()` / `isnull()`：检测缺失值
+    - `dropna(axis=0)`：删除含缺失值的行；`axis=1` 删除含缺失值的列
+    - `fillna(value)`：填充缺失值
+      - `df.fillna(0)`：用 `0` 填充
+      - `df.ffill()`：用前一个值填充
+      - `df.bfill()`：用后一个值填充
+  - 分组与透视表
+    - `pivot_table(values, index, aggfunc)`：按行索引分组并汇总，默认计算均值
+      - `df.pivot_table("是否生还", index="性别")`：按性别统计平均生还值
+  - 连续数据分箱
+    - `cut(values, bins)`：按指定区间分箱，默认区间右侧闭合
+      - `pd.cut(df["年龄"], [0, 25, 120])`：分为 `(0, 25]` 和 `(25, 120]`
+    - `qcut(values, q)`：按分位数分箱，各箱数据量大致相等
+      - `pd.qcut(df["费用"], 2)`：按中位数分为两组

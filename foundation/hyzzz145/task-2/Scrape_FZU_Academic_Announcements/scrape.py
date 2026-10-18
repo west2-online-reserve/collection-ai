@@ -73,9 +73,9 @@ def scatch(resp_notice,url_id):
                     writer.writerow([f"发布时间：{date}"])
                     writer.writerow([f"详细链接：{url_context}"])
                     #正文（略去）
-                    soup = BeautifulSoup(context_text,'lxml')
-                    content = soup.find('div',class_ = 'xl_main').get_text(strip=True)
-                    writer.writerow([f"正文：{content}"])
+                    # soup = BeautifulSoup(context_text,'lxml')
+                    # content = soup.find('div',class_ = 'xl_main').get_text(strip=True)
+                    # writer.writerow([f"正文：{content}"])
 
 
                     print("data1 已写入")

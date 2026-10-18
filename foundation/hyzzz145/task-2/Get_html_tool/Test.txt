@@ -1,0 +1,45 @@
+ <li>附件【<a href="/system/_content/
+ download.jsp?urltype=news.DownloadAttachUrl&amp;
+ owner=1744984858&amp;wbfileid=18307276" 
+ target="_blank">2026年度福州大学新上岗教师岗前培训班（配导师）
+ .xlsx</a>】已下载
+ <span id="nattach18307276">
+ <script language="javascript">
+ getClickTimes(18307276,1744984858,"wbnewsfile","attach")
+ </script></span>次</li>
+
+ <a target="_blank" href="https://www.zhihu.com/pin/1863895826616692737">【一个人的自卑多半是和父亲有关】</a>
+
+ <div class="RichContent-inner"><div class="css-376mun"><span id="content"><span class="RichText ztext CopyrightRichText-richText css-u8299y" options="[object Object]" itemprop="text">韩韩聊天赋教育：就是说呀，一个人自卑大多和父亲有点关系呢。心理学家埃里克森讲了，自卑感一般在6到12岁容易产生，这个时候孩子开始离开妈妈，要去外面的世界闯荡。 在这个阶段，父亲就像个能决定好坏的审判官，或者像创造一切的神一样，他对孩子的评价对孩子性格形成特别重要。 要是孩子和父亲相处的时候，很少得到表扬，或者干脆爸爸不…</span><span id="VirtualCatalogAnchorPoint"></span></span></div><button type="button" class="Button ContentItem-more FEfUrdfMIKpQDJDqkjte Button--plain fEPKGkUK5jyc4fUuT0QP">阅读全文<span style="display: inline-flex; align-items: center;">​<svg width="24" height="24" viewBox="0 0 24 24" class="Zi Zi--ArrowDown ContentItem-arrowIcon" fill="currentColor"><path fill-rule="evenodd" d="M17.776 10.517a.875.875 0 0 1-.248 1.212l-5.05 3.335a.875.875 0 0 1-.964 0L6.47 11.73a.875.875 0 1 1 .965-1.46l4.56 3.015 4.568-3.016a.875.875 0 0 1 1.212.248Z" clip-rule="evenodd"></path></svg></span></button></div>
+
+
+
+
+
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[2]/div/div/div[3]/div/div/div[3]/div[1]/div/div[1]/div/div[2]/div[2]
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[2]/div/div/div[3]/div/div/div[3]/div[1]/div/div[2]/div/div[2]/div[2]
+ 
+ '//*[@id="TopicMain"]/div[4]/div[2]/div/div/div[4]/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[2]
+  //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[2]/div/div/div[3]/div/div/div[3]/div[1]/div/div[1]/div/div[2]/div[2]
+ '//*[@id="TopicMain"]/div[4]/div[2]/div/div/div[3]/div/div/div[2]/div/div/div[2]/div[2]/div/div[5]/div/div[2]/div[2]
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[2]/div/div/div[3]/div/div/div[3]/div[1]/div/div[1]/div/div[2]/div[2]
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[3]/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[2]
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[4]/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[2]
+ //*[@id="TopicMain"]/div[4]/div[2]/div/div/div[6]/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[2]
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ '//*[@id="TopicMain"]/div[4]/div[2]/div/div/div[3]/div/div/div[3]/div/div/div[2]/div[2]/div/div[5]/div/div[2]/div[2]'
