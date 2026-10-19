@@ -59,3 +59,24 @@ class LeechSeedEffect(Effect):
         pokemon.lose_hp(leechseed_damage)
         leechseed_heal = initial_hp - pokemon.hp
         self.source.heal_self(leechseed_heal)
+
+
+class ShieldEffect(Effect):
+    name = "Shield"
+    damage_multiplier: float = 0.5  # 受到伤害减半
+
+    def __init__(self, duration: int = 2) -> None:
+        super().__init__(duration)
+
+    def apply(self, pokemon: "Pokemon") -> None:
+        pass
+
+
+class BurnEffect(Effect):
+    name = "Burn"
+
+    def __init__(self, duration: int = 2) -> None:
+        super().__init__(duration)
+
+    def apply(self, pokemon: "Pokemon") -> None:
+        pokemon.lose_hp(10)  # 每回合扣除10点生命值

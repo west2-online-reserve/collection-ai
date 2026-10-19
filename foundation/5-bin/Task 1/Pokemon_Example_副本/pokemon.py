@@ -1,5 +1,6 @@
 from __future__ import annotations
 import skills
+import effects
 from skills import Skill
 from effects import Effect
 import random
@@ -16,12 +17,15 @@ class Pokemon:
     name: str
     type: str
 
-    def __init__(self, hp: int, attack: int, defense: int) -> None:
+    def __init__(
+        self, hp: int, attack: int, defense: int, dodge_chance: int = 0
+    ) -> None:  # 新增dodge_chance闪避概率
         # 初始化 Pokemon 的属性
         self.hp = hp
         self.max_hp = hp
         self.attack = attack
         self.defense = defense
+        self.dodge_chance = dodge_chance
         self.skills: list[Skill] = self.initialize_skills()
         self.alive = True
         self.statuses: list[Effect] = []
@@ -68,6 +72,16 @@ class Pokemon:
             print(f"{self.name} has fainted!")
 
     def receive_damage(self, damage: int | float) -> None:
+        if not self.alive:
+            return
+
+        # 检查是否有盾牌效果，如果有，应用伤害减免
+        for status in self.statuses:
+            if isinstance(status, effects.ShieldEffect):
+                if status.duration == 1:
+                    damage *= status.damage_multiplier
+                    break  # 只应用一回合盾牌效果
+
         # 计算伤害并减去防御力，更新 HP
         if not isinstance(damage, int):
             damage = int(damage)
@@ -77,6 +91,19 @@ class Pokemon:
             print(f"{self.name}'s defense absorbed the attack!")
             return
         self.lose_hp(damage)
+
+    def try_dodge(self) -> bool:
+        if not self.alive:
+            return False
+        # 尝试闪避攻击
+        if random.randint(1, 100) <= self.dodge_chance:
+            print(f"{self.name} dodged the attack!")
+            return True
+        return False
+
+    def on_damage_dealt(self) -> None:
+        # 当造成伤害时触发的效果
+        pass
 
     def add_status_effect(self, effect: Effect):
         # 添加状态效果
@@ -127,9 +154,11 @@ class GrassPokemon(Pokemon):
 class Bulbasaur(GrassPokemon):
     name = "Bulbasaur"
 
-    def __init__(self, hp: int = 100, attack: int = 35, defense: int = 10) -> None:
+    def __init__(
+        self, hp: int = 100, attack: int = 35, defense: int = 10, dodge_chance: int = 10
+    ) -> None:
         # 初始化 Bulbasaur 的属性
-        super().__init__(hp, attack, defense)
+        super().__init__(hp, attack, defense, dodge_chance)
 
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 SeedBomb 和 ParasiticSeeds
@@ -139,6 +168,7 @@ class Bulbasaur(GrassPokemon):
 class WaterPokemon(Pokemon):
     type = "Water"
 
+    # 水属性减伤 → 护盾减伤 → 取整 → 减防御 → 实际扣血
     def receive_damage(self, damage: int | float) -> None:
         if not self.alive:
             return
@@ -152,10 +182,48 @@ class WaterPokemon(Pokemon):
 class Squirtle(WaterPokemon):
     name = "Squirtle"
 
-    def __init__(self, hp: int = 80, attack: int = 25, defense: int = 20) -> None:
+    def __init__(
+        self, hp: int = 80, attack: int = 25, defense: int = 20, dodge_chance: int = 20
+    ) -> None:
         # 初始化 Squirtle 的属性
-        super().__init__(hp, attack, defense)
+        super().__init__(hp, attack, defense, dodge_chance)
 
     def initialize_skills(self) -> list[Skill]:
-        # 初始化技能，具体技能是 AquaJet
-        return [skills.AquaJet()]
+        # 初始化技能，具体技能是 AquaJet 和 Shield
+        return [skills.AquaJet(), skills.Shield()]
+
+
+class FirePokemon(Pokemon):
+    type = "Fire"
+    base_attack: int
+    attack_stacks: int = 0  # 攻击力提升的层数
+
+    def __init__(self, hp: int, attack: int, defense: int, dodge_chance: int) -> None:
+        super().__init__(hp, attack, defense, dodge_chance)
+        self.base_attack = attack  # 保存基础攻击力
+
+    def on_damage_dealt(self) -> None:
+        if not self.alive:
+            return
+        if self.attack_stacks >= 4:
+            return  # 攻击力提升最多为4层
+        # 当造成伤害时触发的效果，增加攻击力
+        self.attack_stacks += 1
+        self.attack = int(
+            self.base_attack * (1 + self.attack_stacks * 0.1)
+        )  # 每次造成伤害增加10%的攻击力
+        print(f"{self.name}'s attack increases to {self.attack} due to Fire attribute!")
+
+
+class Charmander(FirePokemon):
+    name = "Charmander"
+
+    def __init__(
+        self, hp: int = 80, attack: int = 35, defense: int = 15, dodge_chance: int = 10
+    ) -> None:
+        # 初始化 Charmander 的属性
+        super().__init__(hp, attack, defense, dodge_chance)
+
+    def initialize_skills(self) -> list[Skill]:
+        # 初始化技能，具体技能是 Ember 和 Fireball
+        return [skills.Ember()]

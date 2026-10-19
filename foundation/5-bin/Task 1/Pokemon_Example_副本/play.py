@@ -177,6 +177,7 @@ class Play:
 if __name__ == "__main__":
     pokemon1 = pokemon.Bulbasaur()
     pokemon2 = pokemon.Squirtle()
-    all_pokemon = [pokemon1, pokemon2]
+    pokemon3 = pokemon.Charmander()
+    all_pokemon = [pokemon1, pokemon2, pokemon3]
     play = Play(all_pokemon)
     play.run()
