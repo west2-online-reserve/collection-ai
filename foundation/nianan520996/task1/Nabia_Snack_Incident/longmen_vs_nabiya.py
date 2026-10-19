@@ -179,24 +179,28 @@ def main_battle_loop(
         print("\n>>> 长门回合")
         action=choose_nagato_action(nagato_hp, nabiya_hp)
         if action=="attack":
-            attack=calculate_attack_damage(3)
-            print("长门攻击！")
+            attack=calculate_attack_damage(3)     
             if check_critical_hit(attack)==True:
                 attack*=2
-            print("触发 BIG SEVEN：造成暴击伤害！")
+                nabiya_hp=apply_damage(nabiya_hp,attack,nabiya_defense_bonus)
+                print(f"触发 BIG SEVEN：造成暴击伤害,娜比娅剩余{nabiya_hp} 点生命值。")
+            else :
+                print(f"长门攻击！娜比娅剩余{nabiya_hp} 点生命值。")
         if action=="defend":
             nagato_defense_bonus+=calculate_defense_value(2)
-            print(f"长门进入防御姿态，获得 {nagato_defense_bonus} 点防御值。")
+            print(f"长门进入防御姿态，获得 {nagato_defense_bonus} 点防御值。")          
         if action=="special":
             if random.random()<SPECIAL_ATTACK_SUCCESS_RATE:
                 attack=SPECIAL_ATTACK_DAMAGE    
-                print("长门的特殊攻击成功,娜比娅损失了 {attack} 点生命值。")
+                nabiya_hp=apply_damage(nabiya_hp,attack,nabiya_defense_bonus)
+                print(f"长门的特殊攻击成功,娜比娅损剩余 {nabiya_hp} 点生命值。")
             else :
                 attack=0
                 print("长门的特殊攻击失败，没有造成伤害。")
+        nabiya_defense_bonus=0
         if is_battle_over==True:
             break      
-        nabiya_hp=apply_damage(nabiya_hp,attack,nabiya_defense_bonus)
+        
         print("\n>>> 娜比娅的回合")
         enemy_action =nabiya_ai_action(nabiya_hp)
         if enemy_action=="attack":
