@@ -159,7 +159,7 @@ def main_battle_loop(
 ) -> BattleResult:
     """运行完整战斗，并返回 nagato、nabiya 或 draw。"""
     # TODO：先检查 pause_seconds 和 max_turns 是否合理，不合理时抛出 ValueError。
-    if pause_seconds<=0 or max_turns<=0:
+    if pause_seconds<0 or max_turns<=0:
         raise ValueError("pause_seconds和max_turns必须大于零")
     # TODO：初始化 nagato_hp、nabiya_hp、nagato_defense_bonus、
     # TODO：nabiya_defense_bonus，以及从 1 开始的 turn。
@@ -185,6 +185,7 @@ def main_battle_loop(
                 nabiya_hp=apply_damage(nabiya_hp,attack,nabiya_defense_bonus)
                 print(f"触发 BIG SEVEN：造成暴击伤害,娜比娅剩余{nabiya_hp} 点生命值。")
             else :
+                nabiya_hp=apply_damage(nabiya_hp,attack,nabiya_defense_bonus)
                 print(f"长门攻击！娜比娅剩余{nabiya_hp} 点生命值。")
         if action=="defend":
             nagato_defense_bonus+=calculate_defense_value(2)
@@ -198,7 +199,7 @@ def main_battle_loop(
                 attack=0
                 print("长门的特殊攻击失败，没有造成伤害。")
         nabiya_defense_bonus=0
-        if is_battle_over==True:
+        if is_battle_over(nagato_hp, nabiya_hp):
             break      
         
         print("\n>>> 娜比娅的回合")
