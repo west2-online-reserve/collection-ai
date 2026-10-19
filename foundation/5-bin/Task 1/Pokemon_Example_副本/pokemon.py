@@ -2,6 +2,14 @@ from __future__ import annotations
 import skills
 from skills import Skill
 from effects import Effect
+import random
+
+TYPE_EFFECTIVENESS: dict[str, dict[str, float]] = {
+    "Grass": {"Grass": 1.0, "Fire": 0.5, "Water": 2.0, "Electric": 2.0},
+    "Fire": {"Grass": 2.0, "Fire": 1.0, "Water": 0.5, "Electric": 1.0},
+    "Water": {"Grass": 0.5, "Fire": 2.0, "Water": 1.0, "Electric": 0.5},
+    "Electric": {"Grass": 0.5, "Fire": 1.0, "Water": 2.0, "Electric": 1.0},
+}
 
 
 class Pokemon:
@@ -87,9 +95,10 @@ class Pokemon:
             if self.hp <= 0:  # hp小于0，结束循环
                 break
 
-    def type_effectiveness(self, opponent: Pokemon):
-        # 计算属性克制的抽象方法，具体实现由子类提供
-        raise NotImplementedError
+    # 克制计算倍率由父类统一实现
+    def type_effectiveness(self, opponent: Pokemon) -> float:
+        # 根据对手的类型计算效果倍率
+        return TYPE_EFFECTIVENESS.get(self.type, {}).get(opponent.type, 1.0)
 
     def begin(self):
         # 新回合开始时触发的方法
@@ -102,17 +111,6 @@ class Pokemon:
 # GrassPokemon 类
 class GrassPokemon(Pokemon):
     type = "Grass"
-
-    def type_effectiveness(self, opponent: Pokemon):
-        # 针对敌方 Pokemon 的类型，调整效果倍率
-        effectiveness = 1.0
-        opponent_type = opponent.type
-
-        if opponent_type == "Water":
-            effectiveness = 2.0
-        elif opponent_type == "Fire":
-            effectiveness = 0.5
-        return effectiveness
 
     def begin(self):
         # 每个回合开始时执行草属性特性
@@ -136,3 +134,28 @@ class Bulbasaur(GrassPokemon):
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 SeedBomb 和 ParasiticSeeds
         return [skills.SeedBomb(), skills.ParasiticSeeds()]
+
+
+class WaterPokemon(Pokemon):
+    type = "Water"
+
+    def receive_damage(self, damage: int | float) -> None:
+        if not self.alive:
+            return
+        # 受到伤害时，有 50% 的几率减免 30% 的伤害
+        if random.randint(1, 100) <= 50:
+            damage *= 0.7
+            print(f"{self.name}'s Water attribute reduces the damage by 30%!")
+        super().receive_damage(damage)
+
+
+class Squirtle(WaterPokemon):
+    name = "Squirtle"
+
+    def __init__(self, hp: int = 80, attack: int = 25, defense: int = 20) -> None:
+        # 初始化 Squirtle 的属性
+        super().__init__(hp, attack, defense)
+
+    def initialize_skills(self) -> list[Skill]:
+        # 初始化技能，具体技能是 AquaJet
+        return [skills.AquaJet()]

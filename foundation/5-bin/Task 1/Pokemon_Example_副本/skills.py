@@ -53,3 +53,16 @@ class ParasiticSeeds(Skill):
         print(
             f"{user.name} used {self.name}, {opponent.name} is now affected by Leech Seed!"
         )
+
+
+class AquaJet(Skill):
+    name = "Aqua Jet"
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        print(f"{user.name} used {self.name}")
+        # 计算伤害
+        skill_damage = user.attack * 1.4 * user.type_effectiveness(opponent)
+        opponent.receive_damage(skill_damage)
