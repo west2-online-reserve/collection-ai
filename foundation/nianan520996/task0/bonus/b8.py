@@ -7,7 +7,11 @@ player1=cards[:17]
 player2=cards[17:34]
 player3=cards[34:51]
 other=cards[51:]
-open('player1.txt','w').write(str(player1))
-open('player2.txt','w').write(str(player2))
-open('player3.txt','w').write(str(player3))
-open('other.txt','w').write(str(other))
+with open('player1.txt','w')as f:
+    f.write(str(player1))
+with open('player2.txt','w')as f:
+    f.write(str(player2))
+with open('player3.txt','w')as f:
+    f.write(str(player3))
+with open('other.txt','w')as f:
+    f.write(str(other))
