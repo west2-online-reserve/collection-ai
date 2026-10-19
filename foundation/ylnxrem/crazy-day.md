@@ -15,7 +15,7 @@ A: 你说的对，但是《原神》~
 
 ↑ 这是链接
 
-![原神](./yuanshen.png)
+![原神](https://ts1.tc.mm.bing.net/th/id/OIP-C.sjUpOqaNSr-r6Ftk_criHgHaHa?w=193&h=193&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=ImgAns&rm=2)
 
 #### 原神和其他二游比怎么样?
 
