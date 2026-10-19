@@ -18,14 +18,22 @@ class Pokemon:
     type: str
 
     def __init__(
-        self, hp: int, attack: int, defense: int, dodge_chance: int = 0
-    ) -> None:  # 新增dodge_chance闪避概率
+        self,
+        hp: int,
+        attack: int,
+        defense: int,
+        dodge_chance: int = 0,
+        charging_skill: Skill | None = None,
+        extra_action_pending: bool = False,
+    ) -> None:  # 新增dodge_chance闪避概率，charging_skill正在蓄力的技能对象
         # 初始化 Pokemon 的属性
         self.hp = hp
         self.max_hp = hp
         self.attack = attack
         self.defense = defense
         self.dodge_chance = dodge_chance
+        self.charging_skill = charging_skill
+        self.extra_action_pending = extra_action_pending
         self.skills: list[Skill] = self.initialize_skills()
         self.alive = True
         self.statuses: list[Effect] = []
@@ -34,9 +42,12 @@ class Pokemon:
         # 抽象方法，子类应实现具体技能初始化
         raise NotImplementedError
 
-    def use_skill(self, skill: Skill, opponent: Pokemon):
+    def use_skill(self, skill: Skill, opponent: Pokemon) -> None:
         # 使用技能
         print(f"{self.name} uses {skill.name}")
+        if self.charging_skill is not None:
+            if self.charging_skill != skill:
+                self.charging_skill = None  # 如果使用了不同的技能，取消蓄力状态
         skill.execute(self, opponent)
 
     def heal_self(self, amount: int | float) -> None:
@@ -92,11 +103,11 @@ class Pokemon:
             return
         self.lose_hp(damage)
 
-    def try_dodge(self) -> bool:
+    def try_dodge(self, bonus: int = 0) -> bool:  # bonus参数用于增加闪避概率，默认为0
         if not self.alive:
             return False
         # 尝试闪避攻击
-        if random.randint(1, 100) <= self.dodge_chance:
+        if random.randint(1, 100) <= self.dodge_chance + bonus:
             print(f"{self.name} dodged the attack!")
             return True
         return False
@@ -105,7 +116,28 @@ class Pokemon:
         # 当造成伤害时触发的效果
         pass
 
-    def add_status_effect(self, effect: Effect):
+    def can_act(self) -> bool:  # 处理麻痹效果，判断宝可梦是否可以行动
+        if not self.alive:
+            return False
+        # 检查是否可以行动
+        for status in self.statuses:
+            if isinstance(status, effects.ParalysisEffect):
+                if status.duration > 0:
+                    status.apply(self)  # 应用麻痹效果
+                    status.decrease_duration()  # 减少持续时间
+                    if status.duration <= 0:
+                        self.statuses.remove(status)
+                    return False
+        return True
+
+    def add_status_effect(self, effect: Effect) -> None:
+        effect_initial_duration = effect.duration
+        # 检查是否已经有相同的状态效果，如果有，刷新持续时间
+        if isinstance(effect, effects.ParalysisEffect):
+            for status in self.statuses:
+                if isinstance(status, effects.ParalysisEffect):
+                    status.duration = max(status.duration, effect_initial_duration)
+                    return
         # 添加状态效果
         self.statuses.append(effect)
 
@@ -114,6 +146,8 @@ class Pokemon:
             return
         # 应用所有当前的状态效果，并移除持续时间结束的效果
         for status in self.statuses[:]:  # 使用切片防止列表在遍历时被修改
+            if status.trigger_phase != "turn_end":
+                continue  # 只在回合结束阶段应用状态效果
             status.apply(self)
             status.decrease_duration()
             if status.duration <= 0:
@@ -225,5 +259,30 @@ class Charmander(FirePokemon):
         super().__init__(hp, attack, defense, dodge_chance)
 
     def initialize_skills(self) -> list[Skill]:
-        # 初始化技能，具体技能是 Ember 和 Fireball
-        return [skills.Ember()]
+        # 初始化技能，具体技能是 Ember 和 FlameCharge
+        return [skills.Ember(), skills.FlameCharge()]
+
+
+class ElectricPokemon(Pokemon):
+    type = "Electric"
+
+    def try_dodge(self, bonus: int = 0) -> bool:
+        dodge_status = super().try_dodge(bonus)
+        if dodge_status:
+            # 如果闪避成功，触发电属性特性，增加一次额外行动机会
+            self.extra_action_pending = True
+        return dodge_status
+
+
+class Pikachu(ElectricPokemon):
+    name = "Pikachu"
+
+    def __init__(
+        self, hp: int = 80, attack: int = 35, defense: int = 5, dodge_chance: int = 30
+    ) -> None:
+        # 初始化 Pikachu 的属性
+        super().__init__(hp, attack, defense, dodge_chance)
+
+    def initialize_skills(self) -> list[Skill]:
+        # 初始化技能，具体技能是 Thunderbolt 和 QuickAttack
+        return [skills.Thunderbolt(), skills.QuickAttack()]

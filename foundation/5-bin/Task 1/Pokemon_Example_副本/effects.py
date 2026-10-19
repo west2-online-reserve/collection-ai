@@ -6,6 +6,7 @@ if TYPE_CHECKING:
 
 class Effect:
     name: str
+    trigger_phase: str = "turn_end"  # 用于处理麻痹状态
 
     def __init__(self, duration: int) -> None:
         # 初始化效果持续时间
@@ -80,3 +81,15 @@ class BurnEffect(Effect):
 
     def apply(self, pokemon: "Pokemon") -> None:
         pokemon.lose_hp(10)  # 每回合扣除10点生命值
+
+
+class ParalysisEffect(Effect):
+    name = "Paralysis"
+    trigger_phase = "before_action"
+
+    def __init__(self, duration: int = 1) -> None:
+        super().__init__(duration)
+
+    def apply(self, pokemon: "Pokemon") -> None:
+        # 麻痹效果可能会让宝可梦无法行动，这里仅打印提示
+        print(f"{pokemon.name} is paralyzed and may not be able to move!")

@@ -37,7 +37,7 @@ class SeedBomb(Skill):
         opponent_initial_hp = opponent.hp
         opponent.receive_damage(skill_damage)
         if opponent_initial_hp - opponent.hp > 0:
-            user.on_damage_dealt()  # 触发用户的 on_damage_dealt 方法
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
         if not opponent.alive:
             return  # 如果对手已经被击败，则不再触发状态效果
         # 判断是否触发状态效果
@@ -76,9 +76,12 @@ class AquaJet(Skill):
         print(f"{user.name} used {self.name}")
         if opponent.try_dodge():
             return
+        opponent_initial_hp = opponent.hp
         # 计算伤害
         skill_damage = user.attack * 1.4 * user.type_effectiveness(opponent)
         opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
 
 
 class Shield(Skill):
@@ -106,11 +109,105 @@ class Ember(Skill):
         print(f"{user.name} used {self.name}")
         if opponent.try_dodge():
             return
+        opponent_initial_hp = opponent.hp
         # 计算伤害
         skill_damage = user.attack * 1.0 * user.type_effectiveness(opponent)
         opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
         if not opponent.alive:
             return  # 如果对手已经被击败，则不再触发状态效果
         # 判断是否触发状态效果
         if random.randint(1, 100) <= self.activation_chance:
             opponent.add_status_effect(effects.BurnEffect())
+
+
+class FlameCharge(Skill):
+    name = "Flame Charge"
+
+    def __init__(self, activation_chance: int = 80) -> None:
+        super().__init__()
+        self.activation_chance = activation_chance
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        if not opponent.alive or not user.alive:
+            return
+        print(f"{user.name} used {self.name}")
+        if user.charging_skill is not self:
+            print(f"{user.name} is charging {self.name} and will attack next turn!")
+            user.charging_skill = self
+            return
+        else:
+            print(f"{user.name} unleashes the charged {self.name}!")
+            user.charging_skill = None  # 重置蓄力状态
+        if opponent.try_dodge(bonus=20):  # 增加20%的闪避概率
+            return
+        opponent_initial_hp = opponent.hp
+        # 计算伤害
+        skill_damage = user.attack * 3.0 * user.type_effectiveness(opponent)
+        opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+        if not opponent.alive:
+            return  # 如果对手已经被击败，则不再触发状态效果
+        # 判断是否触发状态效果
+        if random.randint(1, 100) <= self.activation_chance:
+            opponent.add_status_effect(effects.BurnEffect())
+
+
+class Thunderbolt(Skill):
+    name = "Thunderbolt"
+
+    def __init__(self, activation_chance: int = 10) -> None:
+        super().__init__()
+        self.activation_chance = activation_chance
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        if not opponent.alive:
+            return
+        print(f"{user.name} used {self.name}")
+        if opponent.try_dodge():
+            return
+        opponent_initial_hp = opponent.hp
+        # 计算伤害
+        skill_damage = user.attack * 1.4 * user.type_effectiveness(opponent)
+        opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+        if not opponent.alive:
+            return  # 如果对手已经被击败，则不再触发状态效果
+        if random.randint(1, 100) <= self.activation_chance:
+            opponent.add_status_effect(effects.ParalysisEffect())
+
+
+class QuickAttack(Skill):
+    name = "Quick Attack"
+
+    def __init__(self, activation_chance: int = 10) -> None:
+        super().__init__()
+        self.activation_chance = activation_chance
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        if not opponent.alive or not user.alive:
+            return
+        print(f"{user.name} used {self.name}")
+        if opponent.try_dodge():
+            return
+        opponent_initial_hp = opponent.hp
+        # 计算伤害，一般属性技能，不考虑克制关系
+        skill_damage = user.attack * 1.0
+        opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+        if not opponent.alive or not user.alive:
+            return  # 如果对手已经被击败，则不再触发追击效果
+        # 判断是否触发追击效果
+        if random.randint(1, 100) <= self.activation_chance:
+            print(f"{user.name} triggers a follow-up attack with {self.name}!")
+            if opponent.try_dodge():
+                return
+            opponent_initial_hp = opponent.hp
+            skill_damage = user.attack * 1.0  # 追击伤害与普通攻击相同
+            opponent.receive_damage(skill_damage)
+            if opponent_initial_hp - opponent.hp > 0:
+                user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法

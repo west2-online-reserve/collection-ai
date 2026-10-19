@@ -105,6 +105,8 @@ class Play:
         # 玩家选择技能
         if self.current_player_pokemon is None:
             return
+        if not self.current_player_pokemon.can_act():
+            return
         print("Choose the skill your pokemon to use")
         skills = self.current_player_pokemon.skills
         while True:  # 增加循环判断，选择有效才能退出
@@ -120,14 +122,51 @@ class Play:
             else:
                 print("Invalid choice, please select a valid Skill")
 
-    def computer_use_skills(self):
+    def computer_use_skills(self) -> None:
         # 电脑随机选择技能
         if self.current_computer_pokemon is None:
+            return
+        if not self.current_computer_pokemon.can_act():
             return
         computer_skill = random.choice(self.current_computer_pokemon.skills)
         self.current_computer_pokemon.use_skill(
             computer_skill, self.current_player_pokemon
         )
+
+    def process_extra_action(self, is_player: bool) -> None:
+        computer_pokemon = self.current_computer_pokemon
+        player_pokemon = self.current_player_pokemon
+        if computer_pokemon is None or player_pokemon is None:
+            return
+        player_pending_before = player_pokemon.extra_action_pending
+        computer_pending_before = computer_pokemon.extra_action_pending
+        # 处理额外行动机会
+        if is_player:
+            if player_pokemon.extra_action_pending:
+                player_pokemon.extra_action_pending = False
+            else:
+                return
+        else:
+            if computer_pokemon.extra_action_pending:
+                computer_pokemon.extra_action_pending = False
+            else:
+                return
+        if computer_pokemon.alive and player_pokemon.alive:
+            if is_player:
+                self.player_use_skills()
+            else:
+                self.computer_use_skills()
+        if is_player:
+            player_pokemon.extra_action_pending = False
+            computer_pokemon.extra_action_pending = (
+                computer_pending_before and computer_pokemon.alive
+            )
+        else:
+            computer_pokemon.extra_action_pending = False
+            player_pokemon.extra_action_pending = (
+                player_pending_before and player_pokemon.alive
+            )
+        self.check_game_status()  # 检查游戏状态，判断玩家或电脑是否失败
 
     def battle_round_begin(self) -> None:
         # 回合开始
@@ -178,6 +217,7 @@ if __name__ == "__main__":
     pokemon1 = pokemon.Bulbasaur()
     pokemon2 = pokemon.Squirtle()
     pokemon3 = pokemon.Charmander()
-    all_pokemon = [pokemon1, pokemon2, pokemon3]
+    pokemon4 = pokemon.Pikachu()
+    all_pokemon = [pokemon1, pokemon2, pokemon3, pokemon4]
     play = Play(all_pokemon)
     play.run()
