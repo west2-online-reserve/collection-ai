@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 class Skill:
     name: str
+    priority: int = 0
 
     def __init__(self) -> None:
         pass
@@ -29,7 +30,7 @@ class SeedBomb(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         # 计算伤害
@@ -43,9 +44,12 @@ class SeedBomb(Skill):
         # 判断是否触发状态效果
         if random.randint(1, 100) <= self.activation_chance:
             opponent.add_status_effect(effects.PoisonEffect())
-            print(f"{opponent.name} is poisoned by {self.name}!")
+            print(f"{opponent.display_name} is poisoned by {self.name}!")
         else:
-            print(f"{self.name} did not poison {opponent.name} this time.")
+            print(
+                f"{user.display_name}'s {self.name} did not poison "
+                f"{opponent.display_name} this time."
+            )
 
 
 class ParasiticSeeds(Skill):
@@ -57,7 +61,7 @@ class ParasiticSeeds(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         # 给对手添加寄生种子效果
@@ -73,7 +77,7 @@ class AquaJet(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp
@@ -93,7 +97,7 @@ class Shield(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         # 给自己添加护盾效果
         user.add_status_effect(effects.ShieldEffect())
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
 
 
 class Ember(Skill):
@@ -106,7 +110,7 @@ class Ember(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp
@@ -132,13 +136,13 @@ class FlameCharge(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if user.charging_skill is not self:
-            print(f"{user.name} is charging {self.name} and will attack next turn!")
+            print(f"{user.display_name} is charging {self.name} and will attack next turn!")
             user.charging_skill = self
             return
         else:
-            print(f"{user.name} unleashes the charged {self.name}!")
+            print(f"{user.display_name} unleashes the charged {self.name}!")
             user.charging_skill = None  # 重置蓄力状态
         if opponent.try_dodge(bonus=20):  # 增加20%的闪避概率
             return
@@ -165,7 +169,7 @@ class Thunderbolt(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp
@@ -182,6 +186,7 @@ class Thunderbolt(Skill):
 
 class QuickAttack(Skill):
     name = "Quick Attack"
+    priority = 1
 
     def __init__(self, activation_chance: int = 10) -> None:
         super().__init__()
@@ -190,7 +195,7 @@ class QuickAttack(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp
@@ -203,7 +208,7 @@ class QuickAttack(Skill):
             return  # 如果对手已经被击败，则不再触发追击效果
         # 判断是否触发追击效果
         if random.randint(1, 100) <= self.activation_chance:
-            print(f"{user.name} triggers a follow-up attack with {self.name}!")
+            print(f"{user.display_name} triggers a follow-up attack with {self.name}!")
             if opponent.try_dodge():
                 return
             opponent_initial_hp = opponent.hp
@@ -222,7 +227,7 @@ class Scratch(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp
@@ -242,7 +247,7 @@ class PayDay(Skill):
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
             return
-        print(f"{user.name} used {self.name}")
+        print(f"{user.display_name} used {self.name}")
         if opponent.try_dodge():
             return
         opponent_initial_hp = opponent.hp

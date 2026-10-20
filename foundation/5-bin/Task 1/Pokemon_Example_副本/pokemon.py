@@ -4,6 +4,7 @@ import effects
 from skills import Skill
 from effects import Effect
 import random
+from typing import Literal
 
 TYPE_EFFECTIVENESS: dict[str, dict[str, float]] = {
     "Grass": {"Grass": 1.0, "Fire": 0.5, "Water": 2.0, "Electric": 2.0, "Normal": 1.0},
@@ -32,6 +33,7 @@ class Pokemon:
         dodge_chance: int = 0,
         charging_skill: Skill | None = None,
         extra_action_pending: bool = False,
+        speed: int = 50,
     ) -> None:  # 新增dodge_chance闪避概率，charging_skill正在蓄力的技能对象
         # 初始化 Pokemon 的属性
         self.hp: int = hp
@@ -39,11 +41,19 @@ class Pokemon:
         self.attack: int = attack
         self.defense: int = defense
         self.dodge_chance: int = dodge_chance
+        self.speed: int = speed
+        self.side: Literal["player", "computer"] | None = None
         self.charging_skill: Skill | None = charging_skill
         self.extra_action_pending: bool = extra_action_pending
         self.skills: list[Skill] = self.initialize_skills()
         self.alive: bool = True
         self.statuses: list[Effect] = []
+
+    @property  # @property 装饰器将 display_name 方法变为属性访问
+    def display_name(self) -> str:
+        if self.side is None:
+            return self.name
+        return f"[{self.side}] {self.name}"
 
     def initialize_skills(self) -> list[Skill]:
         # 抽象方法，子类应实现具体技能初始化
@@ -54,6 +64,12 @@ class Pokemon:
             if self.charging_skill != skill:
                 self.charging_skill = None  # 如果使用了不同的技能，取消蓄力状态
         skill.execute(self, opponent)
+
+    def on_switch_out(self) -> None:
+        # 主动或被迫离场时保留 HP，清除自身所有战斗效果。
+        self.statuses.clear()
+        self.charging_skill = None
+        self.extra_action_pending = False
 
     def heal_self(self, amount: int | float) -> None:
         # 为自身恢复生命值
@@ -68,7 +84,9 @@ class Pokemon:
         self.hp += amount
         if self.hp > self.max_hp:
             self.hp = self.max_hp
-        print(f"{self.name} heals {amount} HP! Current HP: {self.hp}/{self.max_hp}")
+        print(
+            f"{self.display_name} heals {amount} HP! Current HP: {self.hp}/{self.max_hp}"
+        )
 
     # 新增lose_hp，统一扣血处理
     def lose_hp(self, amount: int | float) -> None:
@@ -81,11 +99,11 @@ class Pokemon:
         if self.hp <= 0:  # 防止血量出现负数
             self.hp = 0
         print(
-            f"{self.name} received {initial_hp - self.hp} damage! Remaining HP: {self.hp}/{self.max_hp}"
+            f"{self.display_name} received {initial_hp - self.hp} damage! Remaining HP: {self.hp}/{self.max_hp}"
         )
         if self.hp <= 0:
             self.alive = False
-            print(f"{self.name} has fainted!")
+            print(f"{self.display_name} has fainted!")
 
     def receive_damage(self, damage: int | float) -> None:
         if not self.alive:
@@ -104,7 +122,7 @@ class Pokemon:
 
         damage -= self.defense
         if damage <= 0:
-            print(f"{self.name}'s defense absorbed the attack!")
+            print(f"{self.display_name}'s defense absorbed the attack!")
             return
         self.lose_hp(damage)
 
@@ -113,7 +131,7 @@ class Pokemon:
             return False
         # 尝试闪避攻击
         if random.randint(1, 100) <= self.dodge_chance + bonus:
-            print(f"{self.name} dodged the attack!")
+            print(f"{self.display_name} dodged the attack!")
             return True
         return False
 
@@ -129,7 +147,7 @@ class Pokemon:
             if isinstance(status, effects.ParalysisEffect):
                 if status.duration > 0:
                     status.apply(self)  # 应用麻痹效果
-                    status.decrease_duration()  # 减少持续时间
+                    status.decrease_duration(self)  # 减少持续时间
                     if status.duration <= 0:
                         self.statuses.remove(status)
                     return False
@@ -154,9 +172,9 @@ class Pokemon:
             if status.trigger_phase != "turn_end":
                 continue  # 只在回合结束阶段应用状态效果
             status.apply(self)
-            status.decrease_duration()
+            status.decrease_duration(self)
             if status.duration <= 0:
-                print(f"{self.name}'s {status.name} effect has worn off.")
+                print(f"{self.display_name}'s {status.name} effect has worn off.")
                 self.statuses.remove(status)
             if self.hp <= 0:  # hp小于0，结束循环
                 break
@@ -171,7 +189,10 @@ class Pokemon:
         pass
 
     def __str__(self) -> str:
-        return f"{self.name} type: {self.type}"
+        return (
+            f"{self.display_name} type: {self.type} "
+            f"HP: {self.hp}/{self.max_hp} speed: {self.speed}"
+        )
 
 
 # GrassPokemon 类
@@ -185,7 +206,9 @@ class GrassPokemon(Pokemon):
     def grass_attribute(self) -> None:
         # 草属性特性：每回合恢复最大 HP 的 10%
         amount = self.max_hp * 0.1
-        print("Grass attribute activates! Healing 10% of max HP.")
+        print(
+            f"{self.display_name}'s Grass attribute activates! Healing 10% of max HP."
+        )
         self.heal_self(amount)
 
 
@@ -194,10 +217,16 @@ class Bulbasaur(GrassPokemon):
     name = "Bulbasaur"
 
     def __init__(
-        self, hp: int = 100, attack: int = 35, defense: int = 10, dodge_chance: int = 10
+        self,
+        hp: int = 100,
+        attack: int = 35,
+        defense: int = 10,
+        dodge_chance: int = 10,
+        *,
+        speed: int = 45,
     ) -> None:
         # 初始化 Bulbasaur 的属性
-        super().__init__(hp, attack, defense, dodge_chance)
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
 
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 SeedBomb 和 ParasiticSeeds
@@ -214,7 +243,7 @@ class WaterPokemon(Pokemon):
         # 受到伤害时，有 50% 的几率减免 30% 的伤害
         if random.randint(1, 100) <= 50:
             damage *= 0.7
-            print(f"{self.name}'s Water attribute reduces the damage by 30%!")
+            print(f"{self.display_name}'s Water attribute reduces the damage by 30%!")
         super().receive_damage(damage)
 
 
@@ -222,10 +251,16 @@ class Squirtle(WaterPokemon):
     name = "Squirtle"
 
     def __init__(
-        self, hp: int = 80, attack: int = 25, defense: int = 20, dodge_chance: int = 20
+        self,
+        hp: int = 80,
+        attack: int = 25,
+        defense: int = 20,
+        dodge_chance: int = 20,
+        *,
+        speed: int = 43,
     ) -> None:
         # 初始化 Squirtle 的属性
-        super().__init__(hp, attack, defense, dodge_chance)
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
 
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 AquaJet 和 Shield
@@ -237,9 +272,23 @@ class FirePokemon(Pokemon):
     base_attack: int
     attack_stacks: int = 0  # 攻击力提升的层数
 
-    def __init__(self, hp: int, attack: int, defense: int, dodge_chance: int) -> None:
-        super().__init__(hp, attack, defense, dodge_chance)
+    def __init__(
+        self,
+        hp: int,
+        attack: int,
+        defense: int,
+        dodge_chance: int,
+        *,
+        speed: int = 50,
+    ) -> None:
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
         self.base_attack = attack  # 保存基础攻击力
+        self.attack_stacks = 0
+
+    def on_switch_out(self) -> None:
+        super().on_switch_out()
+        self.attack_stacks = 0
+        self.attack = self.base_attack
 
     def on_damage_dealt(self) -> None:
         if not self.alive:
@@ -251,17 +300,25 @@ class FirePokemon(Pokemon):
         self.attack = int(
             self.base_attack * (1 + self.attack_stacks * 0.1)
         )  # 每次造成伤害增加10%的攻击力
-        print(f"{self.name}'s attack increases to {self.attack} due to Fire attribute!")
+        print(
+            f"{self.display_name}'s attack increases to {self.attack} due to Fire attribute!"
+        )
 
 
 class Charmander(FirePokemon):
     name = "Charmander"
 
     def __init__(
-        self, hp: int = 80, attack: int = 35, defense: int = 15, dodge_chance: int = 10
+        self,
+        hp: int = 80,
+        attack: int = 35,
+        defense: int = 15,
+        dodge_chance: int = 10,
+        *,
+        speed: int = 65,
     ) -> None:
         # 初始化 Charmander 的属性
-        super().__init__(hp, attack, defense, dodge_chance)
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
 
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 Ember 和 FlameCharge
@@ -283,10 +340,16 @@ class Pikachu(ElectricPokemon):
     name = "Pikachu"
 
     def __init__(
-        self, hp: int = 80, attack: int = 35, defense: int = 5, dodge_chance: int = 30
+        self,
+        hp: int = 80,
+        attack: int = 35,
+        defense: int = 5,
+        dodge_chance: int = 30,
+        *,
+        speed: int = 90,
     ) -> None:
         # 初始化 Pikachu 的属性
-        super().__init__(hp, attack, defense, dodge_chance)
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
 
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 Thunderbolt 和 QuickAttack
@@ -315,9 +378,15 @@ class Meowth(NormalPokemon):
     name = "Meowth"
 
     def __init__(
-        self, hp: int = 80, attack: int = 30, defense: int = 10, dodge_chance: int = 20
+        self,
+        hp: int = 80,
+        attack: int = 30,
+        defense: int = 10,
+        dodge_chance: int = 20,
+        *,
+        speed: int = 90,
     ) -> None:
-        super().__init__(hp, attack, defense, dodge_chance)
+        super().__init__(hp, attack, defense, dodge_chance, speed=speed)
         self.base_dodge_chance: int = dodge_chance  # 保存基础闪避率
 
     def initialize_skills(self) -> list[Skill]:

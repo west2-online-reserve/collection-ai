@@ -16,10 +16,11 @@ class Effect:
         # 应用效果的抽象方法，子类需要实现
         raise NotImplementedError
 
-    def decrease_duration(self) -> None:
+    def decrease_duration(self, pokemon: "Pokemon | None" = None) -> None:
         # 减少效果持续时间
         self.duration -= 1
-        print(f"{self.name} effect duration decreased. Remaining: {self.duration}")
+        owner = f"{pokemon.display_name}'s " if pokemon is not None else ""
+        print(f"{owner}{self.name} effect duration decreased. Remaining: {self.duration}")
 
 
 class PoisonEffect(Effect):
@@ -31,7 +32,7 @@ class PoisonEffect(Effect):
     def apply(self, pokemon: "Pokemon") -> None:
         poison_damage = int(pokemon.max_hp * 0.1)
         pokemon.lose_hp(poison_damage)
-        print(f"{pokemon.name} takes {poison_damage} poison damage!")
+        print(f"{pokemon.display_name} takes {poison_damage} poison damage!")
 
 
 class HealEffect(Effect):
@@ -43,7 +44,7 @@ class HealEffect(Effect):
 
     def apply(self, pokemon: "Pokemon") -> None:
         pokemon.heal_self(self.amount)
-        print(f"{pokemon.name} heals {self.amount} HP!")
+        print(f"{pokemon.display_name} heals {self.amount} HP!")
 
 
 # 新增寄生种子效果类
@@ -92,4 +93,4 @@ class ParalysisEffect(Effect):
 
     def apply(self, pokemon: "Pokemon") -> None:
         # 麻痹效果可能会让宝可梦无法行动，这里仅打印提示
-        print(f"{pokemon.name} is paralyzed and may not be able to move!")
+        print(f"{pokemon.display_name} is paralyzed and may not be able to move!")
