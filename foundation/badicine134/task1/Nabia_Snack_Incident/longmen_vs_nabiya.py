@@ -161,7 +161,7 @@ def main_battle_loop(
         display_status('长门',nagato_hp,NAGATO_MAX_HP)
         display_status('娜比娅',nabiya_hp,NABIYA_MAX_HP)
     # 长门回合
-        print('>>>长门的回合')
+        print('\n>>>长门的回合')
         action = choose_nagato_action(nagato_hp, nabiya_hp)
 
         if action == "attack":
@@ -201,7 +201,7 @@ def main_battle_loop(
     #
     # TODO：双方回合完成后让 turn 增加 1，并根据 pause_seconds 调用 time.sleep()。
     # TODO：循环结束后调用 get_battle_result()，输出中文结果并返回 result。
-        print('>>>娜比娅的回合')
+        print('\n>>>娜比娅的回合')
         enemy_action = nabiya_ai_action(nabiya_hp)
         if enemy_action == 'attack':
             nabiya_attack_damage = calculate_attack_damage(3)
