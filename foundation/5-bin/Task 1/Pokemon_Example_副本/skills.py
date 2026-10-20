@@ -12,7 +12,7 @@ class Skill:
     def __init__(self) -> None:
         pass
 
-    def execute(self, user: "Pokemon", opponent: "Pokemon"):
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         raise NotImplementedError
 
     def __str__(self) -> str:
@@ -24,7 +24,7 @@ class SeedBomb(Skill):
 
     def __init__(self, activation_chance: int = 15) -> None:
         super().__init__()
-        self.activation_chance = activation_chance  # 确保激活几率被正确初始化
+        self.activation_chance: int = activation_chance  # 确保激活几率被正确初始化
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
@@ -101,7 +101,7 @@ class Ember(Skill):
 
     def __init__(self, activation_chance: int = 10) -> None:
         super().__init__()
-        self.activation_chance = activation_chance
+        self.activation_chance: int = activation_chance
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
@@ -127,7 +127,7 @@ class FlameCharge(Skill):
 
     def __init__(self, activation_chance: int = 80) -> None:
         super().__init__()
-        self.activation_chance = activation_chance
+        self.activation_chance: int = activation_chance
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
@@ -160,7 +160,7 @@ class Thunderbolt(Skill):
 
     def __init__(self, activation_chance: int = 10) -> None:
         super().__init__()
-        self.activation_chance = activation_chance
+        self.activation_chance: int = activation_chance
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive:
@@ -185,7 +185,7 @@ class QuickAttack(Skill):
 
     def __init__(self, activation_chance: int = 10) -> None:
         super().__init__()
-        self.activation_chance = activation_chance
+        self.activation_chance: int = activation_chance
 
     def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
         if not opponent.alive or not user.alive:
@@ -211,3 +211,46 @@ class QuickAttack(Skill):
             opponent.receive_damage(skill_damage)
             if opponent_initial_hp - opponent.hp > 0:
                 user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+
+
+class Scratch(Skill):
+    name = "Scratch"
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        if not opponent.alive or not user.alive:
+            return
+        print(f"{user.name} used {self.name}")
+        if opponent.try_dodge():
+            return
+        opponent_initial_hp = opponent.hp
+        # 计算伤害，一般属性技能，不考虑克制关系
+        skill_damage = user.attack * 1.2
+        opponent.receive_damage(skill_damage)
+        if opponent_initial_hp - opponent.hp > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+
+
+class PayDay(Skill):
+    name = "PayDay"
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def execute(self, user: "Pokemon", opponent: "Pokemon") -> None:
+        if not opponent.alive or not user.alive:
+            return
+        print(f"{user.name} used {self.name}")
+        if opponent.try_dodge():
+            return
+        opponent_initial_hp = opponent.hp
+        # 计算伤害，一般属性技能，不考虑克制关系
+        skill_damage = user.attack * 0.8
+        opponent.receive_damage(skill_damage)
+        actual_damage_dealt = opponent_initial_hp - opponent.hp
+        if actual_damage_dealt > 0:
+            user.on_damage_dealt()  # 触发使用者的 on_damage_dealt 方法
+            heal_amount = actual_damage_dealt // 2  # 向下取整
+            user.heal_self(heal_amount)

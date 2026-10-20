@@ -10,7 +10,7 @@ class Effect:
 
     def __init__(self, duration: int) -> None:
         # 初始化效果持续时间
-        self.duration = duration
+        self.duration: int = duration
 
     def apply(self, pokemon: "Pokemon") -> None:
         # 应用效果的抽象方法，子类需要实现
@@ -39,7 +39,7 @@ class HealEffect(Effect):
 
     def __init__(self, amount: int, duration: int = 3) -> None:
         super().__init__(duration)
-        self.amount = amount
+        self.amount: int = amount
 
     def apply(self, pokemon: "Pokemon") -> None:
         pokemon.heal_self(self.amount)
@@ -52,7 +52,7 @@ class LeechSeedEffect(Effect):
 
     def __init__(self, source: "Pokemon", duration: int = 3) -> None:
         super().__init__(duration)
-        self.source = source
+        self.source: "Pokemon" = source
 
     def apply(self, pokemon: "Pokemon") -> None:
         initial_hp = pokemon.hp
@@ -85,7 +85,7 @@ class BurnEffect(Effect):
 
 class ParalysisEffect(Effect):
     name = "Paralysis"
-    trigger_phase = "before_action"
+    trigger_phase: str = "before_action"
 
     def __init__(self, duration: int = 1) -> None:
         super().__init__(duration)

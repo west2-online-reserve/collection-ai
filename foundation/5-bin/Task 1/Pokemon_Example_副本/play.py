@@ -2,25 +2,34 @@ from __future__ import annotations
 import copy
 import random
 import sys
+from typing import NoReturn
 
 import pokemon
 
 
-def valid_choice(choice, range):
+def valid_choice(choice: str, max_choice: int) -> bool:
     # 判断输入的选择是否合法
-    return choice.isdigit() and 1 <= int(choice) <= range
+    if not choice.isdigit():
+        return False
+    try:  # 保护整数转换
+        choice_number = int(choice)
+    except ValueError:
+        return False
+    return 1 <= choice_number <= max_choice
 
 
 class Play:
-    def __init__(self, all_pokemon) -> None:
-        self.all_pokemon = all_pokemon
-        self.player_team = []
-        self.computer_team = []
-        self.current_player_pokemon = None
-        self.current_computer_pokemon = None
-        self.turn = 0
+    def __init__(self, all_pokemon: list[pokemon.Pokemon]) -> None:
+        self.all_pokemon: list[pokemon.Pokemon] = all_pokemon
+        self.player_team: list[pokemon.Pokemon] = []
+        self.computer_team: list[pokemon.Pokemon] = []
+        self.current_player_pokemon: pokemon.Pokemon | None = None
+        self.current_computer_pokemon: pokemon.Pokemon | None = None
+        self.turn: int = 0
 
-    def player_choose_pokemon_team(self, pokemon_to_choose: list, num=1):
+    def player_choose_pokemon_team(
+        self, pokemon_to_choose: list[pokemon.Pokemon], num: int = 3
+    ) -> None:
         # 玩家选择队伍中的Pokemon
         print(f"Choose {num} pokemon for your team:")
         pokemon_to_choose = copy.deepcopy(
@@ -38,7 +47,9 @@ class Play:
         print("Here is your pokemon team:")
         self.print_pokemon_list(self.player_team)
 
-    def computer_choose_pokemon_team(self, pokemon_to_choose: list, num=1):
+    def computer_choose_pokemon_team(
+        self, pokemon_to_choose: list[pokemon.Pokemon], num: int = 3
+    ) -> None:
         # 电脑选择对战的队伍
         print(f"Your opponent is choosing {num} pokemon")
         pokemon_to_choose = copy.deepcopy(
@@ -48,12 +59,12 @@ class Play:
         print("Here is your opponent's team:")
         self.print_pokemon_list(self.computer_team)
 
-    def print_pokemon_list(self, pokemon_list):
+    def print_pokemon_list(self, pokemon_list: list[pokemon.Pokemon]) -> None:
         # 打印Pokemon列表
         for i, p in enumerate(pokemon_list, 1):
             print(f"{i}: {p}")
 
-    def player_choose_pokemon(self):
+    def player_choose_pokemon(self) -> pokemon.Pokemon:
         # 玩家选择当前战斗的Pokemon
         print("Your Team:")
         self.print_pokemon_list(self.player_team)
@@ -70,7 +81,7 @@ class Play:
             else:
                 print("Invalid choice, please select a valid Pokemon")
 
-    def computer_choose_pokemon(self):
+    def computer_choose_pokemon(self) -> pokemon.Pokemon:
         # 电脑随机选择一个存活的Pokemon
         available_pokemon = [p for p in self.computer_team if p.alive is True]
         chosen_pokemon = random.choice(available_pokemon)
@@ -78,11 +89,11 @@ class Play:
         self.current_computer_pokemon = chosen_pokemon
         return chosen_pokemon  # 返回选择的Pokemon
 
-    def game_finished(self):
+    def game_finished(self) -> NoReturn:
         # 游戏结束
         sys.exit()
 
-    def check_game_status(self):
+    def check_game_status(self) -> None:
         # 检查游戏状态，判断玩家或电脑是否失败
         is_player_fail = all(pokemon.alive is False for pokemon in self.player_team)
         is_computer_fail = all(pokemon.alive is False for pokemon in self.computer_team)
@@ -103,7 +114,7 @@ class Play:
 
     def player_use_skills(self) -> None:
         # 玩家选择技能
-        if self.current_player_pokemon is None:
+        if self.current_player_pokemon is None or self.current_computer_pokemon is None:
             return
         if not self.current_player_pokemon.can_act():
             return
@@ -124,7 +135,7 @@ class Play:
 
     def computer_use_skills(self) -> None:
         # 电脑随机选择技能
-        if self.current_computer_pokemon is None:
+        if self.current_computer_pokemon is None or self.current_player_pokemon is None:
             return
         if not self.current_computer_pokemon.can_act():
             return
@@ -194,11 +205,15 @@ class Play:
         computer_pokemon = self.current_computer_pokemon
         self.player_use_skills()
         self.check_game_status()
+        self.process_extra_action(False)  # 处理闪避后的立即行动
+        self.process_extra_action(True)  # 处理电光一闪类使用技能后触发追击的行动
         if computer_pokemon.alive:
             self.computer_use_skills()
             self.check_game_status()
+            self.process_extra_action(True)
+            self.process_extra_action(False)
 
-    def run(self):
+    def run(self) -> NoReturn:
         # 游戏主循环
         self.player_choose_pokemon_team(self.all_pokemon)
         self.computer_choose_pokemon_team(self.all_pokemon)
@@ -218,6 +233,9 @@ if __name__ == "__main__":
     pokemon2 = pokemon.Squirtle()
     pokemon3 = pokemon.Charmander()
     pokemon4 = pokemon.Pikachu()
-    all_pokemon = [pokemon1, pokemon2, pokemon3, pokemon4]
+    pokemon5 = pokemon.Meowth()
+    all_pokemon: list[pokemon.Pokemon] = [
+        pokemon1, pokemon2, pokemon3, pokemon4, pokemon5
+    ]
     play = Play(all_pokemon)
     play.run()

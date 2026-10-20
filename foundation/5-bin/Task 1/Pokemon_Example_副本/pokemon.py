@@ -6,10 +6,17 @@ from effects import Effect
 import random
 
 TYPE_EFFECTIVENESS: dict[str, dict[str, float]] = {
-    "Grass": {"Grass": 1.0, "Fire": 0.5, "Water": 2.0, "Electric": 2.0},
-    "Fire": {"Grass": 2.0, "Fire": 1.0, "Water": 0.5, "Electric": 1.0},
-    "Water": {"Grass": 0.5, "Fire": 2.0, "Water": 1.0, "Electric": 0.5},
-    "Electric": {"Grass": 0.5, "Fire": 1.0, "Water": 2.0, "Electric": 1.0},
+    "Grass": {"Grass": 1.0, "Fire": 0.5, "Water": 2.0, "Electric": 2.0, "Normal": 1.0},
+    "Fire": {"Grass": 2.0, "Fire": 1.0, "Water": 0.5, "Electric": 1.0, "Normal": 1.0},
+    "Water": {"Grass": 0.5, "Fire": 2.0, "Water": 1.0, "Electric": 0.5, "Normal": 1.0},
+    "Electric": {
+        "Grass": 0.5,
+        "Fire": 1.0,
+        "Water": 2.0,
+        "Electric": 1.0,
+        "Normal": 1.0,
+    },
+    "Normal": {"Grass": 1.0, "Fire": 1.0, "Water": 1.0, "Electric": 1.0, "Normal": 1.0},
 }
 
 
@@ -27,15 +34,15 @@ class Pokemon:
         extra_action_pending: bool = False,
     ) -> None:  # 新增dodge_chance闪避概率，charging_skill正在蓄力的技能对象
         # 初始化 Pokemon 的属性
-        self.hp = hp
-        self.max_hp = hp
-        self.attack = attack
-        self.defense = defense
-        self.dodge_chance = dodge_chance
-        self.charging_skill = charging_skill
-        self.extra_action_pending = extra_action_pending
+        self.hp: int = hp
+        self.max_hp: int = hp
+        self.attack: int = attack
+        self.defense: int = defense
+        self.dodge_chance: int = dodge_chance
+        self.charging_skill: Skill | None = charging_skill
+        self.extra_action_pending: bool = extra_action_pending
         self.skills: list[Skill] = self.initialize_skills()
-        self.alive = True
+        self.alive: bool = True
         self.statuses: list[Effect] = []
 
     def initialize_skills(self) -> list[Skill]:
@@ -43,8 +50,6 @@ class Pokemon:
         raise NotImplementedError
 
     def use_skill(self, skill: Skill, opponent: Pokemon) -> None:
-        # 使用技能
-        print(f"{self.name} uses {skill.name}")
         if self.charging_skill is not None:
             if self.charging_skill != skill:
                 self.charging_skill = None  # 如果使用了不同的技能，取消蓄力状态
@@ -161,7 +166,7 @@ class Pokemon:
         # 根据对手的类型计算效果倍率
         return TYPE_EFFECTIVENESS.get(self.type, {}).get(opponent.type, 1.0)
 
-    def begin(self):
+    def begin(self) -> None:
         # 新回合开始时触发的方法
         pass
 
@@ -173,7 +178,7 @@ class Pokemon:
 class GrassPokemon(Pokemon):
     type = "Grass"
 
-    def begin(self):
+    def begin(self) -> None:
         # 每个回合开始时执行草属性特性
         self.grass_attribute()
 
@@ -286,3 +291,35 @@ class Pikachu(ElectricPokemon):
     def initialize_skills(self) -> list[Skill]:
         # 初始化技能，具体技能是 Thunderbolt 和 QuickAttack
         return [skills.Thunderbolt(), skills.QuickAttack()]
+
+
+# 喵喵
+# | 项目 | 设计 |
+# |---|---|
+# | 属性 | 普通 `Normal`，与现有属性双向倍率均为 `1.0` |
+# | 基础数值 | HP **80**、攻击 **30**、防御 **10**、闪避 **20%** |
+# | 被动：灵巧 | 当前 HP ≤ 最大 HP 的一半时，闪避额外增加 **10 个百分点**；回血超过一半后取消加成，不累计 |
+# | 技能一：利爪 `Scratch` | 造成当前攻击力 **1.2 倍**的普通伤害，无附加效果 |
+# | 技能二：聚宝功 `PayDay` | 造成当前攻击力 **0.8 倍**的普通伤害，恢复本次**实际扣血量的 50%**，向下取整 |
+class NormalPokemon(Pokemon):
+    type = "Normal"
+
+    def try_dodge(self, bonus: int = 0) -> bool:
+        # 检查当前 HP 是否低于最大 HP 的一半，若是则增加闪避率
+        if self.hp <= self.max_hp / 2:
+            bonus += 10
+        return super().try_dodge(bonus)
+
+
+class Meowth(NormalPokemon):
+    name = "Meowth"
+
+    def __init__(
+        self, hp: int = 80, attack: int = 30, defense: int = 10, dodge_chance: int = 20
+    ) -> None:
+        super().__init__(hp, attack, defense, dodge_chance)
+        self.base_dodge_chance: int = dodge_chance  # 保存基础闪避率
+
+    def initialize_skills(self) -> list[Skill]:
+        # 初始化技能，具体技能是 Scratch 和 PayDay
+        return [skills.Scratch(), skills.PayDay()]
