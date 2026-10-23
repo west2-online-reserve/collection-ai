@@ -182,7 +182,11 @@ def main_battle_loop(
             else:
                 nagato_base_damage = 0
         # 5. 造成伤害时统一调用 apply_damage()，并在攻击后清零对方的防御值。
-        nabiya_hp = apply_damage(nabiya_hp, nagato_base_damage, nabiya_defense_bonus)
+        # 只有普通攻击和特殊攻击才造成伤害
+        if action in ("attack", "special"):
+            nabiya_hp = apply_damage(
+                nabiya_hp, nagato_base_damage, nabiya_defense_bonus
+            )
         nabiya_defense_bonus = 0
         # 6. 长门行动后，如果 is_battle_over() 返回 True，使用 break 结束循环。
         if is_battle_over(nagato_hp, nabiya_hp):

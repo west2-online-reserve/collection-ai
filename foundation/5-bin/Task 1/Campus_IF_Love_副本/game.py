@@ -144,6 +144,8 @@ class Game:
             print("\n你随手挑起一只笔，在纸上几笔勾勒出惊艳的图案，引得周围阵阵惊呼。")
             print("学姐目光一震，眼神变得格外认真。你进入【学姐线】！")
             self.current_target = self.characters["学姐"]
+            self.story_block = "学姐"
+            self.story_line = 0
             self.story_loop()
             return True
         else:
@@ -165,6 +167,8 @@ class Game:
             print("小白：『原来是这样！谢谢你！』")
             print("你进入【小白线】！")
             self.current_target = self.characters["小白"]
+            self.story_block = "小白"
+            self.story_line = 0
             self.story_loop()
             return True
         else:
@@ -188,6 +192,8 @@ class Game:
             print("姐姐：『原来如此，你的思路很清晰呢。』")
             print("你进入【姐姐线】！")
             self.current_target = self.characters["姐姐"]
+            self.story_block = "姐姐"
+            self.story_line = 0
             self.story_loop()
             return True
         else:
@@ -333,26 +339,52 @@ class Game:
 
     def apply_save_data(self, data: Dict[str, Any]) -> bool:
         """使用存档数据覆盖当前游戏状态"""
-        if not data:
+        if not data or not isinstance(data, dict):
             return False
 
-        try:
-            target_name: str = data["current_target"]
+        target_name = data.get("current_target")
+        story_block = data.get("story_block")
+        story_line = data.get("story_line")
+        affinity = data.get("affinity")
 
-            if target_name not in self.characters:
-                print("存档角色不存在。")
+        # 校验字符串字段以及角色是否存在
+        if (
+            not isinstance(target_name, str)
+            or target_name not in self.characters
+            or not isinstance(story_block, str)
+        ):
+            print("存档角色或剧情块不正确。")
+            return False
+
+        # bool 是 int 的子类，使用 type(...) is int 排除 True、False
+        if type(story_line) is not int or type(affinity) is not int:
+            print("剧情索引和好感度必须是整数。")
+            return False
+
+        if story_line < 0:
+            print("剧情索引不能为负数。")
+            return False
+
+        if story_block in DIALOGUES:
+            dialogues = DIALOGUES[story_block]
+
+            if story_block != target_name:
+                print("剧情角色与当前角色不一致。")
                 return False
 
-            self.story_block = data["story_block"]
-            self.story_line = data["story_line"]
-            self.current_target = self.characters[target_name]
-            self.current_target.affinity = data["affinity"]
+            if story_line >= len(dialogues):
+                print("剧情索引超出范围。")
+                return False
 
-            return True
-
-        except (KeyError, TypeError):
-            print("存档格式不正确。")
+        elif story_block != "opening" and story_block not in GIFT_EFFECTS:
+            print("存档中的剧情块不存在。")
             return False
+
+        self.story_block = story_block
+        self.story_line = story_line
+        self.current_target = self.characters[target_name]
+        self.current_target.affinity = affinity
+        return True
 
     def load_nomal_save(self) -> bool:
         """加载普通存档"""
