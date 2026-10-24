@@ -1,0 +1,1 @@
+small_joker K K Q Q 10 10 8 7 7 6 6 5 5 3
