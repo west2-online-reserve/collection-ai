@@ -1,0 +1,5 @@
+.idea/
+.venv/
+task1/learn-AI
+__pycache__/
+task1/Campus_IF_Love/*.json
