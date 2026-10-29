@@ -1,0 +1,302 @@
+# task-2 模块笔记
+
+- `venv`（虚拟环境）
+  - `python -m venv myenv`：创建虚拟环境
+  - ` .\myenv\Scripts\Activate.ps1`：激活虚拟环境
+  - `deactivate`：退出虚拟环境
+- `os`
+  - `getcwd()`：获取当前目录
+  - `chdir()`：切换当前目录
+  - `listdir()`：获取当前目录文件
+  - `mkdir()`：创建目录
+  - `rmdir()`：删除目录
+  - `rename()`：重命名
+  - `getenv()`：获取环境变量
+  - `path`
+    - `dirname`：获取父级目录
+    - `abspath`：获取绝对路径
+  - 在字符串引号前加 `r`：忽略字符串中的 `\`
+  - `__file__`：获取当前程序的路径
+- `requests`
+  - `.get()`、`.post()`：发送请求
+  - `request.session`
+    - `post(url, data)`：发送请求，`data` 为字典
+    - `.cookies`：获取 cookies
+  - `resp.encoding = resp.apparent_encoding`：解决网页编码导致的乱码
+  - `resp.content`：字节内容，一般用于抓取图片
+  - 请求尽量加 `timeout` 参数
+  - 请求失败时检查是否填写 `payload`
+  - 请求 URL 中问号后面的内容可以用 `param` 字典代替
+  - `head`
+    - `referer`：防盗链
+  - 写入请求内容时，根据内容使用文本或二进制模式；保存文件时注意终端当前目录
+- `正则表达式`
+  - 元字符
+    - `.`：匹配除换行符外的任意字符
+    - `\w`、`\W`：匹配字母、数字或下划线及其以外字符
+    - `\d`、`\D`：匹配数字及非数字
+    - `\s`、`\S`：匹配空白字符及非空白字符
+    - `\n`、`\t`：匹配换行符、制表符
+    - `^`、`$`：匹配字符串开头、结尾
+    - `a|b`：匹配 `a` 或 `b`
+    - `()`：分组，也可匹配括号内表达式
+    - `[...]`、`[^...]`：匹配字符组中的字符，或不在字符组中的字符
+    - `^` 在 `[]` 中表示“非”
+  - 量词
+    - `*`：重复 0 次或多次
+    - `+`：重复 1 次或多次
+    - `?`：重复 0 次或 1 次
+    - `{n}`：重复 `n` 次
+    - `{n,}`：至少重复 `n` 次
+    - `{n,m}`：重复 `n` 到 `m` 次
+  - 贪婪匹配：`.*`
+  - 惰性匹配：`.*?`
+  - 匹配 `.com` 时转义为 `\.com`
+  - `re`
+    - `findall`：查找匹配内容并返回列表
+    - `finditer`：返回迭代器；获取内容可用 `group()`
+    - `search`：查找一个结果；获取内容可用 `group()`
+    - `match`：从开头匹配
+    - `compile(r"\d+")`：预加载正则表达式，之后可使用以上方法
+    - `re.S`：让 `.` 也匹配换行符
+    - `(?P<name>....)`：用于筛选特定内容
+    - `sub(re, "", text)`：替换 `text` 中的内容
+    - `search('()', text).group(1)`：获取匹配对象中的分组
+  - `iter.groupdict`：把迭代器内容转为字典
+  - `str.strip()`：去除前方空格
+- `csv`
+  - `csv.writer()`：返回 CSV 写入对象
+  - `writerow(list)`：写入一行
+  - `writerows`：写入二维数组
+  - `open` 中加 `newline=""`：写入时避免空行
+- `BeautifulSoup`
+  - `BeautifulSoup(html, 'lxml')`：创建解析对象
+  - `.find()`、`.findall()`：查找标签
+  - `object['...']`、`get()`：获取标签属性
+  - `.get_text()`：获取文本
+  - `.parent`、`.children`：获取父级和子级
+- `lxml`
+  - `etree.parse`：打开文件，识别内容类型后解析
+  - `etree.XML(xml文件)`：解析 XML
+  - `xpath`
+    - `/../../text()`：获取文本，返回列表
+    - `//`：表示后代
+    - `/*/`：表示任意
+    - `/li[1]`：选择第一个 `li`
+    - `/a[@herf='...']`：按属性查找
+    - `/a/@herf`：获取属性值
+    - 对列表中的元素继续使用 XPath 时，输入 `"./..."`
+  - `etree.tostring()`
+    - 将解析后的树转换为 HTML 或 XML 内容
+    - `pretty_print=True`：添加换行和缩进
+    - `encoding=resp.encoding or "utf-8"`：指定编码
+    - `method="html"`：按 HTML 规则输出
+    - 默认返回 `bytes`
+    - `encoding="unicode"`：返回 Python 字符串
+    - 返回 `bytes` 时用二进制模式写入；返回字符串时用文本模式写入
+- `selenium`（模拟用户上网行为）
+  - `webdriver`
+    - `Edge(service, option)`：选择浏览器
+    - `get(url)`：打开网页
+    - `find_element(By.属性, value="值")`：查找元素
+      - `send_keys(str)`：发送内容
+      - `click()`：点击
+      - `text`：读取内容
+      - `get_attribute`：获取标签属性
+    - `save_screenshot('herf')`：截取当前图片，不会自动创建文件夹
+    - `quit()`：退出
+    - `close()`：关闭标签页
+    - `page_source`：获取 HTML
+    - `maximize_window()`：最大化
+    - `minimize_window()`：最小化
+    - `set_window_size(int, int)`：设置窗口大小
+    - `fullscreen_window()`：全屏
+    - `back()`、`forward()`、`refresh()`：后退、前进、刷新
+    - `title`：获取标题
+    - `current_url`：获取链接
+    - `execute_script("arguments[0].scrollIntoView({block: 'center'});", element)`：用于滚动到页面元素
+  - `support`
+    - `ui.WebDriverWait(drive, time)`：等待加载，最多等待 `time` 秒
+      - `until(EC)`：等待条件满足
+    - `expected_conditions`
+      - `visibility_of_element_located((By., ''))`：等待内容存在且可见
+      - `presence_of_all_elements_located()`：等待 DOM 中出现所有匹配元素
+  - `common`
+    - `by.By`：定位属性，属性需大写
+      - `xpath`
+      - 属性
+      - `css`
+    - `keys.Keys.RETURN`：回车键
+  - `Edge().add_cookie(cookie)`：添加 cookie
+  - `get_cookie()`：获取 cookie 字典列表
+- `HTML`
+  - 标签：`img`、`h`、`a`
+  - 属性：`align`、`scr`
+- `CSS`
+  - `#title`：对 `id` 为 `title` 的元素起效
+  - `.title`：对 `class` 为 `title` 的元素起效
+- `json`
+  - `dump(json, f)`：写入文件
+  - `dumps`：写入字符串
+    - `ensure_ascii=False`：中文正常显示
+    - `indent=2`：缩进美化
+  - `load`：从文件读取对象
+  - `loads`：从字符串读取对象
+- `urllib.parse`
+  - `unquote(text)`：解码
+- `itertools`
+  - `islice`：切片迭代器
+  - `pairwise(iter)`：返回相邻元素对
+  - `chain(list, iter)`：连接迭代对象
+- `异常与调试`
+  - `try...except`：处理异常
+  - `assert`：断言
+  - `breakpoint()`：调试
+    - `p x`：打印变量 `x`
+    - `l`：显示当前代码上部
+    - `n`：执行下一行
+    - `q`：退出调试
+  - `repr()`：返回对象的开发者表示形式
+  - `traceback`
+    - `print_exc`：打印当前正在处理的异常
+  - 常见异常
+    - `SyntaxError`：无效语法
+    - `NameError`：变量名错误
+    - `ValueError`：传入值错误
+    - `IndentationError`：缩进错误
+    - `ZeroDivisionError`：除数为 0
+    - `IndexError`：索引错误
+    - `FileNotFoundError`：未找到文件
+    - `AttributeError`：属性错误
+    - `UnboundLocalError`：引用未定义的局部变量
+    - `KeyError`：未找到对应的键
+    - `TypeError`：无效类型
+    - `OverflowError`：数值运算超出最大限制
+    - `NotImplementedError`：尚未实现的方法
+    - `ModuleNotFoundError`：模块未找到
+- `numpy`
+  - `array(list)`：把列表转为数组
+    - 数组类型：`np.int32`、`np.int64`、`np.float32`、`np.float64`、`np.bool_`、`np.str_`
+    - `astype`：转换数组类型
+    - `reshape(1, 4)`：改变数组形状；参数可填 `-1` 自动计算
+  - `zeros(n)`：创建 `n` 个 0 的数组，类型为浮点数；`n` 可以是数字或 `(2, 3)`
+  - `arange(stop)` / `arange(start, stop, step)`：按步长生成连续数值，包含 `start`，不包含 `stop`
+  - `random`
+    - `random(size)`：生成 `[0, 1)` 范围内的随机小数
+    - `randint(low, high, size)`：生成随机整数，包含 `low`，不包含 `high`
+    - `randn(size)`：生成标准正态分布随机数
+    - `normal(loc, scale, size)`：按指定均值、标准差和形状生成正态分布数组
+  - `索引与切片`
+    - `arr[indices]`：按索引取值
+    - `arr[start:stop]`：包含起点、不包含终点；二维数组默认切行
+    - `arr[:, 1:3]`：选取所有行的第 2、3 列
+    - `arr[condition]`：按条件筛选
+  - `转置与复制`
+    - `arr.T`、`transpose(1, 0, 2)`：转置或调整维度顺序
+    - `copy()`：创建独立副本；直接赋值会共享数组
+  - `翻转`
+    - `fliplr(arr)`：左右翻转二维数组
+    - `flipud(arr)`：上下翻转
+  - `拼接与分割`
+    - `concatenate(arrays, axis)`：拼接数组，`axis=0` 按行，`axis=1` 按列
+    - `split(arr, indices, axis)`：按索引位置分割数组
+    - `stack([array1, array2], axis=)`：增加维度后拼接
+    - `repeat(array, n, axis)`：沿指定轴重复
+  - `数学与统计`
+    - `dot(a, b)`：计算点积
+    - `abs`、`sin`、`exp`、`log`：绝对值、正弦、指数、自然对数
+    - `max`、`sum`、`prod`、`mean`、`std`：最大值、求和、求积、均值、标准差
+    - `axis=0`：按列计算；`axis=1`：按行计算
+    - 函数名前加 `nan` 可忽略 NaN
+    - `argmax(array)`：返回最大值的索引
+    - `unravel_index(idx, size)`：把一维索引转为二维索引
+  - `条件定位`
+    - `where(condition)`：返回满足条件的位置
+    - `any(array_condition, axis)`：返回降维后的布尔数组
+  - 其他
+    - `pi`：圆周率
+    - `newaxis`：增加一个长度为 1 的维度
+    - `clip(a, min, max)`：把数组值限制在指定范围
+    - `swapaxes(array, 0, 1)`：交换指定维度
+    - `size`：获取数组大小
+- `pandas`
+  - `Series`
+    - `Series(data, index)`：创建带索引的一维数据
+    - `sr.values`：获取底层数组
+    - `.astype()`：转换类型
+  - `DataFrame`
+    - `DataFrame(data, index, columns)`：创建二维表
+    - `df.T`：行列转置
+    - `df.values`：把数据转为二维数组
+  - `选择与修改`
+    - `loc[行标签, 列标签]`：按标签选择
+    - `iloc[行位置, 列位置]`：按位置选择
+    - `df.iloc[:, ::-1]`：反转列顺序
+    - `df.iloc[::-1, :]`：反转行顺序
+    - `df.set_index('')`：设置新索引
+    - `set_index(..., inplace=True)`：直接修改原 DataFrame
+    - `df[].rank(ascending, method)`：返回排名 Series
+  - `读取与概览`
+    - `read_csv(path, index_col=0)`：读取 CSV，可将首列设为索引
+    - `head(n)`：查看前 `n` 行，默认 5 行
+    - `describe()`：查看数值列描述性统计
+    - `index`：获取索引名称
+    - `values`：获取值
+  - `缺失值`
+    - `isna()` / `isnull()`：检测缺失值
+    - `dropna(axis=0)`：删除含缺失值的行；`axis=1` 删除列
+    - `fillna(value)`：填充缺失值
+    - `ffill()`、`bfill()`：用前一个或后一个值填充
+  - `分组与透视表`
+    - `pivot_table(values, index, aggfunc)`：按索引分组汇总，默认计算均值
+  - `连续数据分箱`
+    - `cut(values, bins)`：按指定区间分箱
+    - `qcut(values, q)`：按分位数分箱
+  - `to_csv`
+    - `float_format='%.2f'`：设置小数位数
+    - `mode='a'`：追加写入
+    - 写入出现空行时，在字符串数据上使用 `.strip()`
+    - 已设置索引后，不能直接用 `df[索引列名]`
+- `matplotlib.pyplot`
+  - 中文显示设置
+    - `plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']`
+    - `plt.rcParams['axes.unicode_minus'] = False`
+  - `figure(figsize=(n, n), dpi=)`：创建图像
+  - `title('', fontsize='')`：设置标题
+  - `plot(x, y)`：绘制线型图
+  - `axes()`：用于面向对象方式建造图表
+  - `show()`：显示图表
+  - `subplot(3, 1, 1)`：创建 3 行 1 列的图表并使用第一个
+  - `subplots(3)`：创建包含 3 个子图的画布
+  - 图表类型
+    - `plot(x, y)`：线型图
+    - `pie(value, label, autopct=...)`：饼图
+    - `scatter(x, y)`：散点图
+    - `bar(x, y)`：条形图
+    - `stem(x, y)`：杆图
+    - `step(x, y)`：阶梯图
+  - `bar_label(bar, padding=3, fmt='%.2f')`：在柱形图上显示数字
+- `Jupyter Notebook`
+  - `jupyter notebook`：启动
+  - `Shift + Enter`：运行单元格
+  - `Esc + A`：在上方插入单元格
+  - `Esc + B`：在下方插入单元格
+  - `Esc + M`：切换为 Markdown
+  - `Ctrl + Enter`：运行当前单元格
+- `Python语法与格式`
+  - 字符串格式化：`"aaa%s" % (str)`
+  - 条件表达式：`"pass" if score > 60 else "fail"`
+  - `for a, b in dict.items()`：分别获取键和值
+  - `{1.100:g}`：去掉多余的 0
+- `itertools`
+  - `pairwise(iter)`：返回相邻元素对
+  - `chain(list, iter)`：连接迭代对象
+- `编程与爬虫记录`
+  - 爬取 XHR 时复制参数信息，注意浏览器可能把 `:` 显示为 `%3A`
+  - 请求后记得关闭
+  - 知乎直接请求返回 403 时，尝试学习 Selenium
+  - 爬虫中遇到报错时，可打印状态码、请求方法、请求网址、请求体、响应类型和响应正文进行排查
+  - 使用 XPath 抓取时遇到定位不稳定
+  - 爬取福大网页时，注意页面编码和题目字段含义
+  - 已完成福大教务处爬虫正文提取及 bonus
+  - 已完成源之夏
