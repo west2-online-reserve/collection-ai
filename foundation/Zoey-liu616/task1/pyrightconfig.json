@@ -1,0 +1,11 @@
+{
+  "include": [
+    "Campus_IF_Love",
+    "Pokemon_Battle"
+  ],
+  "exclude": [
+    "**/__pycache__"
+  ],
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "standard"
+}
