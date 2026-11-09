@@ -1,0 +1,13 @@
+foundation/hao888myt/task1/galgame/data/
+
+.vscode/
+
+__pycache__/
+*.pyc
+*.pyo
+
+.python-version
+pyproject.toml
+uv.lock
+foundation/hao888myt/task2/zhi_hu/cookies.json
+src/collection_ai/__init__.py

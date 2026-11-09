@@ -1,0 +1,19 @@
+{
+  "current_file": "start",
+  "current_group": "group_1",
+  "current_index": 1,
+  "characters": {
+    "jie_jie": {
+      "name": "姐姐",
+      "affinity": 5
+    },
+    "sen_pai": {
+      "name": "学姐",
+      "affinity": 0
+    },
+    "xiao_bai": {
+      "name": "小白",
+      "affinity": 0
+    }
+  }
+}
