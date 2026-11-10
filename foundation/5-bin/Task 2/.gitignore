@@ -1,0 +1,15 @@
+# Local learning records and exercises; keep on disk.
+/AGENTS.md
+/学习计划.md
+/学习进度.md
+/练习/
+
+# Previous AI implementation, collected data, and verification evidence.
+/教务通知/
+
+# Generated files for the learner's assignment implementation.
+/作业1_教务通知/data/
+/作业1_教务通知/raw/
+/作业1_教务通知/state.json
+/作业1_教务通知/*.log
+/作业1_教务通知/*.tmp
