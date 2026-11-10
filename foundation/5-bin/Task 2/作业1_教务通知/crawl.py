@@ -4,6 +4,9 @@ from lxml import etree
 import csv
 import requests
 import json
+import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 def parse_list(html_bytes, base_url):
@@ -61,7 +64,7 @@ def parse_attachments(html_bytes, notice_url):
     for a in links:
         name = a.xpath("string(.)").strip()
         attachment_url = urljoin(notice_url, a.get("href", ""))
-        params = parse_qs(urlsplit(attachment_url).query)
+        params = parse_qs(urlsplit(attachment_url).query)  # 返回字典
         attachment_code = params.get("wbfileid", [""])[0]
         attachments.append(
             {
@@ -90,43 +93,209 @@ def parse_download_count(data, attachment_code):
     return str(count)
 
 
-def main():
-    directory = Path(__file__).resolve().parent
-    html_path = directory / "samples" / "list.html"
-    html_bytes = html_path.read_bytes()
+def fetch_with_retry(url, error_records, params=None):
+    for attempt in range(1, 4):
+        try:
+            time.sleep(1)  # 避免请求过快
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            return response
 
-    base_url = "https://jwch.fzu.edu.cn/jxtz.htm"
-    records, next_url = parse_list(html_bytes, base_url)
+        except requests.HTTPError as error:
+            error_records.append(
+                {
+                    "url": url,
+                    "attempts": attempt,
+                    "error_type": type(error).__name__,
+                    "error_message": str(error),
+                }
+            )
+            return None
 
-    print("通知数：", len(records))
-    print("第一条：", records[0])
-    print("下一页：", next_url)
+        except (requests.Timeout, requests.ConnectionError) as error:
+            if attempt == 3:
+                error_records.append(
+                    {
+                        "url": url,
+                        "attempts": attempt,
+                        "error_type": type(error).__name__,
+                        "error_message": str(error),
+                    }
+                )
+    return None
 
-    detail_path = directory / "samples" / "detail.html"
-    detail_bytes = detail_path.read_bytes()
-    body = parse_detail(detail_bytes)
 
-    print("正文字符数：", len(body))
-    print("正文开头：", body[:100])
-    print("正文结尾：", body[-100:])
+def fetch_attachment_count(attachment, directory, error_records):
+    code = attachment["attachment_code"]
+    query = parse_qs(urlsplit(attachment["attachment_url"]).query)
 
-    attachments_bytes = (
-        directory / "samples" / "detail_with_attachments.html"
-    ).read_bytes()
-    attachments = parse_attachments(
-        attachments_bytes, "https://jwch.fzu.edu.cn/info/1036/14874.htm"
+    url = "https://jwch.fzu.edu.cn/system/resource/code/news/click/clicktimes.jsp"
+    params = {
+        "wbnewsid": code,
+        "owner": query["owner"][0] if "owner" in query else "",
+        "type": "wbnewsfile",
+        "randomid": "nattach",
+    }
+
+    response = fetch_with_retry(url, error_records, params=params)
+    if response is None:
+        return None
+
+    collected_at = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
+
+    raw_dir = directory / "raw"
+    raw_dir.mkdir(exist_ok=True)
+    raw_path = raw_dir / f"count_{code}_{time.time_ns()}.json"
+    raw_path.write_bytes(response.content)
+
+    download_count = parse_download_count(response.json(), code)
+
+    # 整理本次采集记录
+    metadata = {
+        "attachment_code": code,
+        "collected_at": collected_at,
+        "download_count": download_count,
+        "response_file": raw_path.name,
+        "response_url": response.url,
+        "status_code": response.status_code,
+    }
+
+    metadata_path = raw_path.with_suffix(".meta.json")
+    metadata_path.write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
-    print("附件数：", len(attachments))
-    for attachment in attachments:
-        print(attachment)
+    return metadata
 
+
+def parse_notice(html_bytes, metadata):
+    # parse_detail 内部已经调用 clean_body，无需重复清理
+    body = parse_detail(html_bytes)
+
+    notice = {
+        "publisher": metadata["publisher"],
+        "title": metadata["title"],
+        "published_date": metadata["published_date"],
+        "notice_url": metadata["notice_url"],
+        "body": body,
+    }
+
+    attachments = parse_attachments(
+        html_bytes,
+        metadata["notice_url"],
+    )
+
+    return notice, attachments
+
+
+def save_csv(records, csv_path, temp_path, fieldnames):
+    with open(temp_path, "w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(records)
+    temp_path.replace(csv_path)
+
+
+def save_checkpoint(directory, items):
+    data_dir = directory / "data"
+    data_dir.mkdir(exist_ok=True)
+
+    state_path = data_dir / "state.json"
+    temp_state_path = state_path.with_suffix(".tmp")
+    with open(temp_state_path, "w", encoding="utf-8") as file:
+        json.dump({"items": items}, file, ensure_ascii=False, indent=2)
+    temp_state_path.replace(state_path)
+
+    notice_rows = []
+    attachment_rows = []
+
+    for item in items.values():
+        notice_rows.append(item["notice"])
+        attachment_rows.extend(item["attachments"])
+
+    # 保存通知数据到 CSV
+    save_csv(
+        notice_rows,
+        data_dir / "notices.csv",
+        data_dir / "notices.csv.tmp",
+        ["publisher", "title", "published_date", "notice_url", "body"],
+    )
+
+    # 保存附件数据到 CSV
+    save_csv(
+        attachment_rows,
+        data_dir / "attachments.csv",
+        data_dir / "attachments.csv.tmp",
+        [
+            "notice_url",
+            "attachment_name",
+            "download_count",
+            "attachment_code",
+            "attachment_url",
+        ],
+    )
+
+
+def load_checkpoint(directory):
+    state_path = directory / "data" / "state.json"
+    if not state_path.exists():
+        return {}
+
+    with open(state_path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+    return data["items"]
+
+
+def main():
+    directory = Path(__file__).resolve().parent
+
+    items = load_checkpoint(directory)
+    save_checkpoint(directory, items)
+
+    target_url = "https://jwch.fzu.edu.cn/info/1036/14874.htm"
+    notice_metadata = None
+
+    if items.get(target_url):
+        notice = items[target_url]["notice"]
+        attachments = items[target_url]["attachments"]
+    else:
+        html_path = directory / "samples" / "list.html"
+        html_bytes = html_path.read_bytes()
+
+        base_url = "https://jwch.fzu.edu.cn/jxtz.htm"
+        records, next_url = parse_list(html_bytes, base_url)
+
+        for record in records:
+            if record["notice_url"] == target_url:
+                notice_metadata = record
+                break
+
+        if notice_metadata is None:
+            print("未找到目标通知的元数据")
+            return
+
+        detail_path = directory / "samples" / "detail_with_attachments.html"
+        detail_bytes = detail_path.read_bytes()
+
+        notice, attachments = parse_notice(detail_bytes, notice_metadata)
+
+        items[notice["notice_url"]] = {
+            "notice": notice,
+            "attachments": attachments,
+        }
+
+        save_checkpoint(directory, items)
+
+    # 先解析通知和附件，再用已有本地 JSON 回填次数。
     for attachment in attachments:
+        if attachment["download_count"] != "":
+            print("跳过已知次数：", attachment["attachment_code"])
+            continue
         code = attachment["attachment_code"]
         count_path = directory / "samples" / f"count_{code}.json"
         data = json.loads(count_path.read_bytes())
         attachment["download_count"] = parse_download_count(data, code)
-        print(code, attachment["download_count"])
+        save_checkpoint(directory, items)  # 保存最终结果
 
 
 if __name__ == "__main__":
