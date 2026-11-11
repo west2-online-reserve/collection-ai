@@ -102,6 +102,7 @@ def fetch_with_retry(url, error_records, params=None):
             return response
 
         except requests.HTTPError as error:
+            print(f"  [请求失败] {url}：{error}", flush=True)
             error_records.append(
                 {
                     "url": url,
@@ -113,6 +114,11 @@ def fetch_with_retry(url, error_records, params=None):
             return None
 
         except (requests.Timeout, requests.ConnectionError) as error:
+            print(
+                f"  [请求异常 {attempt}/3] {url}：{error}"
+                + ("；即将重试" if attempt < 3 else "；已达到尝试上限"),
+                flush=True,
+            )
             if attempt == 3:
                 error_records.append(
                     {
@@ -246,56 +252,240 @@ def load_checkpoint(directory):
     return data["items"]
 
 
+def collect_list_pages(start_url, directory, error_records, max_pages=2):
+    current_url = start_url
+    all_records = []
+    seen_urls = set()  # 记录已访问的 URL，避免重复抓取
+    page_count = 0
+
+    while current_url and page_count < max_pages:
+        print(
+            f"[列表 {page_count + 1}/{max_pages}] 正在获取：{current_url}",
+            flush=True,
+        )
+        response = fetch_with_retry(current_url, error_records)
+        if response is None:
+            print("[列表失败] 停止翻页，保留当前地址供后续处理。", flush=True)
+            break
+        collected_at = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(
+            timespec="seconds"
+        )
+
+        raw_dir = directory / "raw"
+        raw_dir.mkdir(exist_ok=True)
+
+        raw_path = raw_dir / f"list_{time.time_ns()}.html"
+        raw_path.write_bytes(response.content)
+
+        response_metadata = {
+            "requested_url": current_url,
+            "response_url": response.url,
+            "status_code": response.status_code,
+            "collected_at": collected_at,
+            "response_file": raw_path.name,
+        }
+
+        meta_path = raw_path.with_suffix(".meta.json")
+        meta_path.write_text(
+            json.dumps(response_metadata, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+        page_records, next_url = parse_list(response.content, response.url)
+
+        if not page_records:
+            print("[列表失败] 未解析到通知，原文已保存。", flush=True)
+            raise ValueError(
+                f"第 {page_count + 1} 页未解析到任何记录，URL: {current_url}"
+            )
+
+        for record in page_records:
+            notice_url = record["notice_url"]
+            if notice_url in seen_urls:
+                continue  # 跳过已访问的通知 URL
+            seen_urls.add(notice_url)
+
+            all_records.append(record)
+
+        current_url = next_url
+        page_count += 1
+        print(
+            f"[列表 {page_count}/{max_pages}] 成功：本页 {len(page_records)} 条，"
+            f"累计 {len(all_records)} 条唯一通知。",
+            flush=True,
+        )
+
+    return all_records, current_url  # 返回所有记录和下一页的 URL
+
+
+def collect_notice(notice_metadata, directory, items, error_records):
+    notice_url = notice_metadata["notice_url"]
+
+    if notice_url not in items:
+        print("  正在获取详情正文……", flush=True)
+        response = fetch_with_retry(notice_url, error_records)
+        if response is None:
+            return False  # 请求失败，无法继续处理
+
+        collected_at = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(
+            timespec="seconds"
+        )
+
+        raw_dir = directory / "raw"
+        raw_dir.mkdir(exist_ok=True)
+
+        raw_path = raw_dir / f"detail_{time.time_ns()}.html"
+        raw_path.write_bytes(response.content)
+
+        response_metadata = {
+            "requested_url": notice_url,
+            "response_url": response.url,
+            "status_code": response.status_code,
+            "collected_at": collected_at,
+            "response_file": raw_path.name,
+        }
+
+        meta_path = raw_path.with_suffix(".meta.json")
+        meta_path.write_text(
+            json.dumps(response_metadata, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+        try:
+            notice, attachments = parse_notice(response.content, notice_metadata)
+        except ValueError as error:
+            error_records.append(
+                {
+                    "url": notice_url,
+                    "attempts": "",
+                    "error_type": type(error).__name__,
+                    "error_message": str(error),
+                }
+            )
+            return False  # 解析失败，无法继续处理
+
+        items[notice_url] = {
+            "notice": notice,
+            "attachments": attachments,
+            "detail_response": response_metadata,  # 保存详情页响应元数据
+            "count_evidence": {},  # 初始化下载次数证据字典
+        }
+
+        save_checkpoint(directory, items)  # 保存中间结果
+        print(f"  正文已保存，发现 {len(attachments)} 个附件。", flush=True)
+    else:
+        print("  复用已保存正文，检查附件次数。", flush=True)
+
+    item = items[notice_url]
+    attachment_total = len(item["attachments"])
+    for index, attachment in enumerate(item["attachments"], start=1):
+        if attachment["download_count"] != "":
+            print(
+                f"  [附件 {index}/{attachment_total}] 跳过已知次数："
+                f"{attachment['attachment_name']}（{attachment['download_count']} 次）",
+                flush=True,
+            )
+            continue  # 跳过已知次数
+
+        print(
+            f"  [附件 {index}/{attachment_total}] 正在获取次数："
+            f"{attachment['attachment_name']}",
+            flush=True,
+        )
+        try:
+            count_record = fetch_attachment_count(attachment, directory, error_records)
+        except ValueError as error:
+            error_records.append(
+                {
+                    "url": notice_url,
+                    "attempts": "",
+                    "error_type": type(error).__name__,
+                    "error_message": str(error),
+                }
+            )
+            return False  # 下载次数解析失败，无法继续处理
+        if count_record is None:
+            return False  # 下载次数获取失败，无法继续处理
+
+        attachment["download_count"] = count_record["download_count"]
+        item.setdefault("count_evidence", {})[
+            attachment["attachment_code"]
+        ] = count_record
+        save_checkpoint(directory, items)  # 保存最终结果
+        print(
+            f"  [附件 {index}/{attachment_total}] 成功："
+            f"{attachment['download_count']} 次，已保存。",
+            flush=True,
+        )
+
+    return True
+
+
+def collect_notices(records, directory, items, error_records):
+    success_count = 0
+    failure_count = 0
+
+    total = len(records)
+    for index, record in enumerate(records, start=1):
+        print(
+            f"[通知 {index}/{total}] 开始：{record['title']}\n"
+            f"  {record['notice_url']}",
+            flush=True,
+        )
+        previous_errors = len(error_records)
+        try:
+            result = collect_notice(record, directory, items, error_records)
+        except OSError as error:
+            print(f"[通知 {index}/{total}] 文件操作失败，采集停止：{error}", flush=True)
+            raise
+        if not result:
+            failure_count += 1
+            reason = (
+                error_records[-1]["error_message"]
+                if len(error_records) > previous_errors
+                else "未能完成采集"
+            )
+            print(f"[通知 {index}/{total}] 失败：{reason}", flush=True)
+        else:
+            success_count += 1
+            print(f"[通知 {index}/{total}] 成功，数据已完整保存。", flush=True)
+        print(f"  本轮累计：成功 {success_count}，失败 {failure_count}。", flush=True)
+
+    return success_count, failure_count
+
+
 def main():
     directory = Path(__file__).resolve().parent
 
     items = load_checkpoint(directory)
     save_checkpoint(directory, items)
+    print(f"[启动] 已加载 {len(items)} 条通知状态。", flush=True)
 
-    target_url = "https://jwch.fzu.edu.cn/info/1036/14874.htm"
-    notice_metadata = None
+    error_records = []
 
-    if items.get(target_url):
-        notice = items[target_url]["notice"]
-        attachments = items[target_url]["attachments"]
-    else:
-        html_path = directory / "samples" / "list.html"
-        html_bytes = html_path.read_bytes()
+    start_url = "https://jwch.fzu.edu.cn/jxtz.htm"
+    records, next_url = collect_list_pages(
+        start_url, directory, error_records, max_pages=50
+    )
 
-        base_url = "https://jwch.fzu.edu.cn/jxtz.htm"
-        records, next_url = parse_list(html_bytes, base_url)
+    success_count, failure_count = collect_notices(
+        records, directory, items, error_records
+    )
 
-        for record in records:
-            if record["notice_url"] == target_url:
-                notice_metadata = record
-                break
+    data_dir = directory / "data"
+    save_csv(
+        error_records,
+        data_dir / "errors.csv",
+        data_dir / "errors.csv.tmp",
+        ["url", "attempts", "error_type", "error_message"],
+    )
 
-        if notice_metadata is None:
-            print("未找到目标通知的元数据")
-            return
-
-        detail_path = directory / "samples" / "detail_with_attachments.html"
-        detail_bytes = detail_path.read_bytes()
-
-        notice, attachments = parse_notice(detail_bytes, notice_metadata)
-
-        items[notice["notice_url"]] = {
-            "notice": notice,
-            "attachments": attachments,
-        }
-
-        save_checkpoint(directory, items)
-
-    # 先解析通知和附件，再用已有本地 JSON 回填次数。
-    for attachment in attachments:
-        if attachment["download_count"] != "":
-            print("跳过已知次数：", attachment["attachment_code"])
-            continue
-        code = attachment["attachment_code"]
-        count_path = directory / "samples" / f"count_{code}.json"
-        data = json.loads(count_path.read_bytes())
-        attachment["download_count"] = parse_download_count(data, code)
-        save_checkpoint(directory, items)  # 保存最终结果
+    print(f"[结束] 本轮处理完毕，数据目录：{data_dir}", flush=True)
+    print("列表条数：", len(records))
+    print("成功数：", success_count)
+    print("失败数：", failure_count)
+    print("错误数：", len(error_records))
+    print("下一待处理列表页：", next_url)
 
 
 if __name__ == "__main__":
