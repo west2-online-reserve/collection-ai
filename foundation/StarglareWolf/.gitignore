@@ -1,0 +1,7 @@
+# .gitignore 示例
+__pycache__/
+*.pyc
+node_modules/
+.env
+*.log
+.venv/
