@@ -1,0 +1,11 @@
+# PyCharm IDE配置目录
+../../.idea/
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 临时文件
+*.log
