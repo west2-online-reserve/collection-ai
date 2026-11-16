@@ -1,0 +1,7 @@
+list=[2,"abc",7,"hello",98]
+new_list=[]
+for item in list:
+    if type(item)==int:
+        new_list.append(item)
+new_list.sort()
+print(new_ list)

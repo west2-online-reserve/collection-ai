@@ -1,0 +1,15 @@
+stu = {
+    "2025001":"张三",
+    "2025002":"李四",
+    "2025003":"王五",
+    "2025004":"赵六"
+}
+keys_to_del = []
+for k in stu:
+    last = int(k[-1])
+    if last % 2 == 0:
+        keys_to_del.append(k)
+
+for k in keys_to_del:
+    del stu[k]
+print(stu)

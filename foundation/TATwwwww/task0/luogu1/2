@@ -1,0 +1,8 @@
+apple=list(map(int,input().split()))
+a=int(input())
+total=a+30
+cnt=0
+for height in apple:
+    if height <= total:
+        cnt+=1
+print(cnt)

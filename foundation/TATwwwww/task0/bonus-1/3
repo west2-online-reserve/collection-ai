@@ -1,0 +1,4 @@
+s=input("请输入字符串：")
+s=s.replace("ol","fzu")
+s_rev=s[::-1]
+print(s_rev)
