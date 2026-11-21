@@ -86,3 +86,18 @@ d1 = {
 }
 print(d1)
 ```
+
+## dict2
+
+```python
+s = [1,1,2,3,5]
+def main(s):
+    d = {x : s.count(x) for x in s}
+    print(d)
+main(s)
+```
+
+## class
+
+```pyhton
+class goods:
