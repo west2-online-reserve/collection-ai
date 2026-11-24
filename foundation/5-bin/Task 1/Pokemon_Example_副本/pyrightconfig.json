@@ -1,0 +1,4 @@
+{
+    "include": ["play.py", "pokemon.py", "skills.py", "effects.py"],
+    "typeCheckingMode": "strict"
+}

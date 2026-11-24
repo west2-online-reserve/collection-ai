@@ -1,0 +1,14 @@
+url,attempts,error_type,error_message
+https://jwch.fzu.edu.cn/info/1038/14502.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1035&wbnewsid=13875,3,ReadTimeout,"HTTPSConnectionPool(host='jwch.fzu.edu.cn', port=443): Read timed out. (read timeout=10)"
+https://jwch.fzu.edu.cn/info/1038/13857.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/content.jsp?urltype=news.NewsContentUrl&wbtreeid=1035&wbnewsid=13626,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1036/13536.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1039/13167.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1039/13155.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1036/13102.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1035/12937.htm,,ValueError,正文容器应为 1 个，实际匹配 2 个
+https://jwch.fzu.edu.cn/info/1035/12913.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1035/12776.htm,,ValueError,正文容器应为 1 个，实际匹配 2 个
+https://jwch.fzu.edu.cn/info/1036/12619.htm,,ValueError,正文容器应为 1 个，实际匹配 0 个
+https://jwch.fzu.edu.cn/info/1035/12568.htm,,ValueError,正文容器应为 1 个，实际匹配 2 个

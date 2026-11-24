@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Environment variables / secrets
+.env
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# 本地 AI 协作配置与迁移资料，不提交
+/CLAUDE.md
+/.cache/
+/Task 1/Pokemon_Example_副本/AGENTS.md
+/.claude/
