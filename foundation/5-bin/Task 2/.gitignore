@@ -20,3 +20,15 @@
 /作业1_教务通知/*.tmp
 
 /.learning/
+
+# 作业2：只提交结果 CSV；调试样本等其他生成数据保留本地。
+/作业2_知乎话题/data/*
+!/作业2_知乎话题/data/zhihu_answers.csv
+!/作业2_知乎话题/data/zhihu_failures.csv
+
+# 浏览器资料与 Cookie：任意层级的 private/ 一律不提交（防止在错误目录启动 Chrome 时生成的资料被误提交）。
+private/
+
+# 作业2：离线检查脚本与访问受限排查报告保留本地，不提交。
+/作业2_知乎话题/check_csv.py
+/作业2_知乎话题/知乎详情访问受限排查报告-*.md

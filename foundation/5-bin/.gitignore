@@ -21,3 +21,9 @@ env/
 build/
 dist/
 *.egg-info/
+
+# 本地 AI 协作配置与迁移资料，不提交
+/CLAUDE.md
+/.cache/
+/Task 1/Pokemon_Example_副本/AGENTS.md
+/.claude/
